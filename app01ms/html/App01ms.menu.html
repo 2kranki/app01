@@ -1,0 +1,138 @@
+
+<!doctype html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <title>App01ms Tables</title>
+    <style>
+        html, body, p {
+            padding: 0;
+            border: 0;
+            margin: 0;
+        }
+        body {
+            display: flex;
+            flex-flow: column nowrap;
+            justify-content: center;
+            align-items: left;
+            height: 100vh;
+        }
+        p {
+            margin-left: 4rem;
+            font-size: 2rem;
+            color: black;
+        }
+        .link {
+            font-size: 1rem;
+        }
+    </style>
+</head>
+<body>
+    <ul>
+    <li>Customer Actions:</li>
+    <form id="menuFormCustomer" method="get" action="/Customer">
+            <li>Customer Table</li>
+            <ul>
+                <li><input type=submit onclick='onCreateCustomer()' value="Create Table"></li>
+                <li><input type=submit onclick='onListCustomer()' value="List Rows"></li>
+                <li><input type=submit onclick='onRowCustomer()' value="Maintain Rows"></li>
+                <li><label>Add data from CSV file</label>
+                    <input type=file onclick='onCsvFileCustomer()' name=csvFile value="">
+                    <input type=submit onclick='onCsvLoadCustomer()' value="Create Table and load CSV File">
+                </li>
+                <li><input type=submit onclick='onSaveCSVCustomer()' value="Save CSV file"></li>
+                <li><input type=submit onclick='onLoadTestCustomer()' value="Create Table and load test data"></li>
+            </ul>
+    </form>
+    <script>
+        function onCreateCustomer() {
+            document.getElementById("menuFormCustomer").action = "/Customer/table/create";
+            document.getElementById("menuFormCustomer").method = "get";
+        }
+        function onListCustomer() {
+            document.getElementById("menuFormCustomer").action = "/Customer/list/first";
+            document.getElementById("menuFormCustomer").method = "get";
+        }
+        function onCsvFileCustomer() {
+            document.getElementById("menuFormCustomer").enctype = "multipart/form-data";
+        }
+        function onCsvLoadCustomer() {
+            //document.getElementById("menuFormCustomer").enctype = "multipart/form-data";
+            document.getElementById("menuFormCustomer").action  = "/Customer/table/load/csv";
+            document.getElementById("menuFormCustomer").method  = "post";
+        }
+        function onLoadTestCustomer() {
+            document.getElementById("menuFormCustomer").action = "/Customer/table/load/test";
+            document.getElementById("menuFormCustomer").method = "get";
+        }
+        function onDeleteCustomer() {
+            			key0 = document.getElementById("key0").value
+
+            document.getElementById("menuFormCustomer").action = "/Customer/delete"+"?"+"key="+key0;
+            document.getElementById("menuFormCustomer").method = "get";
+        }
+        function onRowCustomer() {
+            document.getElementById("menuFormCustomer").action = "/Customer/show";
+            document.getElementById("menuFormCustomer").method = "get";
+        }
+        function onSaveCSVCustomer() {
+            document.getElementById("menuFormCustomer").action = "/Customer/table/save/csv";
+            document.getElementById("menuFormCustomer").method = "get";
+        }
+    </script>
+
+    <li>Vendor Actions:</li>
+    <form id="menuFormVendor" method="get" action="/Vendor">
+            <li>Vendor Table</li>
+            <ul>
+                <li><input type=submit onclick='onCreateVendor()' value="Create Table"></li>
+                <li><input type=submit onclick='onListVendor()' value="List Rows"></li>
+                <li><input type=submit onclick='onRowVendor()' value="Maintain Rows"></li>
+                <li><label>Add data from CSV file</label>
+                    <input type=file onclick='onCsvFileVendor()' name=csvFile value="">
+                    <input type=submit onclick='onCsvLoadVendor()' value="Create Table and load CSV File">
+                </li>
+                <li><input type=submit onclick='onSaveCSVVendor()' value="Save CSV file"></li>
+                <li><input type=submit onclick='onLoadTestVendor()' value="Create Table and load test data"></li>
+            </ul>
+    </form>
+    <script>
+        function onCreateVendor() {
+            document.getElementById("menuFormVendor").action = "/Vendor/table/create";
+            document.getElementById("menuFormVendor").method = "get";
+        }
+        function onListVendor() {
+            document.getElementById("menuFormVendor").action = "/Vendor/list/first";
+            document.getElementById("menuFormVendor").method = "get";
+        }
+        function onCsvFileVendor() {
+            document.getElementById("menuFormVendor").enctype = "multipart/form-data";
+        }
+        function onCsvLoadVendor() {
+            //document.getElementById("menuFormVendor").enctype = "multipart/form-data";
+            document.getElementById("menuFormVendor").action  = "/Vendor/table/load/csv";
+            document.getElementById("menuFormVendor").method  = "post";
+        }
+        function onLoadTestVendor() {
+            document.getElementById("menuFormVendor").action = "/Vendor/table/load/test";
+            document.getElementById("menuFormVendor").method = "get";
+        }
+        function onDeleteVendor() {
+            			key0 = document.getElementById("key0").value
+
+            document.getElementById("menuFormVendor").action = "/Vendor/delete"+"?"+"key="+key0;
+            document.getElementById("menuFormVendor").method = "get";
+        }
+        function onRowVendor() {
+            document.getElementById("menuFormVendor").action = "/Vendor/show";
+            document.getElementById("menuFormVendor").method = "get";
+        }
+        function onSaveCSVVendor() {
+            document.getElementById("menuFormVendor").action = "/Vendor/table/save/csv";
+            document.getElementById("menuFormVendor").method = "get";
+        }
+    </script>
+</ul>
+
+</body>
+</html>
