@@ -1,8 +1,5 @@
 
-#================================================
-# Warning: You must run DockerBuild.py before
-#           running this.
-#================================================
+# vi:nu:et:sts=4 ts=4 sw=4
 
 version: "3"
 
@@ -20,9 +17,15 @@ services:
     #----------------------------------------------
     app01sq:
     #----------------------------------------------
+        # Run the latest version of our application
+        # container passing the appropriate startup
+        # parameters such as sql server password.
         image: "app01sq:latest"
+        build:
+            context: "."
+            dockerfile: "./Dockerfile"
         ports:
-            - "127.0.0.1:8090:8090"
+            - "127.0.0.1:8094:8094"
         
         networks:
             - net

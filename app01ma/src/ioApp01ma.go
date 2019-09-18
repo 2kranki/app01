@@ -19,7 +19,7 @@
 //      be lower-case. You should separate words with an '_' if you use full words
 //      in the name.
 
-// Generated: Tue Sep 17, 2019 10:59 for mariadb Database
+// Generated: Wed Sep 18, 2019 11:02 for mariadb Database
 
 package main
 

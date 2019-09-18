@@ -3,7 +3,7 @@
 
 // SQL Application main program
 
-// Generated: Tue Sep 17, 2019 10:59 for sqlite Database
+// Generated: Wed Sep 18, 2019 11:02 for sqlite Database
 
 package main
 
@@ -72,11 +72,11 @@ func main() {
 	}
 
 	// Collect variables from Environment and override value if present.
-	wrk = os.Getenv("APP01SQ_HTTPPORT")
+	wrk = os.Getenv("APP01SQ_HTTP_PORT")
 	if len(wrk) > 0 {
 		http_port = wrk
 	}
-	wrk = os.Getenv("APP01SQ_HTTPSERVER")
+	wrk = os.Getenv("APP01SQ_HTTP_SERVER")
 	if len(wrk) > 0 {
 		http_srvr = wrk
 	}
@@ -89,7 +89,7 @@ func main() {
 		execPath = wrk
 	}
 
-	wrk = os.Getenv("APP01SQ_DBNAME")
+	wrk = os.Getenv("APP01SQ_DB_NAME")
 	if len(wrk) > 0 {
 		db_name = wrk
 	}

@@ -1,8 +1,5 @@
 
-#================================================
-# Warning: You must run DockerBuild.py before
-#           running this.
-#================================================
+# vi:nu:et:sts=4 ts=4 sw=4
 
 version: "3"
 
@@ -18,9 +15,12 @@ services:
     #----------------------------------------------
     db:
     #----------------------------------------------
-        image: "localhost:11.3"
+        # Create and the docker sql server container
+        # with the appropriate startup arguments such
+        # as root password.
+        image: "postgres:11.3"
         environment:
-            POSTGRES_PASSWORD="Passw0rd"
+            POSTGRES_PASSWORD: "Passw0rd"
         expose:
             - "5432"
         networks:
@@ -30,12 +30,18 @@ services:
     #----------------------------------------------
     app01pg:
     #----------------------------------------------
+        # Run the latest version of our application
+        # container passing the appropriate startup
+        # parameters such as sql server password.
         image: "app01pg:latest"
+        build:
+            context: "."
+            dockerfile: "./Dockerfile"
         ports:
-            - "127.0.0.1:8090:8090"
+            - "127.0.0.1:8093:8093"
         environment:
-            APP01PG_DBSERVER: db
-            APP01PG_DBPORT: 5432
+            APP01PG_DB_SERVER: "db"
+            APP01PG_DB_PORT: "5432"
         depends_on:
             - db
         networks:

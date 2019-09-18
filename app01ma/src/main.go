@@ -3,7 +3,7 @@
 
 // SQL Application main program
 
-// Generated: Tue Sep 17, 2019 10:59 for mariadb Database
+// Generated: Wed Sep 18, 2019 11:02 for mariadb Database
 
 package main
 
@@ -76,11 +76,11 @@ func main() {
 	}
 
 	// Collect variables from Environment and override value if present.
-	wrk = os.Getenv("APP01MA_HTTPPORT")
+	wrk = os.Getenv("APP01MA_HTTP_PORT")
 	if len(wrk) > 0 {
 		http_port = wrk
 	}
-	wrk = os.Getenv("APP01MA_HTTPSERVER")
+	wrk = os.Getenv("APP01MA_HTTP_SERVER")
 	if len(wrk) > 0 {
 		http_srvr = wrk
 	}
@@ -93,23 +93,23 @@ func main() {
 		execPath = wrk
 	}
 
-	wrk = os.Getenv("APP01MA_DBPW")
+	wrk = os.Getenv("APP01MA_DB_PW")
 	if len(wrk) > 0 {
 		db_pw = wrk
 	}
-	wrk = os.Getenv("APP01MA_DBPORT")
+	wrk = os.Getenv("APP01MA_DB_PORT")
 	if len(wrk) > 0 {
 		db_port = wrk
 	}
-	wrk = os.Getenv("APP01MA_DBSERVER")
+	wrk = os.Getenv("APP01MA_DB_SERVER")
 	if len(wrk) > 0 {
 		db_srvr = wrk
 	}
-	wrk = os.Getenv("APP01MA_DBUSER")
+	wrk = os.Getenv("APP01MA_DB_USER")
 	if len(wrk) > 0 {
 		db_user = wrk
 	}
-	wrk = os.Getenv("APP01MA_DBNAME")
+	wrk = os.Getenv("APP01MA_DB_NAME")
 	if len(wrk) > 0 {
 		db_name = wrk
 	}

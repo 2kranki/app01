@@ -28,6 +28,5 @@ STATUS:
     you have docker installed, you should be able to build the docker container without
     having golang natively installed. All work, but 'sqlite' for now.
 
-    Working on running the application in docker with the sql server running in
-    docker as well. This utilizes docker-compose and is a work in progress.
+    "docker-compose" is working for all, but sqlite. It will build the application container the first time that it is run. I use "docker-container up &" in MacOS to watch the progress of the application.  You should note that each application exposes a different port, 8090-8094, so that they can all be run at once if needed. "docker-compose down" should shut the application down. Note that you need to be in the directory that contains the Dockerfile and docker-compose.yaml for this to work.
 

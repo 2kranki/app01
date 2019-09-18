@@ -1,6 +1,8 @@
 
-# Generate a minimal Docker container with app01sq installed            
+# Generate a minimal Docker container with app01sq installed
+# vi:nu:et:sts=4 ts=4 sw=4
 
+# Build the application program.
 FROM golang:latest AS golang
 LABEL maintainer="bob@2kranki.us"
 ENV GOLANG_DOCKER_CONTAINER=1
@@ -16,13 +18,28 @@ COPY ./src/* ./
 RUN go build -o /go/bin/app01sq .                                       
 RUN ls -al /go/bin/
 
+# We put the application program built in the prior step into
+# /usr/local/app including all of its support files.
 FROM alpine:latest AS production
-WORKDIR /usr/local/app/
+LABEL maintainer="bob@2kranki.us"
+WORKDIR /usr/local/app
 COPY --from=golang /go/bin/app01sq .
-COPY ./css      ./
-COPY ./html     ./
-COPY ./static   ./
-COPY ./tmpl     ./
-EXPOSE 8090
+# Warning: COPY does not copy the actual directory, just its contents.
+#           So, we must create those directories first, then COPY.
+WORKDIR /usr/local/app/css
+COPY ./css      .
+WORKDIR /usr/local/app/html
+COPY ./html     .
+WORKDIR /usr/local/app/static
+COPY ./static   .
+WORKDIR /usr/local/app/tmpl
+COPY ./tmpl     .
+WORKDIR /usr/local/app
+# The web server ip/port are different when running in the container
+# vs batch.
+ENV APP01SQ_HTTP_SERVER="0.0.0.0"
+ENV APP01SQ_HTTP_PORT="8094"
+EXPOSE 8094
+
 CMD ["/usr/local/app/app01sq"]
 

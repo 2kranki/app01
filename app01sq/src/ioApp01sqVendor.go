@@ -13,7 +13,7 @@
 //      return a "row" need not be closed.
 
 // 2.   SQL requires OFFSET to follow LIMIT optionally (ie LIMIT n [OFFSET n])
-// Generated: Tue Sep 17, 2019 10:59 for sqlite Database
+// Generated: Wed Sep 18, 2019 11:02 for sqlite Database
 
 package main
 

@@ -3,7 +3,7 @@
 
 // SQL Application main program
 
-// Generated: Tue Sep 17, 2019 10:59 for postgres Database
+// Generated: Wed Sep 18, 2019 11:02 for postgres Database
 
 package main
 
@@ -76,11 +76,11 @@ func main() {
 	}
 
 	// Collect variables from Environment and override value if present.
-	wrk = os.Getenv("APP01PG_HTTPPORT")
+	wrk = os.Getenv("APP01PG_HTTP_PORT")
 	if len(wrk) > 0 {
 		http_port = wrk
 	}
-	wrk = os.Getenv("APP01PG_HTTPSERVER")
+	wrk = os.Getenv("APP01PG_HTTP_SERVER")
 	if len(wrk) > 0 {
 		http_srvr = wrk
 	}
@@ -93,23 +93,23 @@ func main() {
 		execPath = wrk
 	}
 
-	wrk = os.Getenv("APP01PG_DBPW")
+	wrk = os.Getenv("APP01PG_DB_PW")
 	if len(wrk) > 0 {
 		db_pw = wrk
 	}
-	wrk = os.Getenv("APP01PG_DBPORT")
+	wrk = os.Getenv("APP01PG_DB_PORT")
 	if len(wrk) > 0 {
 		db_port = wrk
 	}
-	wrk = os.Getenv("APP01PG_DBSERVER")
+	wrk = os.Getenv("APP01PG_DB_SERVER")
 	if len(wrk) > 0 {
 		db_srvr = wrk
 	}
-	wrk = os.Getenv("APP01PG_DBUSER")
+	wrk = os.Getenv("APP01PG_DB_USER")
 	if len(wrk) > 0 {
 		db_user = wrk
 	}
-	wrk = os.Getenv("APP01PG_DBNAME")
+	wrk = os.Getenv("APP01PG_DB_NAME")
 	if len(wrk) > 0 {
 		db_name = wrk
 	}
