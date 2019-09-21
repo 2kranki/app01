@@ -3,7 +3,7 @@
 
 // SQL Application main program
 
-// Generated: Wed Sep 18, 2019 11:02 for mariadb Database
+// Generated: Sat Sep 21, 2019 06:40 for mariadb Database
 
 package main
 
@@ -49,6 +49,7 @@ func main() {
 	var wrk string
 
 	// Set up flag variables
+	log.Printf("\tSetting up the flag variables...\n")
 
 	flag.Usage = usage
 	flag.BoolVar(&debug, "debug", true, "enable debugging")
@@ -70,12 +71,14 @@ func main() {
 	flag.StringVar(&baseDir, "basedir", ".", "Base Directory for Templates, HTML and CSS")
 
 	// Parse the flags and check them
+	log.Printf("\tParsing the flags...\n")
 	flag.Parse()
 	if debug {
 		log.Println("\tIn Debug Mode...")
 	}
 
 	// Collect variables from Environment and override value if present.
+	log.Printf("\tCollecting the variables from Environment and override value if present...\n")
 	wrk = os.Getenv("APP01MA_HTTP_PORT")
 	if len(wrk) > 0 {
 		http_port = wrk
@@ -115,5 +118,6 @@ func main() {
 	}
 
 	// Execute the main process.
+	log.Printf("\tExecuting the main process...\n")
 	exec()
 }

@@ -3,12 +3,12 @@
 # vi:nu:et:sts=4 ts=4 sw=4
 
 # Build the application program.
-FROM golang:latest AS golang
+FROM golang:1.12-stretch AS golang
 LABEL maintainer="bob@2kranki.us"
 ENV GOLANG_DOCKER_CONTAINER=1
+
 ENV CGO_ENABLED=0
 ENV GOOS=linux
-RUN apt-get update && apt-get install --yes sqlite3 libsqlite3-dev 
 RUN go get github.com/2kranki/jsonpreprocess \
     && go get github.com/2kranki/go_util \
     && go get github.com/shopspring/decimal \
@@ -16,12 +16,14 @@ RUN go get github.com/2kranki/jsonpreprocess \
 WORKDIR /go/src
 COPY ./src/* ./
 RUN go build -o /go/bin/app01ms .                                       
-RUN ls -al /go/bin/
 
 # We put the application program built in the prior step into
 # /usr/local/app including all of its support files.
-FROM alpine:latest AS production
+FROM ubuntu:cosmic AS production
+# Note: we must keep glibc version the same as in the golang container.
 LABEL maintainer="bob@2kranki.us"
+
+RUN apt-get update && apt-get upgrade --yes
 WORKDIR /usr/local/app
 COPY --from=golang /go/bin/app01ms .
 # Warning: COPY does not copy the actual directory, just its contents.

@@ -4,7 +4,7 @@
 // ioVendor_test tests various functions of
 // the Table SQL Maintenance methods.
 
-// Generated: Wed Sep 18, 2019 11:02 for mariadb Database
+// Generated: Sat Sep 21, 2019 06:40 for mariadb Database
 
 package main
 

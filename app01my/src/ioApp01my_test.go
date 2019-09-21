@@ -4,7 +4,7 @@
 // ioApp01my contains all the functions
 // and data to interact with the SQL Database.
 
-// Generated: Wed Sep 18, 2019 11:02 for mysql Database
+// Generated: Sat Sep 21, 2019 06:41 for mysql Database
 
 package main
 
