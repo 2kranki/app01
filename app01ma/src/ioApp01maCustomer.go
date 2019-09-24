@@ -13,7 +13,7 @@
 //      return a "row" need not be closed.
 
 // 2.   SQL requires OFFSET to follow LIMIT optionally (ie LIMIT n [OFFSET n])
-// Generated: Sat Sep 21, 2019 06:40 for mariadb Database
+// Generated: Tue Sep 24, 2019 10:29 for mariadb Database
 
 package main
 

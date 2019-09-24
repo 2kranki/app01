@@ -4,7 +4,7 @@
 // ioCustomer_test tests various functions of
 // the Table SQL Maintenance methods.
 
-// Generated: Sat Sep 21, 2019 06:40 for mariadb Database
+// Generated: Tue Sep 24, 2019 10:29 for mariadb Database
 
 package main
 
