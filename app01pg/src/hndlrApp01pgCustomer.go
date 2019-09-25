@@ -3,7 +3,7 @@
 
 //  Handle HTTP Events
 
-// Generated: Tue Sep 24, 2019 21:07
+// Generated: Wed Sep 25, 2019 15:48
 
 package main
 
@@ -39,7 +39,7 @@ type HandlersApp01pgCustomer struct {
 	mu          sync.Mutex
 	db          *IO_App01pgCustomer
 	rowsPerPage int
-	Tmpls       *template.Template
+	Tmpls       *TmplsApp01pg
 }
 
 //----------------------------------------------------------------------------

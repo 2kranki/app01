@@ -4,7 +4,7 @@
 // ioVendor_test tests various functions of
 // the Table SQL Maintenance methods.
 
-// Generated: Tue Sep 24, 2019 21:07 for mysql Database
+// Generated: Wed Sep 25, 2019 15:48 for mysql Database
 
 package main
 

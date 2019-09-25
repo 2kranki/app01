@@ -3,7 +3,7 @@
 
 // SQL Application main program
 
-// Generated: Tue Sep 24, 2019 21:07
+// Generated: Wed Sep 25, 2019 15:48
 
 package main
 
@@ -36,7 +36,6 @@ func HndlrFavIcon(w http.ResponseWriter, r *http.Request) {
 	http.Error(w, http.StatusText(405), http.StatusMethodNotAllowed)
 
 	fmt.Printf("...end HndlrFavIcon(Error:405)\n")
-
 }
 
 // HndlrHome responds to a URL with no sub-elements.  It defaults to
@@ -46,20 +45,16 @@ func HndlrHome(w http.ResponseWriter, r *http.Request) {
 	fmt.Printf("HndlrHome(%s)\n", r.Method)
 
 	if r.URL.Path != "/" {
-
 		fmt.Printf("...end HndlrHome(Error 404) Not '/' URL\n")
-
 		http.NotFound(w, r)
 		return
 	}
 
 	fmt.Printf("\tHndlrHome Serving File: ./html/App01ms.menu.html\n")
-
 	hndlrsApp01ms.MainDisplay(w, "")
 	//http.ServeFile(w, r, baseDir+"/html/App01ms.menu.html")
 
 	fmt.Printf("...end HndlrHome()\n")
-
 }
 
 // To understand the following, review packages net/http and net/url and review:
@@ -107,9 +102,7 @@ func MuxHandlerWrapper(f http.Handler) http.HandlerFunc {
 func exec() {
 
 	// Connect the databases.
-
 	log.Printf("\tConnecting to the Database...\n")
-
 	ioApp01ms := NewIoApp01ms()
 	//ioApp01ms.SetName(db_name)
 	ioApp01ms.SetPort(db_port)
@@ -137,44 +130,38 @@ func exec() {
 	if ioApp01msCustomer == nil {
 		log.Fatalf("ERROR - Failed to Connect to Table, App01msCustomer\n\n\n")
 	}
-
 	ioApp01msVendor := NewIoApp01msVendor(ioApp01ms)
 	if ioApp01msVendor == nil {
 		log.Fatalf("ERROR - Failed to Connect to Table, App01msVendor\n\n\n")
 	}
 
 	// Set up templates.
-
 	log.Printf("\tSetting up the Templates...\n")
-
 	hndlrsApp01ms = NewTmplsApp01ms()
 	hndlrsApp01ms.SetTmplsDir(baseDir + "/tmpl")
 	hndlrsApp01ms.SetupTmpls()
 
 	// Set up default URL handlers
-
 	log.Printf("\tSetting up the Mux Handlers...\n")
-
 	mux := http.NewServeMux()
 	mux.HandleFunc("/", HndlrHome)
 	mux.HandleFunc("/favicon.ico", HndlrFavIcon)
 
 	// App01ms.Customer URL handlers for table maintenance
 	hndlrsApp01msCustomer = NewHandlersApp01msCustomer(ioApp01msCustomer, RowsPerPage, mux)
-	hndlrsApp01msCustomer.Tmpls = hndlrsApp01ms.Tmpls
+	hndlrsApp01msCustomer.Tmpls = hndlrsApp01ms
 	if hndlrsApp01msCustomer.Tmpls == nil {
 		log.Fatalf("ERROR - Failed to load templates from hndlrsApp01ms\n\n\n")
 	}
 	// App01ms.Vendor URL handlers for table maintenance
 	hndlrsApp01msVendor = NewHandlersApp01msVendor(ioApp01msVendor, RowsPerPage, mux)
-	hndlrsApp01msVendor.Tmpls = hndlrsApp01ms.Tmpls
+	hndlrsApp01msVendor.Tmpls = hndlrsApp01ms
 	if hndlrsApp01msVendor.Tmpls == nil {
 		log.Fatalf("ERROR - Failed to load templates from hndlrsApp01ms\n\n\n")
 	}
+
 	// Start the HTTP Server.
-
 	log.Printf("\tStarting Server at %s:%s...\n", http_srvr, http_port)
-
 	srvrStr := fmt.Sprintf("%s:%s", http_srvr, http_port)
 	s := &http.Server{
 		Addr:    srvrStr,

@@ -13,7 +13,7 @@
 //      return a "row" need not be closed.
 
 // 2.   SQL requires OFFSET to follow LIMIT optionally (ie LIMIT n [OFFSET n])
-// Generated: Tue Sep 24, 2019 21:07 for mysql Database
+// Generated: Wed Sep 25, 2019 15:48 for mysql Database
 
 package main
 

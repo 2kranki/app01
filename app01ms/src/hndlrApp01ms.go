@@ -3,7 +3,7 @@
 
 //  Handle HTTP Events
 
-// Generated: Tue Sep 24, 2019 21:07
+// Generated: Wed Sep 25, 2019 15:48
 
 package main
 
@@ -27,22 +27,8 @@ type TmplsApp01ms struct {
 	Tmpls    *template.Template
 }
 
-func (TmplsApp01ms) Title(i interface{}) string {
-	return "Title() - NOT Implemented"
-}
-
-func (TmplsApp01ms) Body(i interface{}) string {
-	return "Body() - NOT Implemented"
-}
-
 func (t *TmplsApp01ms) SetTmplsDir(d string) {
 	t.tmplsDir = d
-}
-
-func NewTmplsApp01ms() *TmplsApp01ms {
-	t := &TmplsApp01ms{}
-	t.tmplsDir = "./tmpl"
-	return t
 }
 
 //----------------------------------------------------------------------------
@@ -78,6 +64,18 @@ func (h *TmplsApp01ms) MainDisplay(w http.ResponseWriter, msg string) {
 }
 
 //----------------------------------------------------------------------------
+//                                  N e w
+//----------------------------------------------------------------------------
+
+func NewTmplsApp01ms(dir string) *TmplsApp01ms {
+	t := &TmplsApp01ms{}
+	if nul == dir {
+		t.tmplsDir = "./tmpl"
+	}
+	return t
+}
+
+//----------------------------------------------------------------------------
 //                           Setup Templates
 //----------------------------------------------------------------------------
 
@@ -95,7 +93,6 @@ func (t *TmplsApp01ms) SetupTmpls() {
 	funcs := map[string]interface{}{"Title": t.Title, "Body": t.Body}
 	path := t.tmplsDir + "/*.gohtml"
 	t.Tmpls = template.Must(template.New("tmpls").Funcs(funcs).ParseGlob(path))
-
 	templates = t.Tmpls.Templates()
 	for _, tt = range templates {
 		names = append(names, tt.Name())
@@ -105,7 +102,6 @@ func (t *TmplsApp01ms) SetupTmpls() {
 		log.Printf("\t\t template: %s\n", name)
 	}
 	log.Printf("\tend of SetupTmpls()\n")
-
 }
 
 func init() {

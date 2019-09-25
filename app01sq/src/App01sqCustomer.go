@@ -3,7 +3,7 @@
 
 //  Struct and Methods for App01sqCustomer
 
-// Generated: Tue Sep 24, 2019 21:07
+// Generated: Wed Sep 25, 2019 15:48
 
 package main
 
