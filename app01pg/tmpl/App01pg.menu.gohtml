@@ -3,7 +3,7 @@
 <html lang="en">
 <head>
     <meta charset="UTF-8">
-    <title>App01ms Tables</title>
+    <title>App01pg Tables</title>
     <style>
         html, body, p {
             padding: 0;
@@ -44,6 +44,8 @@
                 <li><input type=submit onclick='onLoadTestCustomer()' value="Create Table and load test data"></li>
             </ul>
     </form>
+    <p/>
+    <p>{{.Msg}}</p>
     <script>
         function onCreateCustomer() {
             document.getElementById("menuFormCustomer").action = "/Customer/table/create";
@@ -96,6 +98,8 @@
                 <li><input type=submit onclick='onLoadTestVendor()' value="Create Table and load test data"></li>
             </ul>
     </form>
+    <p/>
+    <p>{{.Msg}}</p>
     <script>
         function onCreateVendor() {
             document.getElementById("menuFormVendor").action = "/Vendor/table/create";

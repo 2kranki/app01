@@ -3,7 +3,7 @@
 
 //  Handle HTTP Events
 
-// Generated: Tue Sep 24, 2019 10:29
+// Generated: Tue Sep 24, 2019 21:07
 
 package main
 
@@ -138,7 +138,7 @@ func (h *HandlersApp01msVendor) ListFirst(w http.ResponseWriter, r *http.Request
 	}
 
 	// Display the row in the form.
-	h.ListShow(w, 0)
+	h.ListShow(w, 0, "")
 
 	log.Printf("...end hndlrVendor.ListFirst()\n")
 
@@ -177,7 +177,7 @@ func (h *HandlersApp01msVendor) ListLast(w http.ResponseWriter, r *http.Request)
 	}
 
 	// Display the row in the form.
-	h.ListShow(w, offset)
+	h.ListShow(w, offset, "")
 
 	log.Printf("...end hndlrVendor.ListLast()\n")
 
@@ -218,7 +218,7 @@ func (h *HandlersApp01msVendor) ListNext(w http.ResponseWriter, r *http.Request)
 	}
 
 	// Display the row in the form.
-	h.ListShow(w, offset)
+	h.ListShow(w, offset, "")
 
 	log.Printf("...end hndlrVendor.ListNext()\n")
 
@@ -267,7 +267,7 @@ func (h *HandlersApp01msVendor) ListPrev(w http.ResponseWriter, r *http.Request)
 	}
 
 	// Display the row in the form.
-	h.ListShow(w, offset)
+	h.ListShow(w, offset, "")
 
 	log.Printf("...end hndlrVendor.ListPrev()\n")
 
@@ -278,7 +278,7 @@ func (h *HandlersApp01msVendor) ListPrev(w http.ResponseWriter, r *http.Request)
 //----------------------------------------------------------------------------
 
 // ListShow displays a list page given a starting offset.
-func (h *HandlersApp01msVendor) ListShow(w http.ResponseWriter, offset int) {
+func (h *HandlersApp01msVendor) ListShow(w http.ResponseWriter, offset int, msg string) {
 	var err error
 	var rcds []App01msVendor
 	var name = "App01ms.Vendor.list.gohtml"
@@ -302,7 +302,8 @@ func (h *HandlersApp01msVendor) ListShow(w http.ResponseWriter, offset int) {
 	data := struct {
 		Rcds   []App01msVendor
 		Offset int
-	}{rcds, offset}
+		Msg    string
+	}{rcds, offset, msg}
 
 	log.Printf("\tData: %+v\n", data)
 
@@ -826,6 +827,7 @@ func (h *HandlersApp01msVendor) TableCreate(w http.ResponseWriter, r *http.Reque
 	// Create the table.
 	err = h.db.TableCreate()
 	if err == nil {
+		//h.ListShow(w, 0, "Table was created")
 		w.Write([]byte("Table was created"))
 	} else {
 		w.Write([]byte("Table creation had an error of:" + err.Error()))

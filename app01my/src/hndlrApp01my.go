@@ -3,22 +3,22 @@
 
 //  Handle HTTP Events
 
-// Generated: Tue Sep 24, 2019 10:29
+// Generated: Tue Sep 24, 2019 21:07
 
 package main
 
 import (
-	_ "fmt"
+	"fmt"
 	"html/template"
-	_ "io"
+	"io"
 	_ "io/ioutil"
-	_ "net/http"
-
 	"log"
-
+	"net/http"
 	_ "os"
 	"sort"
+	"strings"
 
+	"github.com/2kranki/go_util"
 	_ "github.com/go-sql-driver/mysql"
 )
 
@@ -35,10 +35,6 @@ func (TmplsApp01my) Body(i interface{}) string {
 	return "Body() - NOT Implemented"
 }
 
-func init() {
-
-}
-
 func (t *TmplsApp01my) SetTmplsDir(d string) {
 	t.tmplsDir = d
 }
@@ -47,6 +43,38 @@ func NewTmplsApp01my() *TmplsApp01my {
 	t := &TmplsApp01my{}
 	t.tmplsDir = "./tmpl"
 	return t
+}
+
+//----------------------------------------------------------------------------
+//                             Main Display
+//----------------------------------------------------------------------------
+
+// Display the main menu with any needed messages.
+func (h *TmplsApp01my) MainDisplay(w http.ResponseWriter, msg string) {
+	var err error
+	var name = "App01my.main.menu.gohtml"
+
+	var str strings.Builder
+
+	log.Printf("App01my.MainDisplay(%s)\n", msg)
+	log.Printf("\tname: %s\n", name)
+	w2 := io.MultiWriter(w, &str)
+
+	data := struct {
+		Msg string
+	}{msg}
+
+	log.Printf("\tData: %+v\n", data)
+
+	log.Printf("\tExecuting template: %s\n", name)
+	err = h.Tmpls.ExecuteTemplate(w2, name, data)
+	if err != nil {
+		fmt.Fprintf(w, err.Error())
+	}
+
+	log.Printf("\t output: %s\n", str.String())
+	log.Printf("...end App01my.MainDisplay(%s)\n", util.ErrorString(err))
+
 }
 
 //----------------------------------------------------------------------------
@@ -77,5 +105,9 @@ func (t *TmplsApp01my) SetupTmpls() {
 		log.Printf("\t\t template: %s\n", name)
 	}
 	log.Printf("\tend of SetupTmpls()\n")
+
+}
+
+func init() {
 
 }

@@ -4,7 +4,7 @@
 // ioApp01sq contains all the functions
 // and data to interact with the SQL Database.
 
-// Generated: Tue Sep 24, 2019 10:29
+// Generated: Tue Sep 24, 2019 21:07
 
 package main
 
@@ -261,15 +261,17 @@ func TestApp01sqCustomerHndlrDB(t *testing.T) {
 func TestApp01sqCustomerHndlrListIndex(t *testing.T) {
 	var err error
 	var td *TestData_App01sqCustomer
+	var r string
 
 	t.Logf("TestCustomer.HndlrListIndex()...\n")
 	td = &TestData_App01sqCustomer{}
 	td.Setup(t)
 
-	//TODO: err = db.Ping()
 	if err != nil {
 		t.Fatalf("Error: Cannot connect: %s\n", err.Error())
 	}
+
+	r = td.ResponseBody()
 
 	t.Logf("TestCustomer.HndlrListIndex() - End of Test\n\n\n")
 }

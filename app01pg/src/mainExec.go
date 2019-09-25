@@ -3,7 +3,7 @@
 
 // SQL Application main program
 
-// Generated: Tue Sep 24, 2019 10:29
+// Generated: Tue Sep 24, 2019 21:07
 
 package main
 
@@ -55,7 +55,8 @@ func HndlrHome(w http.ResponseWriter, r *http.Request) {
 
 	fmt.Printf("\tHndlrHome Serving File: ./html/App01pg.menu.html\n")
 
-	http.ServeFile(w, r, baseDir+"/html/App01pg.menu.html")
+	hndlrsApp01pg.MainDisplay(w, "")
+	//http.ServeFile(w, r, baseDir+"/html/App01pg.menu.html")
 
 	fmt.Printf("...end HndlrHome()\n")
 
