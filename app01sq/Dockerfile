@@ -32,9 +32,16 @@ RUN go get github.com/2kranki/jsonpreprocess \
     && go get github.com/2kranki/go_util \
     && go get github.com/shopspring/decimal \
     && go get "github.com/mattn/go-sqlite3"
+WORKDIR /go/src/cmd
+COPY ./cmd      ./
+WORKDIR /go/src/pkg
+COPY ./pkg      ./
+WORKDIR /go/src/vendor
+COPY ./vendor   ./
 WORKDIR /go/src
-COPY ./src/* ./
-RUN go build -o /go/bin/app01sq .                                       
+COPY go.mod     ./
+COPY go.sum     ./
+RUN go build -o /go/bin/app01sq /go/src/cmd/App01sq/*.go
 
 
 # Create the Production Container with the program built in the
@@ -48,10 +55,6 @@ WORKDIR /usr/local/app
 COPY --from=golang /go/bin/app01sq .
 # Warning: COPY does not copy the actual directory, just its contents.
 #           So, we must create those directories first, then COPY.
-WORKDIR /usr/local/app/css
-COPY ./css      .
-WORKDIR /usr/local/app/html
-COPY ./html     .
 WORKDIR /usr/local/app/static
 COPY ./static   .
 WORKDIR /usr/local/app/tmpl

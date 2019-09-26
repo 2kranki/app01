@@ -199,7 +199,7 @@ class BuildCliCmd(Cmd):
             print("doBuildCli(%s)" % (name))
 
         # Perform the specified actions.
-        szCmd = "dgo build -o %s/%s ./src" % (path, name)
+        szCmd = "go build -o %s/%s ./cmd/App01pg" % (path, name)
         iRc = 0                 # Assume that it works
         try:
             if not oArgs.debug:
@@ -207,6 +207,7 @@ class BuildCliCmd(Cmd):
                     iRC = os.system(szCmd)
                 except OSError:
                     pass
+                print("...output: %s/%s" % (path, name))
             else:
                 print("Debug:", szCmd)
         finally:
