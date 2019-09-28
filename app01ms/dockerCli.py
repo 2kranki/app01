@@ -377,7 +377,8 @@ class NetUpCmd(Cmd):
 def         mainCLI( listArgV=None ):
     """ Command-line interface """
     global      oArgs
-    oCmds = Cmds(BuildCmd(), BuildCliCmd(), NetDownCmd(), NetInspectCmd(), NetUpCmd())
+    oCmds = Cmds(BuildCmd(), BuildCliCmd(), ComposeUpCmd(), NetDownCmd(), NetInspectCmd(),
+            NetUpCmd())
     szEpilog = oCmds.cmdDescs()
 
     # Do initialization.

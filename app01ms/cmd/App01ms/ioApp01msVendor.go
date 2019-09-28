@@ -15,7 +15,7 @@
 // 2.   T-SQL does not seem to support LIMIT or OFFSET in SQL Server 2017. So, you
 //      have to use an ORDER BY clause followed by an OFFSET clause optionally
 //      followed by the FETCH clause (ie ORDER BY xx [OFFSET n ROWS [FETCH NEXT n ROWS ONLY]]).
-// Generated: Thu Sep 26, 2019 13:51 for mssql Database
+// Generated: Sat Sep 28, 2019 11:23 for mssql Database
 
 package main
 
