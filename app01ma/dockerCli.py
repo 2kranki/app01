@@ -6,18 +6,20 @@ import      os
 import      sys
 import      time
 
-oArgs       = None
-szDesc      = 'Perform various Docker CLI commands'
-szAppName   = 'app01ma'
-szImageName = 'app01ma'
-szImageTag  = 'latest'
-szUser      = 'root'
-szPW        = 'Passw0rd'
-szPortDef   = '4306'
-szPortDoc   = '3306'
-szServer    = 'localhost'
-szNetwork   = 'app01ma_net'
-szNetworkSuffix  = 'net'
+oArgs           = None
+szDesc          = 'Perform various Docker CLI commands'
+szAppName       = 'app01ma'
+szImageName     = 'app01ma'
+szImageTag      = 'latest'
+szUser          = 'root'
+szPW            = 'Passw0rd'
+szPortDef       = '4306'
+szDbImageName   = 'mariadb'
+szDbImageTag    = '5.5'
+szPortDoc       = '3306'
+szServer        = 'localhost'
+szNetwork       = 'app01ma_net'
+szNetworkSuffix = 'net'
 
 
 def getNetName(self, name=None, **kwargs):
@@ -124,7 +126,7 @@ class       Cmds(object):
         return iRc
 
     def cmdDescs(self):
-        """ Build the description of the current commends in this object
+        """ Build the description of the current commands in this object
         """
         szDesc = "Commands:\n"
         for key in sorted(self.oCmdDict.keys()):
