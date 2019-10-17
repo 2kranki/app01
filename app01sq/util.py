@@ -46,6 +46,7 @@ import      time
 
 
 fDebug = False
+fForce = False
 fTrace = False
 
 
@@ -121,10 +122,7 @@ def         buildGoApp(szAppDir, szAppName):
     # Reformat the source code.
     err = None
     try:
-        szCmd = 'go fmt -v ./...'
-        if fTrace:
-            print("Issuing: cd {0}".format(appDirAbs))
-        os.chdir(appDirAbs)
+        szCmd = "go fmt {0}".format(os.path.join(curDir, szAppDir, szAppName, '*.go'))
         if fTrace:
             print("Issuing: {0}".format(szCmd))
         if fDebug:
@@ -135,10 +133,6 @@ def         buildGoApp(szAppDir, szAppName):
         if fTrace:
             print("Execption:",e)
         err = Error("Error: '%s' failed!" % szCmd)
-    finally:
-        if fTrace:
-            print("Issuing: cd {0}".format(curDir))
-        os.chdir(curDir)
     if err:
         return err
 
@@ -374,6 +368,52 @@ class   DockerImage(object):
     """
     """
 
+    def Build(self, szName, szTag, fForce=False):
+        ''' Build a current Docker Image
+        '''
+        imageInfo = None
+
+        szImageName = szName
+        if len(szTag):
+            szImageName += ':' + szTag
+
+        image = self.Find(szName, szTag)
+        if image == None:
+            pass
+        else:
+            if fForce:
+                pass
+            else:
+                return Error("Error: image {0} already exists!".format(szImageName))
+
+        # Get rid of any prior images if necessary
+        if image == None:
+            pass
+        else:
+            szCmd = 'docker image rm -f {0}'.format(szImageName)
+            if fDebug:
+                print("\tDebug: {0}".format(szCmd))
+            try:
+                if fTrace:
+                    print("\tIssuing: {0}".format(szCmd))
+                os.system(szCmd)
+            except OSError:
+                return Error("Error: could not remove image {0}".format(szImageName))
+
+        # Pull the image
+        szCmd = "docker image build -t {0} .".format(szImageName)
+        if fDebug:
+            print("\tDebug: {0}".format(szCmd))
+        try:
+            if fTrace:
+                print("\tIssuing: {0}".format(szCmd))
+            os.system(szCmd)
+        except OSError:
+                return Error("Error: could not build image {0}".format(szImageName))
+
+        return None
+
+
     def Find(self, szName, szTag):
         ''' Find information about a current Docker Image
         '''
@@ -416,11 +456,11 @@ class   DockerImage(object):
         ''' Pull a Docker Image
         '''
 
-        image = self.Find(szName, szTag)
+        image = self.Find(szName, szTag, fForce=False)
         if image == None:
             pass
         else:
-            if oArgs.fForce:
+            if fForce:
                 pass
             else:
                 return
@@ -489,7 +529,7 @@ def         goget(pkgDir, szGoDir=None):
     '''
     if szGoDir == None:
         szGoDir = '~/go'
-    goPkgDir = getAbsolutePath(os.path.join(szGoDir, 'src', pkgDir))
+    goPkgDir = absolutePath(os.path.join(szGoDir, 'src', pkgDir))
 
     if not os.path.exists(goPkgDir) :
         szCmd = 'go get {0}'.format(pkgDir)

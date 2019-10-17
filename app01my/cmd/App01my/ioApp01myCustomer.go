@@ -16,7 +16,7 @@
 
 
 // 2.   SQL requires OFFSET to follow LIMIT optionally (ie LIMIT n [OFFSET n])
-// Generated: Wed Oct 16, 2019 20:04 for mysql Database
+// Generated: Wed Oct 16, 2019 21:06 for mysql Database
 
 package main
 

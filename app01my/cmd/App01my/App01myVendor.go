@@ -3,7 +3,7 @@
 
 //  Struct and Methods for App01myVendor
 
-// Generated: Wed Oct 16, 2019 20:04
+// Generated: Wed Oct 16, 2019 21:06
 
 
 package main
