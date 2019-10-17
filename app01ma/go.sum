@@ -1,12 +1,8 @@
-github.com/2kranki/go_util v1.0.1 h1:WVesL/S29rYnHBxFz2cAAkgpJjQ2qYx3WhLSmXCMYEY=
-github.com/2kranki/go_util v1.0.1/go.mod h1:88l4a3Nw68SJnxHLSIe43dopsy9JczXMaqfmB7JwP8g=
 github.com/2kranki/go_util v1.0.3 h1:qYrME1kX/15WUdiL4kYoBMhuAQjSoUsPbXsxk4FV1yA=
 github.com/2kranki/go_util v1.0.3/go.mod h1:s75XI12NiBj4qcG6D2ip6YfXMTyfcPS5xm2yk8nCXkg=
 github.com/2kranki/jsonpreprocess v1.0.1 h1:cwZfoelBoT9NhGemaW/KzQk/jvtUV276RuGX53kCZEs=
 github.com/2kranki/jsonpreprocess v1.0.1/go.mod h1:YeGfkfW78LfYzlCuRbrav4uPPCC8XdxHCoqhq0fczqU=
 github.com/go-sql-driver/mysql v1.4.1 h1:g24URVg0OFbNUTx9qqY1IRZ9D9z3iPyi5zKhQZpNwpA=
 github.com/go-sql-driver/mysql v1.4.1/go.mod h1:zAC/RDZ24gD3HViQzih4MyKcchzm+sOG5ZlKdlhCg5w=
-github.com/shopspring/decimal v0.0.0-20190905144223-a36b5d85f337 h1:Da9XEUfFxgyDOqUfwgoTDcWzmnlOnCGi6i4iPS+8Fbw=
-github.com/shopspring/decimal v0.0.0-20190905144223-a36b5d85f337/go.mod h1:M+9NzErvs504Cn4c5DxATwIqPbtswREoFCre64PpcG4=
 github.com/shopspring/decimal v0.0.0-20191009025716-f1972eb1d1f5 h1:Gojs/hac/DoYEM7WEICT45+hNWczIeuL5D21e5/HPAw=
 github.com/shopspring/decimal v0.0.0-20191009025716-f1972eb1d1f5/go.mod h1:M+9NzErvs504Cn4c5DxATwIqPbtswREoFCre64PpcG4=

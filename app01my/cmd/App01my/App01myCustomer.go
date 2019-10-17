@@ -3,7 +3,7 @@
 
 //  Struct and Methods for App01myCustomer
 
-// Generated: Wed Oct 16, 2019 21:06
+// Generated: Thu Oct 17, 2019 11:49
 
 
 package main

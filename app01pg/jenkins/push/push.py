@@ -44,7 +44,7 @@ import      subprocess
 import      sys
 import      time
 
-sys.path.append('.')
+sys.path.append('./scripts')
 import      util
 
 

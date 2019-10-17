@@ -309,6 +309,9 @@ class DirEntry(object):
         '''
         os.chdir(self._pwd)
 
+    def __str__(self):
+        return "DirEntry({0})".format(self._path)
+
 
 #---------------------------------------------------------------------
 #                           Docker Container
