@@ -19,113 +19,102 @@
 //      be lower-case. You should separate words with an '_' if you use full words
 //      in the name.
 
-
-// Generated: Wed Oct 16, 2019 20:04 for mariadb Database
+// Generated: Wed Oct 16, 2019 21:06 for mariadb Database
 
 package main
 
 import (
-    "database/sql"
-    "fmt"
-    
-        "log"
-    
-    
-     "strconv"
-    "strings"
+	"database/sql"
+	"fmt"
+
+	"log"
+
+	"strconv"
+	"strings"
 	// "time" is only needed for Docker support and "sqlite" is the only
 	//  database server not using it.
-    "time"
-    
+	"time"
 
-    "github.com/2kranki/go_util"
-    "github.com/go-sql-driver/mysql"
-    
+	"github.com/2kranki/go_util"
+	"github.com/go-sql-driver/mysql"
 )
 
-const connect_retries=100
-
-
-
+const connect_retries = 100
 
 //============================================================================
 //                            IO_App01ma
 //============================================================================
 
 type IO_App01ma struct {
-    dbSql       *sql.DB
-    dbName      string
-    dbPW       	string
-    dbPort     	string
-    dbServer    string
-    dbUser     	string
+	dbSql    *sql.DB
+	dbName   string
+	dbPW     string
+	dbPort   string
+	dbServer string
+	dbUser   string
 }
 
 func (io *IO_App01ma) Name() string {
-    return io.dbName
+	return io.dbName
 }
 func (io *IO_App01ma) SetName(str string) {
-    io.dbName = str
+	io.dbName = str
 }
 
 func (io *IO_App01ma) PW() string {
-    return io.dbPW
+	return io.dbPW
 }
 func (io *IO_App01ma) SetPW(str string) {
-    io.dbPW = str
+	io.dbPW = str
 }
 
 func (io *IO_App01ma) Port() string {
-    return io.dbPort
+	return io.dbPort
 }
 func (io *IO_App01ma) SetPort(str string) {
-    io.dbPort = str
+	io.dbPort = str
 }
 
 func (io *IO_App01ma) Server() string {
-    return io.dbServer
+	return io.dbServer
 }
 func (io *IO_App01ma) SetServer(str string) {
-    io.dbServer = str
+	io.dbServer = str
 }
 
 func (io *IO_App01ma) Sql() *sql.DB {
-    return io.dbSql
+	return io.dbSql
 }
 
 func (io *IO_App01ma) User() string {
-    return io.dbUser
+	return io.dbUser
 }
 func (io *IO_App01ma) SetUser(str string) {
-    io.dbUser = str
+	io.dbUser = str
 }
 
 //============================================================================
 //                              Miscellaneous
 //============================================================================
 
+func (io *IO_App01ma) FloatToString(num float64) string {
+	s := fmt.Sprintf("%.4f", num)
+	return strings.TrimRight(strings.TrimRight(s, "0"), ".")
+}
 
-
-    func (io *IO_App01ma) FloatToString(num float64) string {
-        s := fmt.Sprintf("%.4f", num)
-        return strings.TrimRight(strings.TrimRight(s, "0"), ".")
-    }
-
-    func (io *IO_App01ma) StringToFloat(str string) float64 {
-        var num float64
-        num, _ = strconv.ParseFloat(str, 64)
-        return num
-    }
-
-
+func (io *IO_App01ma) StringToFloat(str string) float64 {
+	var num float64
+	num, _ = strconv.ParseFloat(str, 64)
+	return num
+}
 
 // Set up default parameters for the needed SQL Type.
 func (io *IO_App01ma) DefaultParms() {
-		io.SetPort("4306")
-		io.SetPW("Passw0rd")
-		io.SetServer("localhost")
-		io.SetUser("root")
-		//io.SetName("App01ma")
+	io.SetPort("4306")
+	io.SetPW("Passw0rd")
+	io.SetServer("localhost")
+	io.SetUser("root")
+	//io.SetName("App01ma")
 }
 
 //============================================================================
@@ -139,51 +128,49 @@ func (io *IO_App01ma) DefaultParms() {
 // Connect connects the database/sql/driver to the appropriate
 // database server using the given parameters.
 func (io *IO_App01ma) Connect(dbName string) error {
-    var err         error
+	var err error
 
-    dbName = strings.ToLower(dbName)
+	dbName = strings.ToLower(dbName)
 
-    // Set up connection string, connStr.
+	// Set up connection string, connStr.
 	cfg := mysql.NewConfig()
 	cfg.User = io.dbUser
 	cfg.Passwd = io.dbPW
 	cfg.Net = "tcp"
 	cfg.Addr = fmt.Sprintf("%s:%s", io.dbServer, io.dbPort)
 	if len(dbName) > 0 {
-	    cfg.DBName = dbName
+		cfg.DBName = dbName
 	}
 	connStr := cfg.FormatDSN()
 
-    // Allow for the Docker Container to get operational.
-    for i:=0; i<connect_retries; i++ {
-        log.Printf("\tConnecting %d to mariadb with %s...\n", i, connStr)
-        io.dbSql, err = sql.Open("mysql", connStr)
-        if err == nil {
-            err = io.dbSql.Ping()
-            if err == nil {
-                break
-            }
-            io.Disconnect()
-        }
-        time.Sleep(2 * time.Second)
-    }
-    if err != nil {
-        return fmt.Errorf("Error: Cannot Connect: %s\n", err.Error())
-    }
+	// Allow for the Docker Container to get operational.
+	for i := 0; i < connect_retries; i++ {
+		log.Printf("\tConnecting %d to mariadb with %s...\n", i, connStr)
+		io.dbSql, err = sql.Open("mysql", connStr)
+		if err == nil {
+			err = io.dbSql.Ping()
+			if err == nil {
+				break
+			}
+			io.Disconnect()
+		}
+		time.Sleep(2 * time.Second)
+	}
+	if err != nil {
+		return fmt.Errorf("Error: Cannot Connect: %s\n", err.Error())
+	}
 
-    
-        log.Printf("Pinging Server...\n")
-    
-    err = io.dbSql.Ping()
-    if err != nil {
-        io.Disconnect( )
-        return fmt.Errorf("Ping Error: Cannot Ping: %s\n", err.Error())
-    }
-    io.SetName(dbName)
+	log.Printf("Pinging Server...\n")
 
-    return nil
+	err = io.dbSql.Ping()
+	if err != nil {
+		io.Disconnect()
+		return fmt.Errorf("Ping Error: Cannot Ping: %s\n", err.Error())
+	}
+	io.SetName(dbName)
+
+	return nil
 }
-
 
 //----------------------------------------------------------------------------
 //								Disconnect
@@ -193,19 +180,18 @@ func (io *IO_App01ma) Connect(dbName string) error {
 // accomplished before the database is closed
 // and then closes the database connection.
 func (io *IO_App01ma) Disconnect() error {
-    var err         error
+	var err error
 
-    
-        log.Printf("\tDisconnecting from Database\n")
-    
-    if io.IsConnected() {
-        err = io.dbSql.Close()
-        io.dbSql = nil
-    } else {
-        err = fmt.Errorf("Error: Database was not connected!")
-    }
+	log.Printf("\tDisconnecting from Database\n")
 
-    return err
+	if io.IsConnected() {
+		err = io.dbSql.Close()
+		io.dbSql = nil
+	} else {
+		err = fmt.Errorf("Error: Database was not connected!")
+	}
+
+	return err
 }
 
 //----------------------------------------------------------------------------
@@ -213,10 +199,10 @@ func (io *IO_App01ma) Disconnect() error {
 //----------------------------------------------------------------------------
 
 func (io *IO_App01ma) IsConnected() bool {
-    if io.dbSql != nil {
-        return true
-    }
-    return false
+	if io.dbSql != nil {
+		return true
+	}
+	return false
 }
 
 //============================================================================
@@ -230,59 +216,57 @@ func (io *IO_App01ma) IsConnected() bool {
 // DatabaseCreate creates the database within the SQL server if needed and
 // opens a connection to it.
 func (io *IO_App01ma) DatabaseCreate(dbName string) error {
-    var err     error
-    var str		util.StringBuilder
+	var err error
+	var str util.StringBuilder
 
-    log.Printf("DatabaseCreate(%s)\n", dbName)
-    if len(dbName) == 0 {
-        return fmt.Errorf("Error: Missing database name for DatabaseCreate()!")
-    }
+	log.Printf("DatabaseCreate(%s)\n", dbName)
+	if len(dbName) == 0 {
+		return fmt.Errorf("Error: Missing database name for DatabaseCreate()!")
+	}
 
-    dbName = strings.ToLower(dbName)
+	dbName = strings.ToLower(dbName)
 
-        // Connect without a database specified if needed.
-        if len(io.dbName) > 0 || io.dbSql == nil {
-            io.Disconnect()
-            err = io.Connect("")
-            if err != nil {
-                return err
-            }
-        }
+	// Connect without a database specified if needed.
+	if len(io.dbName) > 0 || io.dbSql == nil {
+		io.Disconnect()
+		err = io.Connect("")
+		if err != nil {
+			return err
+		}
+	}
 
-        if io.IsDatabaseDefined(dbName) {
-            io.Disconnect()
-            err = io.Connect(dbName)
-            return err
-        }
+	if io.IsDatabaseDefined(dbName) {
+		io.Disconnect()
+		err = io.Connect(dbName)
+		return err
+	}
 
-        // Build the Create Database SQL Statement.
-        	str.WriteStringf("CREATE DATABASE IF NOT EXISTS %s;", dbName)
+	// Build the Create Database SQL Statement.
+	str.WriteStringf("CREATE DATABASE IF NOT EXISTS %s;", dbName)
 
+	// Create the database.
+	err = io.Exec(str.String())
+	if err != nil {
+		io.Disconnect()
+		return err
+	}
+	time.Sleep(5 * time.Second) // Give it time to get done.
+	if !io.IsDatabaseDefined(dbName) {
+		io.Disconnect()
+		return fmt.Errorf("Error - Could not verify database, %s, exists!", dbName)
+	}
 
-        // Create the database.
-        err = io.Exec(str.String())
-        if err != nil {
-            io.Disconnect()
-            return err
-        }
-        time.Sleep(5 * time.Second)         // Give it time to get done.
-        if !io.IsDatabaseDefined(dbName) {
-            io.Disconnect()
-            return fmt.Errorf("Error - Could not verify database, %s, exists!", dbName)
-        }
+	// Now disconnect from the connection without a database.
+	if io.IsConnected() {
+		io.Disconnect()
+	}
 
-        // Now disconnect from the connection without a database.
-        if io.IsConnected() {
-            io.Disconnect()
-        }
+	// Reconnect using the newly created database.
+	err = io.Connect(dbName)
 
-    // Reconnect using the newly created database.
-    err = io.Connect(dbName)
+	log.Printf("...end DatabaseCreate(%s)\n", util.ErrorString(err))
 
-    
-        log.Printf("...end DatabaseCreate(%s)\n", util.ErrorString(err))
-    
-    return err
+	return err
 }
 
 //----------------------------------------------------------------------------
@@ -292,25 +276,22 @@ func (io *IO_App01ma) DatabaseCreate(dbName string) error {
 // DatabaseDelete deletes the table in the
 // given database if present.
 func (io *IO_App01ma) DatabaseDelete(dbName string) error {
-    var err     error
-	var str		util.StringBuilder
+	var err error
+	var str util.StringBuilder
 
-    
-        log.Printf("DatabaseDelete()\n")
-    
-    dbName = strings.ToLower(dbName)
+	log.Printf("DatabaseDelete()\n")
+
+	dbName = strings.ToLower(dbName)
 
 	// Build the Create Database SQL Statement.
-    
 
-    if !io.IsDatabaseDefined(dbName) {
-            err = io.Exec(str.String())
-        }
+	if !io.IsDatabaseDefined(dbName) {
+		err = io.Exec(str.String())
+	}
 
-    
-        log.Printf("...end DatabaseDelete(%s)\n", util.ErrorString(err))
-    
-    return err
+	log.Printf("...end DatabaseDelete(%s)\n", util.ErrorString(err))
+
+	return err
 }
 
 //----------------------------------------------------------------------------
@@ -320,41 +301,37 @@ func (io *IO_App01ma) DatabaseDelete(dbName string) error {
 // IsDatabaseDefined checks to see if the Database is already defined to the SQL server.
 // This is not needed in SQLite. So, we just return true.
 func (io *IO_App01ma) IsDatabaseDefined(dbName string) bool {
-	var str		    util.StringBuilder
-    var err         error
-    var row         *sql.Row
-    var Database    string
+	var str util.StringBuilder
+	var err error
+	var row *sql.Row
+	var Database string
 
-    
-        log.Printf("IsDatabaseDefined(%s)\n", dbName)
-    
-    dbName = strings.ToLower(dbName)
+	log.Printf("IsDatabaseDefined(%s)\n", dbName)
 
-    // Build the SQL Statement.
-    str.WriteStringf("SELECT schema_name FROM information_schema.schemata WHERE schema_name = '%s';", dbName)
+	dbName = strings.ToLower(dbName)
 
-    row = io.dbSql.QueryRow(str.String())
-    err = row.Scan(&Database)
+	// Build the SQL Statement.
+	str.WriteStringf("SELECT schema_name FROM information_schema.schemata WHERE schema_name = '%s';", dbName)
+
+	row = io.dbSql.QueryRow(str.String())
+	err = row.Scan(&Database)
 	if err == nil {
-        if Database == dbName {
-        
-            log.Printf("...end IsDatabaseDefined(true)\n")
-        
-            return true;
-        }
-    
+		if Database == dbName {
+
+			log.Printf("...end IsDatabaseDefined(true)\n")
+
+			return true
+		}
+
 	} else {
-	        log.Printf("\tSELECT schema_name Error: %s  Name: %s\n", err.Error(), Database)
-    
+		log.Printf("\tSELECT schema_name Error: %s  Name: %s\n", err.Error(), Database)
+
 	}
 
-    
-        log.Printf("...end IsDatabaseDefined(false)\n")
-    
-    return false
+	log.Printf("...end IsDatabaseDefined(false)\n")
+
+	return false
 }
-
-
 
 //----------------------------------------------------------------------------
 //								    Exec
@@ -362,19 +339,15 @@ func (io *IO_App01ma) IsDatabaseDefined(dbName string) bool {
 
 // Exec executes an sql statement which does not return any rows.
 func (io *IO_App01ma) Exec(sqlStmt string, args ...interface{}) error {
-    var err     error
+	var err error
 
-    
-        log.Printf("Exec(%s)\n", sqlStmt)
-    
+	log.Printf("Exec(%s)\n", sqlStmt)
 
-    _, err = io.dbSql.Exec(sqlStmt, args...)
-    
+	_, err = io.dbSql.Exec(sqlStmt, args...)
 
-    
-        log.Printf("...end Exec(%s)\n", util.ErrorString(err))
-    
-    return err
+	log.Printf("...end Exec(%s)\n", util.ErrorString(err))
+
+	return err
 }
 
 //----------------------------------------------------------------------------
@@ -383,28 +356,25 @@ func (io *IO_App01ma) Exec(sqlStmt string, args ...interface{}) error {
 
 // Query executes an sql statement which does return row(s).
 func (io *IO_App01ma) Query(sqlStmt string, process func(rows *sql.Rows), args ...interface{}) error {
-    var err     error
-    var rows    *sql.Rows
+	var err error
+	var rows *sql.Rows
 
-    
-        log.Printf("Query(%s)\n", sqlStmt)
-    
+	log.Printf("Query(%s)\n", sqlStmt)
 
-    rows, err = io.dbSql.Query(sqlStmt, args...)
-    
-    if err == nil {
-        defer rows.Close()
-        // Process the rows
-        for rows.Next() {
-            process(rows)
-        }
-        err = rows.Close()
-    }
+	rows, err = io.dbSql.Query(sqlStmt, args...)
 
-    
-        log.Printf("...end Query(%s)\n", util.ErrorString(err))
-    
-    return err
+	if err == nil {
+		defer rows.Close()
+		// Process the rows
+		for rows.Next() {
+			process(rows)
+		}
+		err = rows.Close()
+	}
+
+	log.Printf("...end Query(%s)\n", util.ErrorString(err))
+
+	return err
 }
 
 //----------------------------------------------------------------------------
@@ -413,25 +383,17 @@ func (io *IO_App01ma) Query(sqlStmt string, process func(rows *sql.Rows), args .
 
 // QueryRow executes an sql statement which does return row(s).
 func (io *IO_App01ma) QueryRow(sqlStmt string, args ...interface{}) *sql.Row {
-    var err     error
-    var row     *sql.Row
+	var err error
+	var row *sql.Row
 
-    
-        log.Printf("QueryRow(%s)\n", sqlStmt)
-    
+	log.Printf("QueryRow(%s)\n", sqlStmt)
 
-    row = io.dbSql.QueryRow(sqlStmt, args...)
+	row = io.dbSql.QueryRow(sqlStmt, args...)
 
-    
+	log.Printf("...end Query(%s)\n", util.ErrorString(err))
 
-    
-        log.Printf("...end Query(%s)\n", util.ErrorString(err))
-    
-    return row
+	return row
 }
-
-
-
 
 //----------------------------------------------------------------------------
 //                                  NewIoApp01ma
@@ -439,7 +401,6 @@ func (io *IO_App01ma) QueryRow(sqlStmt string, args ...interface{}) *sql.Row {
 
 // New creates a new struct.
 func NewIoApp01ma() *IO_App01ma {
-    db := &IO_App01ma{}
-    return db
+	db := &IO_App01ma{}
+	return db
 }
-

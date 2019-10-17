@@ -7,42 +7,40 @@
 //  *   All static (ie non-changing) files should be served from the 'static'
 //      subdirectory.
 
-// Generated: Wed Oct 16, 2019 20:04
-
+// Generated: Wed Oct 16, 2019 21:06
 
 package main
 
 import (
 	"fmt"
+	"html/template"
 	"io"
 	_ "io/ioutil"
-    "html/template"
-    "log"
+	"log"
 	"net/http"
-    _ "os"
-    "sort"
-    "strings"
+	_ "os"
+	"sort"
+	"strings"
 
-    "github.com/2kranki/go_util"
+	"github.com/2kranki/go_util"
 	_ "github.com/go-sql-driver/mysql"
 )
 
-type TmplsApp01ma  struct {
-    tmplsDir        string
-    Tmpls           *template.Template
+type TmplsApp01ma struct {
+	tmplsDir string
+	Tmpls    *template.Template
 }
 
-
 func (TmplsApp01ma) Title(i interface{}) string {
-    return "Title() - NOT Implemented"
+	return "Title() - NOT Implemented"
 }
 
 func (TmplsApp01ma) Body(i interface{}) string {
-    return "Body() - NOT Implemented"
+	return "Body() - NOT Implemented"
 }
 
 func (t *TmplsApp01ma) SetTmplsDir(d string) {
-    t.tmplsDir = d
+	t.tmplsDir = d
 }
 
 //----------------------------------------------------------------------------
@@ -51,36 +49,30 @@ func (t *TmplsApp01ma) SetTmplsDir(d string) {
 
 // Display the main menu with any needed messages.
 func (h *TmplsApp01ma) MainDisplay(w http.ResponseWriter, msg string) {
-    var err     error
-    var name    = "App01ma.main.menu.gohtml"
-    
-        var str     strings.Builder
-    
+	var err error
+	var name = "App01ma.main.menu.gohtml"
 
-    
-        log.Printf("App01ma.MainDisplay(%s)\n", msg)
-        log.Printf("\tname: %s\n", name)
-        w2 := io.MultiWriter(w, &str)
-    
+	var str strings.Builder
 
-    data := struct {
-                Msg         string
-            }{msg}
+	log.Printf("App01ma.MainDisplay(%s)\n", msg)
+	log.Printf("\tname: %s\n", name)
+	w2 := io.MultiWriter(w, &str)
 
-    
-        log.Printf("\tData: %+v\n", data)
-    
+	data := struct {
+		Msg string
+	}{msg}
 
-    log.Printf("\tExecuting template: %s\n", name)
-        err = h.Tmpls.ExecuteTemplate(w2, name, data)
-    if err != nil {
-        fmt.Fprintf(w, err.Error())
-    }
+	log.Printf("\tData: %+v\n", data)
 
-    
-        log.Printf("\t output: %s\n", str.String())
-        log.Printf("...end App01ma.MainDisplay(%s)\n", util.ErrorString(err))
-    
+	log.Printf("\tExecuting template: %s\n", name)
+	err = h.Tmpls.ExecuteTemplate(w2, name, data)
+	if err != nil {
+		fmt.Fprintf(w, err.Error())
+	}
+
+	log.Printf("\t output: %s\n", str.String())
+	log.Printf("...end App01ma.MainDisplay(%s)\n", util.ErrorString(err))
+
 }
 
 //----------------------------------------------------------------------------
@@ -88,11 +80,11 @@ func (h *TmplsApp01ma) MainDisplay(w http.ResponseWriter, msg string) {
 //----------------------------------------------------------------------------
 
 func NewTmplsApp01ma(dir string) *TmplsApp01ma {
-    t := &TmplsApp01ma{}
-    if "" == dir {
-        t.tmplsDir = "./tmpl"
-    }
-    return t
+	t := &TmplsApp01ma{}
+	if "" == dir {
+		t.tmplsDir = "./tmpl"
+	}
+	return t
 }
 
 //----------------------------------------------------------------------------
@@ -102,29 +94,28 @@ func NewTmplsApp01ma(dir string) *TmplsApp01ma {
 // SetupTmpls initializes the functions used in the templates
 // and loads them.
 func (t *TmplsApp01ma) SetupTmpls() {
-    
-        var templates   []*template.Template
-        var tt          *template.Template
-        var names       []string
-        var name        string
-    
-        log.Printf("\tSetupTmpls(%s/*.gohtml)\n", t.tmplsDir)
 
-    funcs := map[string]interface{}{"Title":t.Title, "Body":t.Body,}
-    path := t.tmplsDir + "/*.gohtml"
+	var templates []*template.Template
+	var tt *template.Template
+	var names []string
+	var name string
+
+	log.Printf("\tSetupTmpls(%s/*.gohtml)\n", t.tmplsDir)
+
+	funcs := map[string]interface{}{"Title": t.Title, "Body": t.Body}
+	path := t.tmplsDir + "/*.gohtml"
 	t.Tmpls = template.Must(template.New("tmpls").Funcs(funcs).ParseGlob(path))
-        templates = t.Tmpls.Templates()
-        for _, tt = range templates {
-            names = append(names, tt.Name())
-        }
-        sort.Strings(names)
-        for _, name = range names {
-            log.Printf("\t\t template: %s\n", name)
-        }
-        log.Printf("\tend of SetupTmpls()\n")
+	templates = t.Tmpls.Templates()
+	for _, tt = range templates {
+		names = append(names, tt.Name())
+	}
+	sort.Strings(names)
+	for _, name = range names {
+		log.Printf("\t\t template: %s\n", name)
+	}
+	log.Printf("\tend of SetupTmpls()\n")
 }
 
 func init() {
 
 }
-
