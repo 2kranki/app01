@@ -7,7 +7,7 @@
 //  *   All static (ie non-changing) files should be served from the 'static'
 //      subdirectory.
 
-// Generated: Thu Oct 17, 2019 11:49
+// Generated: Fri Oct 18, 2019 14:50
 
 package main
 
@@ -17,16 +17,24 @@ import (
 	"net/http"
 	"os"
     "os/signal"
+
+    "app01ms/pkg/hndlrApp01ms"
+	
+        "app01ms/pkg/hndlrApp01msCustomer"
+        "app01ms/pkg/ioApp01msCustomer"
+        "app01ms/pkg/hndlrApp01msVendor"
+        "app01ms/pkg/ioApp01msVendor"
+    "app01ms/pkg/ioApp01ms"
 )
 
 const (
     RowsPerPage = 15
 )
 
-var     hndlrsApp01ms    *TmplsApp01ms
+var     hndlrsApp01ms    *hndlrApp01ms.TmplsApp01ms
 	
-	    var hndlrsApp01msCustomer     *HandlersApp01msCustomer
-	    var hndlrsApp01msVendor     *HandlersApp01msVendor
+	    var hndlrsApp01msCustomer     *hndlrApp01msCustomer.HandlersApp01msCustomer
+	    var hndlrsApp01msVendor     *hndlrApp01msVendor.HandlersApp01msVendor
 
 // HndlrFavIcon is the default Favorite Icon Handler.  It defaults to
 // returning a 405 status to indicate that no Icon is available.
@@ -107,7 +115,7 @@ func exec() {
 
     // Connect the databases.
     log.Printf("\tConnecting to the Database...\n")
-    ioApp01ms := NewIoApp01ms()
+    ioApp01ms := ioApp01ms.NewIoApp01ms()
     //ioApp01ms.SetName(db_name)
     ioApp01ms.SetPort(db_port)
     ioApp01ms.SetPW(db_pw)
@@ -130,18 +138,18 @@ func exec() {
 
     // Set up the Table I/O.
 	
-	    ioApp01msCustomer := NewIoApp01msCustomer(ioApp01ms)
+	    ioApp01msCustomer := ioApp01msCustomer.NewIoApp01msCustomer(ioApp01ms)
         if ioApp01msCustomer == nil {
             log.Fatalf("ERROR - Failed to Connect to Table, App01msCustomer\n\n\n")
         }
-	    ioApp01msVendor := NewIoApp01msVendor(ioApp01ms)
+	    ioApp01msVendor := ioApp01msVendor.NewIoApp01msVendor(ioApp01ms)
         if ioApp01msVendor == nil {
             log.Fatalf("ERROR - Failed to Connect to Table, App01msVendor\n\n\n")
         }
 
     // Set up templates.
     log.Printf("\tSetting up the Templates...\n")
-    hndlrsApp01ms = NewTmplsApp01ms("")
+    hndlrsApp01ms = hndlrApp01ms.NewTmplsApp01ms("")
     hndlrsApp01ms.SetTmplsDir(baseDir + "/tmpl")
     hndlrsApp01ms.SetupTmpls()
 
@@ -153,13 +161,13 @@ func exec() {
 
 	
 	    // App01ms.Customer URL handlers for table maintenance
-	    hndlrsApp01msCustomer = NewHandlersApp01msCustomer(ioApp01msCustomer, RowsPerPage, mux)
+	    hndlrsApp01msCustomer = hndlrApp01msCustomer.NewHandlersApp01msCustomer(ioApp01msCustomer, RowsPerPage, mux)
 	    hndlrsApp01msCustomer.Tmpls = hndlrsApp01ms
         if hndlrsApp01msCustomer.Tmpls == nil {
             log.Fatalf("ERROR - Failed to load templates from hndlrsApp01ms\n\n\n")
         }
 	    // App01ms.Vendor URL handlers for table maintenance
-	    hndlrsApp01msVendor = NewHandlersApp01msVendor(ioApp01msVendor, RowsPerPage, mux)
+	    hndlrsApp01msVendor = hndlrApp01msVendor.NewHandlersApp01msVendor(ioApp01msVendor, RowsPerPage, mux)
 	    hndlrsApp01msVendor.Tmpls = hndlrsApp01ms
         if hndlrsApp01msVendor.Tmpls == nil {
             log.Fatalf("ERROR - Failed to load templates from hndlrsApp01ms\n\n\n")
