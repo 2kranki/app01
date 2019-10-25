@@ -1,7 +1,7 @@
 
 # vi:nu:et:sts=4 ts=4 sw=4
 
-# Generate a minimal Docker container with app01pg installed
+# Generate a minimal Docker container with app01sq installed
 
 # This is a two step process. The first step is to generate the go
 # binary program which will be passed to the second step. You have
@@ -21,27 +21,31 @@
 # than Ubuntu. But, it uses a glibc substitute.
 
 
+# WARNING: This file must be located in the main directory
+#           because of docker limitations.
+
+
 # Build the application program using Debian-Golang container.
 FROM golang:1.12-stretch AS golang
 LABEL maintainer="bob@2kranki.us"
 ENV GOLANG_DOCKER_CONTAINER=1
-
-ENV CGO_ENABLED=0
+ENV CGO_ENABLED=1
+RUN apt-get update && apt-get install --yes sqlite3 libsqlite3-dev
 ENV GOOS=linux
 RUN go get github.com/2kranki/jsonpreprocess \
     && go get github.com/2kranki/go_util \
     && go get github.com/shopspring/decimal \
-    && go get "github.com/lib/pq"
-WORKDIR /go/src/cmd
+    && go get "github.com/mattn/go-sqlite3"
+WORKDIR /go/src/app01sq/cmd
 COPY ./cmd      ./
-WORKDIR /go/src/pkg
+WORKDIR /go/src/app01sq/pkg
 COPY ./pkg      ./
-WORKDIR /go/src/vendor
+WORKDIR /go/src/app01sq/vendor
 COPY ./vendor   ./
-WORKDIR /go/src
+WORKDIR /go/src/app01sq
 COPY go.mod     ./
 COPY go.sum     ./
-RUN go build -o /go/bin/app01pg /go/src/cmd/App01pg/*.go
+RUN go build -o /go/bin/app01sq /go/src/app01sq/cmd/App01sq/*.go
 
 
 # Create the Production Container with the program built in the
@@ -50,10 +54,9 @@ RUN go build -o /go/bin/app01pg /go/src/cmd/App01pg/*.go
 FROM ubuntu:cosmic AS production
 # Note: we must keep glibc version the same as in the golang container.
 LABEL maintainer="bob@2kranki.us"
-
-RUN apt-get update && apt-get upgrade --yes
+RUN apt-get update && apt-get upgrade --yes && apt-get install --yes sqlite3 libsqlite3-dev
 WORKDIR /usr/local/app
-COPY --from=golang /go/bin/app01pg .
+COPY --from=golang /go/bin/app01sq .
 # Warning: COPY does not copy the actual directory, just its contents.
 #           So, we must create those directories first, then COPY.
 WORKDIR /usr/local/app/static
@@ -63,9 +66,9 @@ COPY ./tmpl     .
 WORKDIR /usr/local/app
 # The web server ip/port are different when running in the container
 # vs batch.
-ENV APP01PG_HTTP_SERVER="0.0.0.0"
-ENV APP01PG_HTTP_PORT="8093"
-EXPOSE 8093
+ENV APP01SQ_HTTP_SERVER="0.0.0.0"
+ENV APP01SQ_HTTP_PORT="8094"
+EXPOSE 8094
 
-CMD ["/usr/local/app/app01pg"]
+CMD ["/usr/local/app/app01sq"]
 

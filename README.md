@@ -8,7 +8,7 @@ The way that I test is to:
 
 
 * `cd /tmp/app01/app01xx`   where xx is ma(mariadb), ms (mssql), my (mysql), pg (postgres), sq (sqlite)
-* `jenkins/build/build.py` <- builds the application, /tmp/bin/app1xx, and the Docker container.
+* `./jenkins/build/build.py` <- builds the application, /tmp/bin/app1xx, and the Docker container.
 * `docker-compose -f deployment/docker-compose.yaml up &` <- starts the app and sql containers
 * `http://localhost:????` - Point your browser here where ???? is the port mentioned in the startup messages.
 * `Load test data` - I generally only do the Customer table but it should not matter.
@@ -18,7 +18,15 @@ The way that I test is to:
                     through the rows and update/delete rows.
 * `docker-compose -f deployment/docker-compose.yaml down` - to quit the application
 
+
+You can build all the containers at once by executing:
+* `cd /tmp/app01`
+* `./jenkins/build/build.py`
+
+
 STATUS: 
     MariaDB, MS SQL, MySQL, PostGres and SQLite work for both,  the Customer and Vendor tables. All tests are successful for every server executed in bash on MacOS. All the sql servers are running in docker.
-    
+
+
+Although we have a 'jenkins' subdirectory, we may end up using `Drone` or `GitLab` for the full CI implementation.  Jenkins is not currently used.   
 

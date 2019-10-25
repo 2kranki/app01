@@ -4,7 +4,7 @@
 // ioVendor_test tests various functions of
 // the Table SQL Maintenance methods.
 
-// Generated: Fri Oct 18, 2019 14:51 for sqlite Database
+// Generated: Fri Oct 25, 2019 11:40 for sqlite Database
 
 package ioApp01sqVendor
 

@@ -335,7 +335,7 @@ class   DockerImage(object):
     """
     """
 
-    def Build(self, szName, szTag, fForce=False):
+    def Build(self, szName, szTag, szDockerFilePath='.', fForce=False):
         ''' Build a current Docker Image
         '''
         imageInfo = None
@@ -368,7 +368,7 @@ class   DockerImage(object):
                 return Error("Error: could not remove image {0}".format(szImageName))
 
         # Pull the image
-        szCmd = "docker image build -t {0} .".format(szImageName)
+        szCmd = "docker image build -t {0} {1}".format(szImageName, szDockerFilePath)
         if fDebug:
             print("\tDebug: {0}".format(szCmd))
         try:

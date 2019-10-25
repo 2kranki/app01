@@ -1,0 +1,8 @@
+github.com/2kranki/go_util v1.0.3 h1:qYrME1kX/15WUdiL4kYoBMhuAQjSoUsPbXsxk4FV1yA=
+github.com/2kranki/go_util v1.0.3/go.mod h1:s75XI12NiBj4qcG6D2ip6YfXMTyfcPS5xm2yk8nCXkg=
+github.com/2kranki/jsonpreprocess v1.0.1 h1:cwZfoelBoT9NhGemaW/KzQk/jvtUV276RuGX53kCZEs=
+github.com/2kranki/jsonpreprocess v1.0.1/go.mod h1:YeGfkfW78LfYzlCuRbrav4uPPCC8XdxHCoqhq0fczqU=
+github.com/lib/pq v1.2.0 h1:LXpIM/LZ5xGFhOpXAQUIMM1HdyqzVYM13zNdjCEEcA0=
+github.com/lib/pq v1.2.0/go.mod h1:5WUZQaWbwv1U+lTReE5YruASi9Al49XbQIvNi/34Woo=
+github.com/shopspring/decimal v0.0.0-20191009025716-f1972eb1d1f5 h1:Gojs/hac/DoYEM7WEICT45+hNWczIeuL5D21e5/HPAw=
+github.com/shopspring/decimal v0.0.0-20191009025716-f1972eb1d1f5/go.mod h1:M+9NzErvs504Cn4c5DxATwIqPbtswREoFCre64PpcG4=

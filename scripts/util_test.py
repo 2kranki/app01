@@ -67,24 +67,15 @@ class testAbsolutePath(TestCase):
         self.assertEqual(a,b)
 
 
-class testDirEntry(TestCase):
+class testBuild(TestCase):
 
-    def test_1(self):
-        with util.DirEntry("./app01ma") as curDir:
-            self.assert()
-        txt = "${HOME}/a.txt"
-        a = util.absolutePath(txt)
-        b = os.path.expandvars(txt)
-        self.assertEqual(a,b)
-        a = util.absolutePath('~/a.txt')
-        self.assertEqual(a,b)
-
-
-    def test_2(self):
-        txt = "."
-        a = util.absolutePath(txt)
-        b = os.getcwd()
-        self.assertEqual(a,b)
+    def test_one(self):
+        util.fDebug = True
+        util.fTrace = True
+        err = util.buildGoApp('cmd', 'app01ma')
+        if err:
+            print(err.Error())
+        self.assertEqual(err, None)
 
 
 ################################################################################

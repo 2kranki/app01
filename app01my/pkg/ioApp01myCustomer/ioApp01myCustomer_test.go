@@ -4,7 +4,7 @@
 // ioCustomer_test tests various functions of
 // the Table SQL Maintenance methods.
 
-// Generated: Fri Oct 18, 2019 14:51 for mysql Database
+// Generated: Fri Oct 25, 2019 11:40 for mysql Database
 
 package ioApp01myCustomer
 

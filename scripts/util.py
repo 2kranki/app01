@@ -278,42 +278,6 @@ class       Cmds(object):
 
 
 #---------------------------------------------------------------------
-#       DirEntry -- Directory entry with context
-#---------------------------------------------------------------------
-
-class DirEntry(object):
-    ''' Simple directory entry class including context manager interface.
-
-        example:
-            with Dir('abc') as cd:
-                assert cd == 'abc'
-    '''
-
-    def __init__(self, path=None):
-        self._path = path
-        self._stat = os.stat(path)
-        if os.stat.S_ISDIR(self._stat.st_mode):
-            pass
-        else:
-            raise TypeError(Error('Error: %s is not a directory entry!' % path))
-        self._pwd = os.getwd()
-
-    def __enter__(self):
-        ''' Context Manager Support - Change directory to this directory
-        '''
-        os.chdir(self._path)
-        return self._path
-
-    def __exit__(self):
-        ''' Context Manager Support - Restore directory back to where we were
-        '''
-        os.chdir(self._pwd)
-
-    def __str__(self):
-        return "DirEntry({0})".format(self._path)
-
-
-#---------------------------------------------------------------------
 #                           Docker Container
 #---------------------------------------------------------------------
 
@@ -371,7 +335,7 @@ class   DockerImage(object):
     """
     """
 
-    def Build(self, szName, szTag, fForce=False):
+    def Build(self, szName, szTag, szDockerFilePath='.', fForce=False):
         ''' Build a current Docker Image
         '''
         imageInfo = None
@@ -404,7 +368,7 @@ class   DockerImage(object):
                 return Error("Error: could not remove image {0}".format(szImageName))
 
         # Pull the image
-        szCmd = "docker image build -t {0} .".format(szImageName)
+        szCmd = "docker image build -t {0} {1}".format(szImageName, szDockerFilePath)
         if fDebug:
             print("\tDebug: {0}".format(szCmd))
         try:
@@ -515,6 +479,22 @@ class   Error(object):
         '''Convert Path to an absolute path.
         '''
         return self._msg
+
+
+#---------------------------------------------------------------------
+#                           OS Execute
+#---------------------------------------------------------------------
+
+def DoSys(szCmd, cwd=None):
+    """ Execute an O/S command capturing output.
+
+    Returns:
+        r.returncode
+        r.stdout
+        r.stderr
+    """
+    r = subprocess.run(szCmd,cwd=cwd,stdout=subprocess.PIPE,stderr=subprocess.PIPE,shell=True)
+    return r
 
 
 #---------------------------------------------------------------------

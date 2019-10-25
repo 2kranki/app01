@@ -1,6 +1,9 @@
 
 # vi:nu:et:sts=4 ts=4 sw=4
 
+# WARNING: This file must be located in the main directory
+#           because of docker-compose limitations.
+
 version: "3"
 
 #================================================
@@ -18,10 +21,10 @@ services:
         # Create and the docker sql server container
         # with the appropriate startup arguments such
         # as root password.
-        image: "mariadb:5.5"
+        image: "mysql:5.7"
         environment:
             MYSQL_ROOT_PASSWORD: "Passw0rd"
-            MYSQL_DATABASE: "app01ma"
+            MYSQL_DATABASE: "app01my"
             
         expose:
             - "3306"
@@ -30,20 +33,20 @@ services:
         restart: always
 
     #----------------------------------------------
-    app01ma:
+    app01my:
     #----------------------------------------------
         # Run the latest version of our application
         # container passing the appropriate startup
         # parameters such as sql server password.
-        image: "app01ma:latest"
+        image: "app01my:latest"
         build:
             context: "."
             dockerfile: "./Dockerfile"
         ports:
-            - "127.0.0.1:8090:8090"
+            - "127.0.0.1:8092:8092"
         environment:
-            APP01MA_DB_SERVER: "db"
-            APP01MA_DB_PORT: "3306"
+            APP01MY_DB_SERVER: "db"
+            APP01MY_DB_PORT: "3306"
         depends_on:
             - db
         networks:
