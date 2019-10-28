@@ -7,7 +7,7 @@
 //  *   All static (ie non-changing) files should be served from the 'static'
 //      subdirectory.
 
-// Generated: Fri Oct 25, 2019 11:40
+// Generated: Mon Oct 28, 2019 08:40
 
 
 package hndlrApp01sqCustomer
@@ -996,7 +996,10 @@ func (h *HandlersApp01sqCustomer) TableLoadCSV(w http.ResponseWriter, r *http.Re
             	rcd.Zip = record[6]
 
         
-            	rcd.Curbal = record[7]
+            	rcd.Country = record[7]
+
+        
+            	rcd.Curbal = record[8]
 
         
 

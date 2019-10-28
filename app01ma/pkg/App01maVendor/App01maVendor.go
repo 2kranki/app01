@@ -3,12 +3,13 @@
 
 //  Struct and Methods for App01maVendor
 
-// Generated: Fri Oct 25, 2019 11:40
+// Generated: Mon Oct 28, 2019 08:40
 
 
 package App01maVendor
 
 import (
+	"encoding/json"
     "fmt"
     
         "log"
@@ -110,7 +111,18 @@ type App01maVendor struct {
 	Curbal	float64
 }
 
+type App01maVendors []*App01maVendor
 
+type Key struct {
+	Id	int64
+}
+
+type App01maVendorIndex map[Key]*App01maVendor
+
+
+
+// NOTE: For JsonMarshal() and JsonUnmarshal() to work properly, the JSON
+//  names must be defined above.
 
 //----------------------------------------------------------------------------
 //                              Compare
@@ -222,6 +234,48 @@ v.Add("Zip", wrk)
 	}
 v.Add("Curbal", wrk)
 	return v.Encode()
+}
+
+//----------------------------------------------------------------------------
+//                  		JSON Marshal
+//----------------------------------------------------------------------------
+
+func (d *App01maVendor) JsonMarshal() ([]byte, error) {
+	var err         error
+    var text        []byte
+
+    if text, err = json.Marshal(d); err != nil {
+		return nil, fmt.Errorf("Error: marshalling json: %s : %v", err, d)
+	}
+
+	return text, err
+}
+
+//----------------------------------------------------------------------------
+//                             JSON Unmarshal
+//----------------------------------------------------------------------------
+
+func (d *App01maVendor) JsonUnmarshal(text []byte) error {
+	var err         error
+
+	if err = json.Unmarshal(text, d); err != nil {
+		return fmt.Errorf("Error: unmarshalling json: %s : %s", err, text)
+	}
+
+	return err
+}
+
+//----------------------------------------------------------------------------
+//                      Set Keys from a Slice of Strings
+//----------------------------------------------------------------------------
+
+// SetKeysFromStrings creates a URL Value map from the table's key(s). The slice
+// is in field order within the struct, not sorted by field name.
+func (s *App01maVendor) Key() Key {
+    var k       Key
+
+    k.Id = s.Id
+	return k
 }
 
 //----------------------------------------------------------------------------
@@ -462,6 +516,10 @@ func (s *App01maVendor) ToStrings() []string {
 // VendorNew creates a new empty struct.
 func NewApp01maVendor() *App01maVendor {
     return &App01maVendor{}
+}
+
+func NewApp01maVendors() *App01maVendors {
+    return &App01maVendors{}
 }
 
 

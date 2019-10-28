@@ -16,7 +16,7 @@
 
 
 // 2.   SQL requires OFFSET to follow LIMIT optionally (ie LIMIT n [OFFSET n])
-// Generated: Fri Oct 25, 2019 11:40 for sqlite Database
+// Generated: Mon Oct 28, 2019 08:40 for sqlite Database
 
 package ioApp01sqCustomer
 
@@ -76,7 +76,7 @@ func (io *IO_App01sqCustomer) RowFind(rcd *App01sqCustomer.App01sqCustomer) erro
 
 	row := io.io.QueryRow(sqlStmt, rcd.Num)
 
-	err = row.Scan(&rcd.Num, &rcd.Name, &rcd.Addr1, &rcd.Addr2, &rcd.City, &rcd.State, &rcd.Zip, &rcd.Curbal)
+	err = row.Scan(&rcd.Num, &rcd.Name, &rcd.Addr1, &rcd.Addr2, &rcd.City, &rcd.State, &rcd.Zip, &rcd.Country, &rcd.Curbal)
 
     log.Printf("...end ioCustomer.RowFind(%s)\n", util.ErrorString(err))
 	return err
@@ -97,7 +97,7 @@ func (io *IO_App01sqCustomer) RowFirst(rcd *App01sqCustomer.App01sqCustomer) err
 
     row := io.io.QueryRow(sqlStmt)
 
-	err = row.Scan(&rcd.Num, &rcd.Name, &rcd.Addr1, &rcd.Addr2, &rcd.City, &rcd.State, &rcd.Zip, &rcd.Curbal)
+	err = row.Scan(&rcd.Num, &rcd.Name, &rcd.Addr1, &rcd.Addr2, &rcd.City, &rcd.State, &rcd.Zip, &rcd.Country, &rcd.Curbal)
 	if err == sql.ErrNoRows {
         log.Printf("\tNo Rows found!\n")
 	    err = nil
@@ -113,7 +113,7 @@ func (io *IO_App01sqCustomer) RowFirst(rcd *App01sqCustomer.App01sqCustomer) err
 
 func (io *IO_App01sqCustomer) RowInsert(d *App01sqCustomer.App01sqCustomer) error {
     var err     error
-    var sqlStmt = "INSERT INTO customer (num, name, addr1, addr2, city, state, zip, curbal) VALUES (?, ?, ?, ?, ?, ?, ?, ?);\n"
+    var sqlStmt = "INSERT INTO customer (num, name, addr1, addr2, city, state, zip, country, curbal) VALUES (?, ?, ?, ?, ?, ?, ?, ?, ?);\n"
 
     log.Printf("ioCustomer.RowInsert(%+v)\n", d)
         log.Printf("\tSQL:\n%s\n", sqlStmt)
@@ -121,7 +121,7 @@ func (io *IO_App01sqCustomer) RowInsert(d *App01sqCustomer.App01sqCustomer) erro
     // Validate the input record.
 
     // Add it to the table.
-    err = io.io.Exec(sqlStmt, d.Num, d.Name, d.Addr1, d.Addr2, d.City, d.State, d.Zip, d.Curbal)
+    err = io.io.Exec(sqlStmt, d.Num, d.Name, d.Addr1, d.Addr2, d.City, d.State, d.Zip, d.Country, d.Curbal)
 	if err != nil {
     log.Printf("...end ioCustomer.RowInsert(Error:500) - Internal Error\n")
 		err = fmt.Errorf("500. Internal Server Error. %s\n", err.Error())
@@ -142,7 +142,7 @@ func (io *IO_App01sqCustomer) RowLast(rcd *App01sqCustomer.App01sqCustomer) erro
     log.Printf("ioCustomer.RowLast()\n")
     row := io.io.QueryRow(sqlStmt)
 
-	err = row.Scan(&rcd.Num, &rcd.Name, &rcd.Addr1, &rcd.Addr2, &rcd.City, &rcd.State, &rcd.Zip, &rcd.Curbal)
+	err = row.Scan(&rcd.Num, &rcd.Name, &rcd.Addr1, &rcd.Addr2, &rcd.City, &rcd.State, &rcd.Zip, &rcd.Country, &rcd.Curbal)
 	if err == sql.ErrNoRows {
         log.Printf("\tNo Rows found!\n")
 	    err = nil
@@ -166,7 +166,7 @@ func (io *IO_App01sqCustomer) RowNext(rcd *App01sqCustomer.App01sqCustomer) erro
 
     row := io.io.QueryRow(sqlStmt, rcd.Num)
 
-	err = row.Scan(&rcd.Num, &rcd.Name, &rcd.Addr1, &rcd.Addr2, &rcd.City, &rcd.State, &rcd.Zip, &rcd.Curbal)
+	err = row.Scan(&rcd.Num, &rcd.Name, &rcd.Addr1, &rcd.Addr2, &rcd.City, &rcd.State, &rcd.Zip, &rcd.Country, &rcd.Curbal)
 	if err != nil {
 	    err = io.RowFirst(rcd)
 	}
@@ -194,7 +194,7 @@ func (io *IO_App01sqCustomer) RowPage(offset int, limit int) ([]App01sqCustomer.
                     sqlStmt,
                     func(r *sql.Rows) {
                         var rcd     App01sqCustomer.App01sqCustomer
-                        err = r.Scan(&rcd.Num, &rcd.Name, &rcd.Addr1, &rcd.Addr2, &rcd.City, &rcd.State, &rcd.Zip, &rcd.Curbal)
+                        err = r.Scan(&rcd.Num, &rcd.Name, &rcd.Addr1, &rcd.Addr2, &rcd.City, &rcd.State, &rcd.Zip, &rcd.Country, &rcd.Curbal)
                         if err != nil {
                             log.Fatal(err)
                         } else {
@@ -220,7 +220,7 @@ func (io *IO_App01sqCustomer) RowPrev(rcd *App01sqCustomer.App01sqCustomer) erro
 
     row := io.io.QueryRow(sqlStmt, rcd.Num)
 
-	err = row.Scan(&rcd.Num, &rcd.Name, &rcd.Addr1, &rcd.Addr2, &rcd.City, &rcd.State, &rcd.Zip, &rcd.Curbal)
+	err = row.Scan(&rcd.Num, &rcd.Name, &rcd.Addr1, &rcd.Addr2, &rcd.City, &rcd.State, &rcd.Zip, &rcd.Country, &rcd.Curbal)
 	if err != nil {
 	    err = io.RowLast(rcd)
 	}
@@ -235,14 +235,14 @@ func (io *IO_App01sqCustomer) RowPrev(rcd *App01sqCustomer.App01sqCustomer) erro
 
 func (io *IO_App01sqCustomer) RowUpdate(d *App01sqCustomer.App01sqCustomer) error {
     var err     error
-    var sqlStmt = "INSERT INTO customer (num, name, addr1, addr2, city, state, zip, curbal) VALUES (?, ?, ?, ?, ?, ?, ?, ?);\n"
+    var sqlStmt = "INSERT INTO customer (num, name, addr1, addr2, city, state, zip, country, curbal) VALUES (?, ?, ?, ?, ?, ?, ?, ?, ?);\n"
 
     log.Printf("ioCustomer.RowUpdate(%+v)\n", d)
 
     // Validate the input record.
 
     // Add it to the table.
-    err = io.io.Exec(sqlStmt, d.Num, d.Name, d.Addr1, d.Addr2, d.City, d.State, d.Zip, d.Curbal)
+    err = io.io.Exec(sqlStmt, d.Num, d.Name, d.Addr1, d.Addr2, d.City, d.State, d.Zip, d.Country, d.Curbal)
 	if err != nil {
     log.Printf("...end ioCustomer.RowUpdate(Error:500) - Internal Error\n")
 		err = fmt.Errorf("500. Internal Server Error. %s\n", err.Error())
@@ -284,7 +284,7 @@ func (io *IO_App01sqCustomer) TableCount( ) (int, error) {
 // TableCreate creates the table in the given database deleting the current
 // table if present.
 func (io *IO_App01sqCustomer) TableCreate() error {
-    var sqlStmt = "CREATE TABLE IF NOT EXISTS customer (\n\tnum\tINTEGER NOT NULL PRIMARY KEY,\n\tname\tVARCHAR(30),\n\taddr1\tVARCHAR(30),\n\taddr2\tVARCHAR(30),\n\tcity\tVARCHAR(20),\n\tstate\tVARCHAR(10),\n\tzip\tVARCHAR(15),\n\tcurbal\tTEXT(15,2)\n);\n"
+    var sqlStmt = "CREATE TABLE IF NOT EXISTS customer (\n\tnum\tINTEGER NOT NULL PRIMARY KEY,\n\tname\tVARCHAR(30),\n\taddr1\tVARCHAR(30),\n\taddr2\tVARCHAR(30),\n\tcity\tVARCHAR(20),\n\tstate\tVARCHAR(10),\n\tzip\tVARCHAR(20),\n\tcountry\tVARCHAR(30),\n\tcurbal\tTEXT(15,2)\n);\n"
     var err     error
 
     log.Printf("ioCustomer.TableCreate()\n")
@@ -342,7 +342,7 @@ func (io *IO_App01sqCustomer) TableScan(apply func (rcd App01sqCustomer.App01sqC
 
     row = io.io.QueryRow(sqlFirstStmt)
     for ;; {
-        err = row.Scan(&rcd.Num, &rcd.Name, &rcd.Addr1, &rcd.Addr2, &rcd.City, &rcd.State, &rcd.Zip, &rcd.Curbal)
+        err = row.Scan(&rcd.Num, &rcd.Name, &rcd.Addr1, &rcd.Addr2, &rcd.City, &rcd.State, &rcd.Zip, &rcd.Country, &rcd.Curbal)
         if err != nil {
             if err == sql.ErrNoRows {
                 log.Printf("\tNo Rows found!\n")

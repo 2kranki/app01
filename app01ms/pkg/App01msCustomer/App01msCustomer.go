@@ -3,12 +3,13 @@
 
 //  Struct and Methods for App01msCustomer
 
-// Generated: Fri Oct 25, 2019 11:40
+// Generated: Mon Oct 28, 2019 08:40
 
 
 package App01msCustomer
 
 import (
+	"encoding/json"
     "fmt"
     
         "log"
@@ -110,7 +111,18 @@ type App01msCustomer struct {
 	Curbal	float64
 }
 
+type App01msCustomers []*App01msCustomer
 
+type Key struct {
+	Num	int64
+}
+
+type App01msCustomerIndex map[Key]*App01msCustomer
+
+
+
+// NOTE: For JsonMarshal() and JsonUnmarshal() to work properly, the JSON
+//  names must be defined above.
 
 //----------------------------------------------------------------------------
 //                              Compare
@@ -222,6 +234,48 @@ v.Add("Zip", wrk)
 	}
 v.Add("Curbal", wrk)
 	return v.Encode()
+}
+
+//----------------------------------------------------------------------------
+//                  		JSON Marshal
+//----------------------------------------------------------------------------
+
+func (d *App01msCustomer) JsonMarshal() ([]byte, error) {
+	var err         error
+    var text        []byte
+
+    if text, err = json.Marshal(d); err != nil {
+		return nil, fmt.Errorf("Error: marshalling json: %s : %v", err, d)
+	}
+
+	return text, err
+}
+
+//----------------------------------------------------------------------------
+//                             JSON Unmarshal
+//----------------------------------------------------------------------------
+
+func (d *App01msCustomer) JsonUnmarshal(text []byte) error {
+	var err         error
+
+	if err = json.Unmarshal(text, d); err != nil {
+		return fmt.Errorf("Error: unmarshalling json: %s : %s", err, text)
+	}
+
+	return err
+}
+
+//----------------------------------------------------------------------------
+//                      Set Keys from a Slice of Strings
+//----------------------------------------------------------------------------
+
+// SetKeysFromStrings creates a URL Value map from the table's key(s). The slice
+// is in field order within the struct, not sorted by field name.
+func (s *App01msCustomer) Key() Key {
+    var k       Key
+
+    k.Num = s.Num
+	return k
 }
 
 //----------------------------------------------------------------------------
@@ -461,6 +515,10 @@ func (s *App01msCustomer) ToStrings() []string {
 // CustomerNew creates a new empty struct.
 func NewApp01msCustomer() *App01msCustomer {
     return &App01msCustomer{}
+}
+
+func NewApp01msCustomers() *App01msCustomers {
+    return &App01msCustomers{}
 }
 
 

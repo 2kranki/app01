@@ -4,7 +4,7 @@
 // ioApp01sq contains all the functions
 // and data to interact with the SQL Database.
 
-// Generated: Fri Oct 25, 2019 11:40
+// Generated: Mon Oct 28, 2019 08:40
 
 package App01sqCustomer
 
@@ -91,6 +91,13 @@ func TestTestDataApp01sqCustomer(t *testing.T) {
         
     
         
+            if rcd.Country != string(chr) {
+                t.Fatalf("Error: Invalid data for rcd.Country of (%d)%s!\n\n\n",
+                                    len(rcd.Country), rcd.Country)
+            }
+        
+    
+        
             if rcd.Curbal != string(chr) {
                 t.Fatalf("Error: Invalid data for rcd.Curbal of (%d)%s!\n\n\n",
                                     len(rcd.Curbal), rcd.Curbal)
@@ -155,6 +162,12 @@ func TestToStringApp01sqCustomer(t *testing.T) {
 
         if str != strRcd {
             t.Fatalf("Error: Invalid data for %s!\n\n\n", "Zip")
+        }
+    strRcd = rcd.ToString("Country")
+        	str = rcd.Country
+
+        if str != strRcd {
+            t.Fatalf("Error: Invalid data for %s!\n\n\n", "Country")
         }
     strRcd = rcd.ToString("Curbal")
         	str = rcd.Curbal
@@ -240,6 +253,14 @@ func TestToStringsApp01sqCustomer(t *testing.T) {
         }
     
         offset = 7
+        	str = rcd.Country
+
+        if str != strs[offset] {
+            t.Fatalf("Error: Invalid data for %s of %s!\n\n\n",
+                                    "Country", strs[offset])
+        }
+    
+        offset = 8
         	str = rcd.Curbal
 
         if str != strs[offset] {

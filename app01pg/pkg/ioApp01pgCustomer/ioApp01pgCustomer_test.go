@@ -4,7 +4,7 @@
 // ioCustomer_test tests various functions of
 // the Table SQL Maintenance methods.
 
-// Generated: Fri Oct 25, 2019 11:40 for postgres Database
+// Generated: Mon Oct 28, 2019 08:40 for postgres Database
 
 package ioApp01pgCustomer
 

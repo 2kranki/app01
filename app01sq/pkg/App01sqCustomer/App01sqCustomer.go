@@ -3,12 +3,13 @@
 
 //  Struct and Methods for App01sqCustomer
 
-// Generated: Fri Oct 25, 2019 11:40
+// Generated: Mon Oct 28, 2019 08:40
 
 
 package App01sqCustomer
 
 import (
+	"encoding/json"
     "fmt"
     
         "log"
@@ -100,17 +101,29 @@ type App01sqCustomerDbTableScanner interface {
 //============================================================================
 
 type App01sqCustomer struct {
-	Num	int64
-	Name	string
-	Addr1	string
-	Addr2	string
-	City	string
-	State	string
-	Zip	string
-	Curbal	string
+	Num	int64	`json:"num,omitempty"`
+	Name	string	`json:"name,omitempty"`
+	Addr1	string	`json:"addr1,omitempty"`
+	Addr2	string	`json:"addr2,omitempty"`
+	City	string	`json:"city,omitempty"`
+	State	string	`json:"state,omitempty"`
+	Zip	string	`json:"zip,omitempty"`
+	Country	string	`json:"country,omitempty"`
+	Curbal	string	`json:"curbal,omitempty"`
 }
 
+type App01sqCustomers []*App01sqCustomer
 
+type Key struct {
+	Num	int64	`json:"num,omitempty"`
+}
+
+type App01sqCustomerIndex map[Key]*App01sqCustomer
+
+
+
+// NOTE: For JsonMarshal() and JsonUnmarshal() to work properly, the JSON
+//  names must be defined above.
 
 //----------------------------------------------------------------------------
 //                              Compare
@@ -139,6 +152,9 @@ func (s *App01sqCustomer) Compare(r *App01sqCustomer) int {
             return 1
         }
 	if s.Zip != r.Zip {
+            return 1
+        }
+	if s.Country != r.Country {
             return 1
         }
 	if s.Curbal != r.Curbal {
@@ -179,6 +195,7 @@ s.Num = i64
     s.City = str
     s.State = str
     s.Zip = str
+    s.Country = str
     s.Curbal = str
     
 }
@@ -214,10 +231,55 @@ v.Add("State", wrk)
 	// Field: Zip
             	wrk = s.Zip
 v.Add("Zip", wrk)
+	// Field: Country
+            	wrk = s.Country
+v.Add("Country", wrk)
 	// Field: Curbal
             	wrk = s.Curbal
 v.Add("Curbal", wrk)
 	return v.Encode()
+}
+
+//----------------------------------------------------------------------------
+//                  		JSON Marshal
+//----------------------------------------------------------------------------
+
+func (d *App01sqCustomer) JsonMarshal() ([]byte, error) {
+	var err         error
+    var text        []byte
+
+    if text, err = json.Marshal(d); err != nil {
+		return nil, fmt.Errorf("Error: marshalling json: %s : %v", err, d)
+	}
+
+	return text, err
+}
+
+//----------------------------------------------------------------------------
+//                             JSON Unmarshal
+//----------------------------------------------------------------------------
+
+func (d *App01sqCustomer) JsonUnmarshal(text []byte) error {
+	var err         error
+
+	if err = json.Unmarshal(text, d); err != nil {
+		return fmt.Errorf("Error: unmarshalling json: %s : %s", err, text)
+	}
+
+	return err
+}
+
+//----------------------------------------------------------------------------
+//                      Set Keys from a Slice of Strings
+//----------------------------------------------------------------------------
+
+// SetKeysFromStrings creates a URL Value map from the table's key(s). The slice
+// is in field order within the struct, not sorted by field name.
+func (s *App01sqCustomer) Key() Key {
+    var k       Key
+
+    k.Num = s.Num
+	return k
 }
 
 //----------------------------------------------------------------------------
@@ -300,6 +362,8 @@ str = r.FormValue("State")
         	s.State = str
 str = r.FormValue("Zip")
         	s.Zip = str
+str = r.FormValue("Country")
+        	s.Country = str
 str = r.FormValue("Curbal")
         	s.Curbal = str
 
@@ -358,6 +422,7 @@ str = string(chr)
         s.City = str
         s.State = str
         s.Zip = str
+        s.Country = str
         s.Curbal = str
         
 }
@@ -392,6 +457,9 @@ func (s *App01sqCustomer) ToString(TitledName string) string {
 
     case "Zip":
         	str = s.Zip
+
+    case "Country":
+        	str = s.Country
 
     case "Curbal":
         	str = s.Curbal
@@ -435,6 +503,9 @@ func (s *App01sqCustomer) ToStrings() []string {
         	str = s.Zip
 
         strs = append(strs, str)
+        	str = s.Country
+
+        strs = append(strs, str)
         	str = s.Curbal
 
         strs = append(strs, str)
@@ -449,6 +520,10 @@ func (s *App01sqCustomer) ToStrings() []string {
 // CustomerNew creates a new empty struct.
 func NewApp01sqCustomer() *App01sqCustomer {
     return &App01sqCustomer{}
+}
+
+func NewApp01sqCustomers() *App01sqCustomers {
+    return &App01sqCustomers{}
 }
 
 
