@@ -20,15 +20,13 @@
 //      in the name.
 
 
-// Generated: Mon Oct 28, 2019 08:40 for mysql Database
+// Generated: Thu Nov 14, 2019 11:17 for mysql Database
 
 package ioApp01my
 
 import (
     "database/sql"
     "fmt"
-    
-        "log"
     
     
      "strconv"
@@ -155,7 +153,7 @@ func (io *IO_App01my) Connect(dbName string) error {
 
     // Allow for the Docker Container to get operational.
     for i:=0; i<connect_retries; i++ {
-        log.Printf("\tConnecting %d to mysql with %s...\n", i, connStr)
+        
         io.dbSql, err = sql.Open("mysql", connStr)
         if err == nil {
             err = io.dbSql.Ping()
@@ -170,8 +168,6 @@ func (io *IO_App01my) Connect(dbName string) error {
         return fmt.Errorf("Error: Cannot Connect: %s\n", err.Error())
     }
 
-    
-        log.Printf("Pinging Server...\n")
     
     err = io.dbSql.Ping()
     if err != nil {
@@ -194,8 +190,6 @@ func (io *IO_App01my) Connect(dbName string) error {
 func (io *IO_App01my) Disconnect() error {
     var err         error
 
-    
-        log.Printf("\tDisconnecting from Database\n")
     
     if io.IsConnected() {
         err = io.dbSql.Close()
@@ -232,7 +226,7 @@ func (io *IO_App01my) DatabaseCreate(dbName string) error {
     var err     error
     var str		util.StringBuilder
 
-    log.Printf("DatabaseCreate(%s)\n", dbName)
+    
     if len(dbName) == 0 {
         return fmt.Errorf("Error: Missing database name for DatabaseCreate()!")
     }
@@ -279,8 +273,6 @@ func (io *IO_App01my) DatabaseCreate(dbName string) error {
     err = io.Connect(dbName)
 
     
-        log.Printf("...end DatabaseCreate(%s)\n", util.ErrorString(err))
-    
     return err
 }
 
@@ -295,8 +287,6 @@ func (io *IO_App01my) DatabaseDelete(dbName string) error {
 	var str		util.StringBuilder
 
     
-        log.Printf("DatabaseDelete()\n")
-    
     dbName = strings.ToLower(dbName)
 
 	// Build the Create Database SQL Statement.
@@ -306,8 +296,6 @@ func (io *IO_App01my) DatabaseDelete(dbName string) error {
             err = io.Exec(str.String())
         }
 
-    
-        log.Printf("...end DatabaseDelete(%s)\n", util.ErrorString(err))
     
     return err
 }
@@ -325,8 +313,6 @@ func (io *IO_App01my) IsDatabaseDefined(dbName string) bool {
     var Database    string
 
     
-        log.Printf("IsDatabaseDefined(%s)\n", dbName)
-    
     dbName = strings.ToLower(dbName)
 
     // Build the SQL Statement.
@@ -337,18 +323,11 @@ func (io *IO_App01my) IsDatabaseDefined(dbName string) bool {
 	if err == nil {
         if Database == dbName {
         
-            log.Printf("...end IsDatabaseDefined(true)\n")
-        
             return true;
         }
     
-	} else {
-	        log.Printf("\tSELECT schema_name Error: %s  Name: %s\n", err.Error(), Database)
-    
 	}
 
-    
-        log.Printf("...end IsDatabaseDefined(false)\n")
     
     return false
 }
@@ -364,14 +343,10 @@ func (io *IO_App01my) Exec(sqlStmt string, args ...interface{}) error {
     var err     error
 
     
-        log.Printf("Exec(%s)\n", sqlStmt)
-    
 
     _, err = io.dbSql.Exec(sqlStmt, args...)
     
 
-    
-        log.Printf("...end Exec(%s)\n", util.ErrorString(err))
     
     return err
 }
@@ -386,8 +361,6 @@ func (io *IO_App01my) Query(sqlStmt string, process func(rows *sql.Rows), args .
     var rows    *sql.Rows
 
     
-        log.Printf("Query(%s)\n", sqlStmt)
-    
 
     rows, err = io.dbSql.Query(sqlStmt, args...)
     
@@ -401,8 +374,6 @@ func (io *IO_App01my) Query(sqlStmt string, process func(rows *sql.Rows), args .
     }
 
     
-        log.Printf("...end Query(%s)\n", util.ErrorString(err))
-    
     return err
 }
 
@@ -412,19 +383,15 @@ func (io *IO_App01my) Query(sqlStmt string, process func(rows *sql.Rows), args .
 
 // QueryRow executes an sql statement which does return row(s).
 func (io *IO_App01my) QueryRow(sqlStmt string, args ...interface{}) *sql.Row {
-    var err     error
+    
     var row     *sql.Row
 
-    
-        log.Printf("QueryRow(%s)\n", sqlStmt)
     
 
     row = io.dbSql.QueryRow(sqlStmt, args...)
 
     
 
-    
-        log.Printf("...end Query(%s)\n", util.ErrorString(err))
     
     return row
 }

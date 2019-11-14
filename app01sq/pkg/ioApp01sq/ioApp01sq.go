@@ -20,15 +20,13 @@
 //      in the name.
 
 
-// Generated: Mon Oct 28, 2019 08:40 for sqlite Database
+// Generated: Thu Nov 14, 2019 11:17 for sqlite Database
 
 package ioApp01sq
 
 import (
     "database/sql"
     "fmt"
-    
-        "log"
     
     
      
@@ -127,14 +125,12 @@ func (io *IO_App01sq) DefaultParms() {
 func (io *IO_App01sq) Connect(dbName string) error {
     var err         error
 
-    log.Printf("\tConnecting to sqlite with %s...\n", dbName)
+    
     io.dbSql, err = sql.Open("sqlite3", dbName)
     if err != nil {
         return fmt.Errorf("Error: Cannot Connect: %s\n", err.Error())
     }
 
-    
-        log.Printf("Pinging Server...\n")
     
     err = io.dbSql.Ping()
     if err != nil {
@@ -156,8 +152,6 @@ func (io *IO_App01sq) Connect(dbName string) error {
 func (io *IO_App01sq) Disconnect() error {
     var err         error
 
-    
-        log.Printf("\tDisconnecting from Database\n")
     
     if io.IsConnected() {
         err = io.dbSql.Close()
@@ -194,7 +188,7 @@ func (io *IO_App01sq) DatabaseCreate(dbName string) error {
     var err     error
     
 
-    log.Printf("DatabaseCreate(%s)\n", dbName)
+    
     if len(dbName) == 0 {
         return fmt.Errorf("Error: Missing database name for DatabaseCreate()!")
     }
@@ -204,8 +198,6 @@ func (io *IO_App01sq) DatabaseCreate(dbName string) error {
     // Reconnect using the newly created database.
     err = io.Connect(dbName)
 
-    
-        log.Printf("...end DatabaseCreate(%s)\n", util.ErrorString(err))
     
     return err
 }
@@ -221,8 +213,6 @@ func (io *IO_App01sq) DatabaseDelete(dbName string) error {
 	var str		util.StringBuilder
 
     
-        log.Printf("DatabaseDelete()\n")
-    
     dbName = strings.ToLower(dbName)
 
 	// Build the Create Database SQL Statement.
@@ -231,8 +221,6 @@ func (io *IO_App01sq) DatabaseDelete(dbName string) error {
 
     
 
-    
-        log.Printf("...end DatabaseDelete(%s)\n", util.ErrorString(err))
     
     return err
 }
@@ -246,11 +234,7 @@ func (io *IO_App01sq) DatabaseDelete(dbName string) error {
 func (io *IO_App01sq) IsDatabaseDefined() bool {
 
     
-        log.Printf("IsDatabaseDefined()\n")
-    
 
-    
-        log.Printf("...end IsDatabaseDefined(false)\n")
     
     return true
 }
@@ -264,14 +248,10 @@ func (io *IO_App01sq) Exec(sqlStmt string, args ...interface{}) error {
     var err     error
 
     
-        log.Printf("Exec(%s)\n", sqlStmt)
-    
 
     _, err = io.dbSql.Exec(sqlStmt, args...)
     
 
-    
-        log.Printf("...end Exec(%s)\n", util.ErrorString(err))
     
     return err
 }
@@ -286,8 +266,6 @@ func (io *IO_App01sq) Query(sqlStmt string, process func(rows *sql.Rows), args .
     var rows    *sql.Rows
 
     
-        log.Printf("Query(%s)\n", sqlStmt)
-    
 
     rows, err = io.dbSql.Query(sqlStmt, args...)
     
@@ -301,8 +279,6 @@ func (io *IO_App01sq) Query(sqlStmt string, process func(rows *sql.Rows), args .
     }
 
     
-        log.Printf("...end Query(%s)\n", util.ErrorString(err))
-    
     return err
 }
 
@@ -312,19 +288,15 @@ func (io *IO_App01sq) Query(sqlStmt string, process func(rows *sql.Rows), args .
 
 // QueryRow executes an sql statement which does return row(s).
 func (io *IO_App01sq) QueryRow(sqlStmt string, args ...interface{}) *sql.Row {
-    var err     error
+    
     var row     *sql.Row
 
-    
-        log.Printf("QueryRow(%s)\n", sqlStmt)
     
 
     row = io.dbSql.QueryRow(sqlStmt, args...)
 
     
 
-    
-        log.Printf("...end Query(%s)\n", util.ErrorString(err))
     
     return row
 }

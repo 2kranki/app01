@@ -7,7 +7,7 @@
 //  *   All static (ie non-changing) files should be served from the 'static'
 //      subdirectory.
 
-// Generated: Mon Oct 28, 2019 08:40
+// Generated: Thu Nov 14, 2019 11:17
 
 package main
 
@@ -40,33 +40,26 @@ var hndlrsApp01sqVendor *hndlrApp01sqVendor.HandlersApp01sqVendor
 // returning a 405 status to indicate that no Icon is available.
 func HndlrFavIcon(w http.ResponseWriter, r *http.Request) {
 
-	fmt.Printf("HndlrFavIcon(%s)\n", r.Method)
-
 	if r.Method != "GET" {
 		http.NotFound(w, r)
 	}
 	http.Error(w, http.StatusText(405), http.StatusMethodNotAllowed)
 
-	fmt.Printf("...end HndlrFavIcon(Error:405)\n")
 }
 
 // HndlrHome responds to a URL with no sub-elements.  It defaults to
 // providing the default Menu to the browser/caller.
 func HndlrHome(w http.ResponseWriter, r *http.Request) {
 
-	fmt.Printf("HndlrHome(%s)\n", r.Method)
-
 	if r.URL.Path != "/" {
-		fmt.Printf("...end HndlrHome(Error 404) Not '/' URL\n")
+
 		http.NotFound(w, r)
 		return
 	}
 
-	fmt.Printf("\tHndlrHome Serving File: ./html/App01sq.menu.html\n")
 	hndlrsApp01sq.MainDisplay(w, "")
 	//http.ServeFile(w, r, baseDir+"/html/App01sq.menu.html")
 
-	fmt.Printf("...end HndlrHome()\n")
 }
 
 // To understand the following, review packages net/http and net/url and review:
@@ -113,8 +106,10 @@ func MuxHandlerWrapper(f http.Handler) http.HandlerFunc {
 
 func exec() {
 
+	// Generate HTTPS Certificates if needed.
+
 	// Connect the databases.
-	log.Printf("\tConnecting to the Database...\n")
+
 	ioApp01sq := ioApp01sq.NewIoApp01sq()
 	//ioApp01sq.SetName(db_name)
 	ioApp01sq.SetPort(db_port)
@@ -129,11 +124,14 @@ func exec() {
 
 	// Set up to disconnect the database upon program interrupt.
 	chnl := make(chan os.Signal, 1)
-	signal.Notify(chnl, os.Interrupt, os.Kill)
+	signal.Notify(chnl, os.Interrupt)
 	go func() {
 		<-chnl
 		if ioApp01sq.IsConnected() {
-			ioApp01sq.Disconnect()
+			err = ioApp01sq.Disconnect()
+			if err != nil {
+				log.Fatal(err)
+			}
 		}
 		os.Exit(1)
 	}()
@@ -150,13 +148,13 @@ func exec() {
 	}
 
 	// Set up templates.
-	log.Printf("\tSetting up the Templates...\n")
+
 	hndlrsApp01sq = hndlrApp01sq.NewTmplsApp01sq("")
 	hndlrsApp01sq.SetTmplsDir(baseDir + "/tmpl")
 	hndlrsApp01sq.SetupTmpls()
 
 	// Set up default URL handlers
-	log.Printf("\tSetting up the Mux Handlers...\n")
+
 	mux := http.NewServeMux()
 	mux.HandleFunc("/", HndlrHome)
 	mux.HandleFunc("/favicon.ico", HndlrFavIcon)
@@ -178,7 +176,7 @@ func exec() {
 	// openssl req -x509 -days 365 -nodes -newkey rsa:2048 -keyout ./ssl/ssl_key.pem -out ./ssl/ssl_cert.pem
 
 	// Start the HTTP Server.
-	log.Printf("\tStarting Server at %s:%s...\n", http_srvr, http_port)
+
 	srvrStr := fmt.Sprintf("%s:%s", http_srvr, http_port)
 	s := &http.Server{
 		Addr:    srvrStr,

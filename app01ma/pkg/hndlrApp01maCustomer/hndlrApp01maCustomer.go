@@ -7,7 +7,7 @@
 //  *   All static (ie non-changing) files should be served from the 'static'
 //      subdirectory.
 
-// Generated: Mon Oct 28, 2019 08:40
+// Generated: Thu Nov 14, 2019 11:17
 
 
 package hndlrApp01maCustomer
@@ -16,14 +16,10 @@ import (
 	"encoding/csv"
     "fmt"
     "io"
-    
-        "log"
-    
+    "log"
     "mime/multipart"
 	"net/http"
 	"strconv"
-    
-	    "strings"
     
 	"sync"
     
@@ -81,8 +77,6 @@ func (h *HandlersApp01maCustomer) SetRowsPerPage(r int) {
 func (h *HandlersApp01maCustomer) SetupHandlers(mux *http.ServeMux) {
 
     
-        log.Printf("\thndlrCustomer.SetupHandlers()\n")
-    
 
 	    mux.HandleFunc("/Customer/list/first",         h.ListFirst)
 	    mux.HandleFunc("/Customer",                    h.ListFirst)
@@ -105,8 +99,6 @@ func (h *HandlersApp01maCustomer) SetupHandlers(mux *http.ServeMux) {
 	    mux.HandleFunc("/Customer/table/load/test",    h.TableLoadTestData)
 	    mux.HandleFunc("/Customer/table/save/csv",     h.TableSaveCSV)
 
-    
-        log.Printf("\tend of hndlrCustomer.SetupHandlers()\n")
     
 }
 
@@ -141,12 +133,8 @@ func NewHandlersApp01maCustomer(db *ioApp01maCustomer.IO_App01maCustomer, rowsPe
 func (h *HandlersApp01maCustomer) ListFirst(w http.ResponseWriter, r *http.Request) {
 
     
-        log.Printf("hndlrCustomer.ListFirst(%s)\n", r.Method)
-    
 
     if r.Method != "GET" {
-        
-            log.Printf("...end hndlrCustomer.ListFirst(Error:405) - Not GET\n")
         
         http.Error(w, http.StatusText(405), http.StatusMethodNotAllowed)
         return
@@ -155,8 +143,6 @@ func (h *HandlersApp01maCustomer) ListFirst(w http.ResponseWriter, r *http.Reque
     // Display the row in the form.
     h.ListShow(w, 0, "")
 
-    
-        log.Printf("...end hndlrCustomer.ListFirst()\n")
     
 }
 
@@ -170,12 +156,8 @@ func (h *HandlersApp01maCustomer) ListLast(w http.ResponseWriter, r *http.Reques
     var offset  int
 
     
-        log.Printf("hndlrCustomer.ListLast(%s)\n", r.Method)
-    
 
     if r.Method != "GET" {
-        
-            log.Printf("...end hndlrCustomer.ListLast(Error:405) - Not GET\n")
         
         http.Error(w, http.StatusText(405), http.StatusMethodNotAllowed)
         return
@@ -184,8 +166,6 @@ func (h *HandlersApp01maCustomer) ListLast(w http.ResponseWriter, r *http.Reques
     // Calculate the offset.
     offset, err = h.db.TableCount()
     if err != nil {
-        
-            log.Printf("...end hndlrCustomer.ListLast(Error:400) - %s\n", util.ErrorString(err))
         
         http.Error(w, http.StatusText(400), http.StatusBadRequest)
     }
@@ -197,8 +177,6 @@ func (h *HandlersApp01maCustomer) ListLast(w http.ResponseWriter, r *http.Reques
     // Display the row in the form.
     h.ListShow(w, offset, "")
 
-    
-        log.Printf("...end hndlrCustomer.ListLast()\n")
     
 }
 
@@ -213,12 +191,8 @@ func (h *HandlersApp01maCustomer) ListNext(w http.ResponseWriter, r *http.Reques
     var cTable  int
 
     
-        log.Printf("hndlrCustomer.ListNext(%s)\n", r.Method)
-    
 
     if r.Method != "GET" {
-        
-            log.Printf("...end hndlrCustomer.ListNext(Error:405) - Not GET\n")
         
         http.Error(w, http.StatusText(405), http.StatusMethodNotAllowed)
         return
@@ -227,8 +201,6 @@ func (h *HandlersApp01maCustomer) ListNext(w http.ResponseWriter, r *http.Reques
     // Calculate the offset.
     cTable, err = h.db.TableCount()
     if err != nil {
-        
-            log.Printf("...end hndlrCustomer.ListLast(Error:400) - %s\n", util.ErrorString(err))
         
         http.Error(w, http.StatusText(400), http.StatusBadRequest)
     }
@@ -241,8 +213,6 @@ func (h *HandlersApp01maCustomer) ListNext(w http.ResponseWriter, r *http.Reques
     // Display the row in the form.
     h.ListShow(w, offset, "")
 
-    
-        log.Printf("...end hndlrCustomer.ListNext()\n")
     
 }
 
@@ -258,12 +228,8 @@ func (h *HandlersApp01maCustomer) ListPrev(w http.ResponseWriter, r *http.Reques
     var cTable  int
 
     
-        log.Printf("hndlrCustomer.ListPrev(%s, %s)\n", r.Method, r.FormValue("offset"))
-    
 
     if r.Method != "GET" {
-        
-            log.Printf("...end hndlrCustomer.ListPrev(Error:405) - Not GET\n")
         
         http.Error(w, http.StatusText(405), http.StatusMethodNotAllowed)
         return
@@ -272,8 +238,6 @@ func (h *HandlersApp01maCustomer) ListPrev(w http.ResponseWriter, r *http.Reques
     // Calculate the offset.
     cTable, err = h.db.TableCount()
     if err != nil {
-        
-            log.Printf("...end hndlrCustomer.ListLast(Error:400) - %s\n", util.ErrorString(err))
         
         http.Error(w, http.StatusText(400), http.StatusBadRequest)
     }
@@ -294,8 +258,6 @@ func (h *HandlersApp01maCustomer) ListPrev(w http.ResponseWriter, r *http.Reques
     h.ListShow(w, offset, "")
 
     
-        log.Printf("...end hndlrCustomer.ListPrev()\n")
-    
 }
 
 //----------------------------------------------------------------------------
@@ -308,20 +270,12 @@ func (h *HandlersApp01maCustomer) ListShow(w http.ResponseWriter, offset int, ms
     var rcds    []App01maCustomer.App01maCustomer
     var name    = "App01ma.Customer.list.gohtml"
     
-        var str     strings.Builder
-    
 
-    
-        log.Printf("hndlrCustomer.ListShow(%d)\n", offset)
-        log.Printf("\tname: %s\n", name)
-        w2 := io.MultiWriter(w, &str)
     
 
     // Get the records to display
     rcds, err = h.db.RowPage(offset, h.rowsPerPage)
     if err != nil {
-        
-            log.Printf("...end hndlrCustomer.ListShow(Error:400) - No Key\n")
         
         http.Error(w, http.StatusText(400), http.StatusBadRequest)
         return
@@ -334,18 +288,13 @@ func (h *HandlersApp01maCustomer) ListShow(w http.ResponseWriter, offset int, ms
             }{rcds, offset, msg}
 
     
-        log.Printf("\tData: %+v\n", data)
-    
 
-    log.Printf("\tExecuting template: %s\n", name)
-        err = h.Tmpls.Tmpls.ExecuteTemplate(w2, name, data)
+    
+        err = h.Tmpls.Tmpls.ExecuteTemplate(w, name, data)
     if err != nil {
         fmt.Fprintf(w, err.Error())
     }
 
-    
-        log.Printf("\t output: %s\n", str.String())
-        log.Printf("...end hndlrCustomer.ListShow(%s)\n", util.ErrorString(err))
     
 }
 
@@ -365,11 +314,7 @@ func (h *HandlersApp01maCustomer) RowDelete(w http.ResponseWriter, r *http.Reque
     var key     string
 
     
-        log.Printf("hndlrCustomer.RowDelete(%s)\n", r.Method)
-    
     if r.Method != "GET" {
-        
-            log.Printf("...end hndlrCustomer.RowDelete(Error:405) - Not GET\n")
         
         http.Error(w, http.StatusText(405), http.StatusMethodNotAllowed)
         return
@@ -382,14 +327,10 @@ func (h *HandlersApp01maCustomer) RowDelete(w http.ResponseWriter, r *http.Reque
 
         i++
     
-        log.Printf("\t rcd: %+v\n", rcd)
-    
 
     // Delete the row with data given.
     err = h.db.RowDelete(&rcd)
     if err != nil {
-        
-            log.Printf("...end hndlrCustomer.RowDelete(Error:400) - %s\n", util.ErrorString(err))
         
         http.Error(w, http.StatusText(400), http.StatusBadRequest)
         return
@@ -399,15 +340,11 @@ func (h *HandlersApp01maCustomer) RowDelete(w http.ResponseWriter, r *http.Reque
     err = h.db.RowNext(&rcd)
     if err != nil {
         
-            log.Printf("...end hndlrCustomer.RowDelete(Error:400) - %s\n", util.ErrorString(err))
-        
         http.Error(w, http.StatusText(400), http.StatusBadRequest)
         return
     }
     h.RowDisplay(w, &rcd, "Row deleted!")
 
-    
-        log.Printf("...end hndlrCustomer.RowDelete(%s)\n", util.ErrorString(err))
     
 }
 
@@ -420,8 +357,6 @@ func (h *HandlersApp01maCustomer) RowDisplay(w http.ResponseWriter, rcd  *App01m
     var err     error
 
     
-        log.Printf("hndlrCustomer.RowDisplay(%+v, %s)\n", rcd, msg)
-    
 
     if h.Tmpls != nil {
         data := struct {
@@ -430,18 +365,12 @@ func (h *HandlersApp01maCustomer) RowDisplay(w http.ResponseWriter, rcd  *App01m
                 }{rcd, msg}
         name := "App01ma.Customer.form.gohtml"
         
-            log.Printf("\tRcd: %+v\n", data.Rcd)
-            log.Printf("\tMsg: %s\n", data.Msg)
-            log.Printf("\tname: %s\n", name)
-        
         err = h.Tmpls.Tmpls.ExecuteTemplate(w, name, data)
         if err != nil {
             fmt.Fprintf(w, err.Error())
         }
     }
 
-    
-        log.Printf("...end hndlrCustomer.RowDisplay(%s)\n", util.ErrorString(err))
     
 }
 
@@ -454,11 +383,7 @@ func (h *HandlersApp01maCustomer) RowEmpty(w http.ResponseWriter, r *http.Reques
     var rcd     App01maCustomer.App01maCustomer
 
     
-        log.Printf("hndlrCustomer.RowEmpty(%s)\n", r.Method)
-    
     if r.Method != "GET" {
-    
-        log.Printf("...end hndlrCustomer.RowEmpty(Error:405) - Not GET\n")
     
         http.Error(w, http.StatusText(405), http.StatusMethodNotAllowed)
         return
@@ -467,8 +392,6 @@ func (h *HandlersApp01maCustomer) RowEmpty(w http.ResponseWriter, r *http.Reques
     // Get the row to display and display it.
     h.RowDisplay(w, &rcd, "")
 
-    
-        log.Printf("...end hndlrCustomer.RowEmpty()\n")
     
 }
 
@@ -485,11 +408,7 @@ func (h *HandlersApp01maCustomer) RowFind(w http.ResponseWriter, r *http.Request
     var key     string
 
     
-        log.Printf("hndlrCustomer.RowFind(%s, %s)\n", r.Method, r.FormValue("key"))
-    
     if r.Method != "GET" {
-        
-            log.Printf("...end hndlrCustomer.RowFind(Error:405) - Not GET\n")
         
         http.Error(w, http.StatusText(405), http.StatusMethodNotAllowed)
         return
@@ -510,15 +429,11 @@ func (h *HandlersApp01maCustomer) RowFind(w http.ResponseWriter, r *http.Request
     }
     if err != nil {
         
-            log.Printf("...end hndlrCustomer.RowFind(Error:400) - %s\n", util.ErrorString(err))
-        
         http.Error(w, http.StatusText(400), http.StatusBadRequest)
         return
     }
     h.RowDisplay(w, &rcd, msg)
 
-    
-        log.Printf("...end hndlrCustomer.RowFind()\n")
     
 }
 
@@ -532,12 +447,8 @@ func (h *HandlersApp01maCustomer) RowFirst(w http.ResponseWriter, r *http.Reques
     var err     error
 
     
-        log.Printf("hndlrCustomer.RowFirst(%s)\n", r.Method)
-    
 
     if r.Method != "GET" {
-        
-            log.Printf("...end hndlrCustomer.RowFirst(Error:405) - Not GET\n")
         
         http.Error(w, http.StatusText(405), http.StatusMethodNotAllowed)
         return
@@ -547,16 +458,12 @@ func (h *HandlersApp01maCustomer) RowFirst(w http.ResponseWriter, r *http.Reques
     err = h.db.RowFirst(&rcd)
     if err != nil {
         
-            log.Printf("...end hndlrCustomer.RowFirst(Error:400) - No Key\n")
-        
         http.Error(w, http.StatusText(400), http.StatusBadRequest)
         return
     }
     h.RowDisplay(w, &rcd, "")
 
 
-    
-        log.Printf("...end hndlrCustomer.RowFirst()\n")
     
 }
 
@@ -568,11 +475,7 @@ func (h *HandlersApp01maCustomer) RowFirst(w http.ResponseWriter, r *http.Reques
 func (h *HandlersApp01maCustomer) RowForm(w http.ResponseWriter, r *http.Request) {
 
     
-        log.Printf("hndlrCustomer.RowForm(%s)\n", r.Method)
-    
     if r.Method != "GET" {
-    
-        log.Printf("...end hndlrCustomer.RowForm(Error:405) - Not GET\n")
     
         http.Error(w, http.StatusText(405), http.StatusMethodNotAllowed)
         return
@@ -586,8 +489,6 @@ func (h *HandlersApp01maCustomer) RowForm(w http.ResponseWriter, r *http.Request
     http.ServeFile(w, r, "./tmpl/App01ma.Customer.form.gohtml")
 
     
-        log.Printf("...end hndlrCustomer.RowForm()\n")
-    
 }
 
 //----------------------------------------------------------------------------
@@ -599,8 +500,6 @@ func (h *HandlersApp01maCustomer) RowInsert(w http.ResponseWriter, r *http.Reque
     var rcd         App01maCustomer.App01maCustomer
     var err         error
 
-    
-        log.Printf("hndlrCustomer.RowInsert(%s)\n", r.Method)
     
     if r.Method != "POST" {
         http.Error(w, http.StatusText(405), http.StatusMethodNotAllowed)
@@ -628,8 +527,6 @@ func (h *HandlersApp01maCustomer) RowInsert(w http.ResponseWriter, r *http.Reque
     h.RowDisplay(w, &rcd, "Row added!")
 
     
-        log.Printf("...end hndlrCustomer.RowInsert(%s)\n", util.ErrorString(err))
-    
 }
 
 //----------------------------------------------------------------------------
@@ -642,11 +539,7 @@ func (h *HandlersApp01maCustomer) RowLast(w http.ResponseWriter, r *http.Request
     var err         error
 
     
-        log.Printf("hndlrCustomer.RowLast(%s)\n", r.Method)
-    
     if r.Method != "GET" {
-        
-            log.Printf("...end hndlrCustomer.RowLast(Error:405) - Not GET\n")
         
         http.Error(w, http.StatusText(405), http.StatusMethodNotAllowed)
         return
@@ -656,8 +549,6 @@ func (h *HandlersApp01maCustomer) RowLast(w http.ResponseWriter, r *http.Request
     err = h.db.RowLast(&rcd)
     if err != nil {
         
-            log.Printf("...end hndlrCustomer.RowLast(Error:400) - No Key\n")
-        
         http.Error(w, http.StatusText(400), http.StatusBadRequest)
         return
     }
@@ -665,8 +556,6 @@ func (h *HandlersApp01maCustomer) RowLast(w http.ResponseWriter, r *http.Request
     // Display the row in the form.
     h.RowDisplay(w, &rcd, "")
 
-    
-        log.Printf("...end hndlrCustomer.RowLast()\n")
     
 }
 
@@ -682,9 +571,6 @@ func (h *HandlersApp01maCustomer) RowNext(w http.ResponseWriter, r *http.Request
     var i           int
     var key         string
 
-    
-        log.Printf("hndlrCustomer.RowNext(%s)\n", r.Method)
-        log.Printf("\tURL: %q\n", r.URL)
     
     if r.Method != "GET" {
         http.Error(w, http.StatusText(405), http.StatusMethodNotAllowed)
@@ -702,15 +588,11 @@ func (h *HandlersApp01maCustomer) RowNext(w http.ResponseWriter, r *http.Request
     err = h.db.RowNext(&rcd)
     if err != nil {
         
-            log.Printf("...end hndlrCustomer.RowNext(Error:400) - No Key\n")
-        
         http.Error(w, http.StatusText(400), http.StatusBadRequest)
         return
     }
     h.RowDisplay(w, &rcd, "")
 
-    
-        log.Printf("...end hndlrCustomer.RowNext()\n")
     
 }
 
@@ -726,8 +608,6 @@ func (h *HandlersApp01maCustomer) RowPrev(w http.ResponseWriter, r *http.Request
     var i           int
     var key         string
 
-    
-        log.Printf("hndlrCustomer.RowPrev(%s)\n", r.Method)
     
     if r.Method != "GET" {
         http.Error(w, http.StatusText(405), http.StatusMethodNotAllowed)
@@ -745,15 +625,11 @@ func (h *HandlersApp01maCustomer) RowPrev(w http.ResponseWriter, r *http.Request
     err = h.db.RowPrev(&rcd)
     if err != nil {
         
-            log.Printf("...end Customer.RowNext(Error:400) - No Key\n")
-        
         http.Error(w, http.StatusText(400), http.StatusBadRequest)
         return
     }
     h.RowDisplay(w, &rcd, "")
 
-    
-        log.Printf("...end hndlrCustomer.RowPrev()\n")
     
 }
 
@@ -768,11 +644,7 @@ func (h *HandlersApp01maCustomer) RowShow(w http.ResponseWriter, r *http.Request
     var rcd         App01maCustomer.App01maCustomer
 
     
-        log.Printf("hndlrCustomer.RowShow(%s)\n", r.Method)
-    
     if r.Method != "GET" {
-        
-            log.Printf("...end hndlrCustomerHndlrShow(Error:405) - Not GET\n")
         
         http.Error(w, http.StatusText(405), http.StatusMethodNotAllowed)
         return
@@ -781,8 +653,6 @@ func (h *HandlersApp01maCustomer) RowShow(w http.ResponseWriter, r *http.Request
     // Verify any fields that need it.
     //TODO: key = r.FormValue("[.Table.PrimaryKey.Name]")
     //TODO: if key is not present, assume first record.
-    
-        //TODO: log.Printf("\tkey: %s\n", key)
     
 
     // Get the row to display.
@@ -793,8 +663,6 @@ func (h *HandlersApp01maCustomer) RowShow(w http.ResponseWriter, r *http.Request
     }
     if err != nil {
         
-            log.Printf("...end hndlrCustomer.RowShow(Error:400) - %s\n", util.ErrorString(err))
-        
         http.Error(w, http.StatusText(400), http.StatusBadRequest)
         return
     }
@@ -802,8 +670,6 @@ func (h *HandlersApp01maCustomer) RowShow(w http.ResponseWriter, r *http.Request
     // Display the row in the form.
     h.RowDisplay(w, &rcd, "")
 
-    
-        log.Printf("...end hndlrCustomer.RowShow()\n")
     
 }
 
@@ -818,8 +684,6 @@ func (h *HandlersApp01maCustomer) RowUpdate(w http.ResponseWriter, r *http.Reque
     var rcd         App01maCustomer.App01maCustomer
     var i           int
 
-    
-        log.Printf("hndlrCustomer.RowUpdate(%s)\n", r.Method)
     
     if r.Method != "POST" {
         http.Error(w, http.StatusText(405), http.StatusMethodNotAllowed)
@@ -840,8 +704,6 @@ func (h *HandlersApp01maCustomer) RowUpdate(w http.ResponseWriter, r *http.Reque
     // Delete the row.
     err = h.db.RowDelete(&rcd)
     if err != nil {
-        
-            log.Printf("...end hndlrCustomer.RowNext(Error:400) - %s\n", util.ErrorString(err))
         
         http.Error(w, http.StatusText(400), http.StatusBadRequest)
         return
@@ -865,8 +727,6 @@ func (h *HandlersApp01maCustomer) RowUpdate(w http.ResponseWriter, r *http.Reque
     h.RowDisplay(w, &rcd, "Record updated")
 
     
-        log.Printf("...end hndlrCustomer.RowUpdate()\n")
-    
 }
 
 //============================================================================
@@ -881,8 +741,6 @@ func (h *HandlersApp01maCustomer) RowUpdate(w http.ResponseWriter, r *http.Reque
 func (h *HandlersApp01maCustomer) TableCreate(w http.ResponseWriter, r *http.Request) {
     var err         error
 
-    
-        log.Printf("hndlrCustomer.TableCreate(%s)\n", r.Method)
     
     if r.Method != "GET" {
         http.Error(w, http.StatusText(405), http.StatusMethodNotAllowed)
@@ -899,8 +757,6 @@ func (h *HandlersApp01maCustomer) TableCreate(w http.ResponseWriter, r *http.Req
     }
 
     
-        log.Printf("...end hndlrCustomer.TableCreate(%s)\n", util.ErrorString(err))
-    
 }
 
 //----------------------------------------------------------------------------
@@ -915,9 +771,8 @@ func (h *HandlersApp01maCustomer) TableLoadCSV(w http.ResponseWriter, r *http.Re
     var fileIn      multipart.File
     var cnt         int
     var maxMem      int64
-
     
-        log.Printf("hndlrCustomer.TableLoadCSV(%s)\n", r.Method)
+
     
     if r.Method != "POST" {
         http.Error(w, http.StatusText(405), http.StatusMethodNotAllowed)
@@ -938,19 +793,14 @@ func (h *HandlersApp01maCustomer) TableLoadCSV(w http.ResponseWriter, r *http.Re
     // specified on the Form Input Type=file Name parameter.
     // it also returns the FileHeader so we can get the Filename,
     // the Header and the size of the file
-    fileIn, handler, err := r.FormFile(name)
-    if err != nil {
     
-        log.Printf("...end hndlrCustomer.TableLoadCSV(Error:500) - %s\n", util.ErrorString(err))
+        fileIn, _, err = r.FormFile(name)
+    if err != nil {
     
         http.Error(w, http.StatusText(500), http.StatusInternalServerError)
         return
     }
     defer fileIn.Close() //close the file when we finish
-    
-        log.Printf("\tUploaded File: %+v\n", handler.Filename)
-        log.Printf("\tFile Size: %+v\n", handler.Size)
-        log.Printf("\tMIME Header: %+v\n", handler.Header)
     
     rdr := csv.NewReader(fileIn)
 
@@ -960,8 +810,6 @@ func (h *HandlersApp01maCustomer) TableLoadCSV(w http.ResponseWriter, r *http.Re
         w.Write([]byte("Table creation had an error of:" + util.ErrorString(err)))
     }
 
-    
-        log.Printf("\tLoading data...\n")
     
     for {
         record, err := rdr.Read()
@@ -977,28 +825,20 @@ func (h *HandlersApp01maCustomer) TableLoadCSV(w http.ResponseWriter, r *http.Re
         
             	rcd.Num, _ = strconv.ParseInt(record[0],0,64)
 
-        
             	rcd.Name = record[1]
 
-        
             	rcd.Addr1 = record[2]
 
-        
             	rcd.Addr2 = record[3]
 
-        
             	rcd.City = record[4]
 
-        
             	rcd.State = record[5]
 
-        
             	rcd.Zip = record[6]
 
-        
             		rcd.Curbal, _ = strconv.ParseFloat(record[7], 64)
 
-        
 
         err = h.db.RowInsert(&rcd)
         if err != nil {
@@ -1008,16 +848,12 @@ func (h *HandlersApp01maCustomer) TableLoadCSV(w http.ResponseWriter, r *http.Re
         }
         cnt++
         
-            log.Printf("\t...Added row %d\n", cnt)
-        
     }
     for i := 1; i > 0; i-- {
         str := fmt.Sprintf("Added %d rows\n", cnt)
         w.Write([]byte(str))
     }
 
-    
-        log.Printf("...end hndlrCustomer.TableLoadCSV(ok) - %d\n", cnt)
     
 }
 
@@ -1031,8 +867,6 @@ func (h *HandlersApp01maCustomer) TableLoadTestData(w http.ResponseWriter, r *ht
     var err         error
     var rcd         App01maCustomer.App01maCustomer
 
-    
-        log.Printf("hndlrCustomer.TableLoadTestData(%s)\n", r.Method)
     
     if r.Method != "GET" {
         http.Error(w, http.StatusText(405), http.StatusMethodNotAllowed)
@@ -1063,8 +897,6 @@ func (h *HandlersApp01maCustomer) TableLoadTestData(w http.ResponseWriter, r *ht
     }
 
     
-        log.Printf("...end hndlrCustomer.TableLoadTestData(%s)\n", util.ErrorString(err))
-    
 }
 
 //----------------------------------------------------------------------------
@@ -1078,8 +910,6 @@ func (h *HandlersApp01maCustomer) TableSaveCSV(w http.ResponseWriter, r *http.Re
     var cntGood     int
     var cntTotal    int
 
-    
-        log.Printf("hndlrCustomer.TableSaveCSV(%s)\n", r.Method)
     
     if r.Method != "GET" {
         http.Error(w, http.StatusText(405), http.StatusMethodNotAllowed)
@@ -1106,11 +936,10 @@ func (h *HandlersApp01maCustomer) TableSaveCSV(w http.ResponseWriter, r *http.Re
         err = h.db.TableScan(apply)
         wtr.Flush()
     } else {
-        err = fmt.Errorf("Error: Could not create CSV Writer!\n")
+        err = fmt.Errorf("Error: Could not create CSV Writer\n")
+        log.Printf("\t%s - for App01maCustomer table!\n", util.ErrorString(err))
     }
 
-    
-        log.Printf("...end hndlrCustomer.TableSaveCSV(%s)\n", util.ErrorString(err))
     
 }
 

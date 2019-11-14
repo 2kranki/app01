@@ -4,7 +4,7 @@
 // ioApp01sq contains all the functions
 // and data to interact with the SQL Database.
 
-// Generated: Mon Oct 28, 2019 08:40
+// Generated: Thu Nov 14, 2019 11:17
 
 package hndlrApp01sqCustomer
 
@@ -43,8 +43,6 @@ type TestData_App01sqCustomer struct {
 func (td *TestData_App01sqCustomer) CheckStatus(status int) {
 
     
-        td.T.Logf("Customer.CheckStatus()\n")
-    
     if td.Resp == nil {
         td.T.Fatalf("Error: Missing HTTP Response\n")
     }
@@ -53,8 +51,6 @@ func (td *TestData_App01sqCustomer) CheckStatus(status int) {
         td.T.Fatalf("Error: Invalid Status Code of %d, needed %d\n", td.Resp.StatusCode, status)
     }
 
-    
-        td.T.Logf("...end Customer.Setup\n")
     
 }
 
@@ -67,8 +63,6 @@ func (td *TestData_App01sqCustomer) CheckStatus(status int) {
 func (td *TestData_App01sqCustomer) GetReq(target string, body string) {
 
     
-        td.T.Logf("Customer.Setup()\n")
-    
     if target == "" {
         td.T.Fatalf("Error: Missing Target String\n")
     }
@@ -76,8 +70,6 @@ func (td *TestData_App01sqCustomer) GetReq(target string, body string) {
     td.Req = httptest.NewRequest(http.MethodGet, target, strings.NewReader(body))
     td.ServeHttp()          // Perform the test through the mux.
 
-    
-        td.T.Logf("...end Customer.Setup\n")
     
 }
 
@@ -90,15 +82,11 @@ func (td *TestData_App01sqCustomer) GetReq(target string, body string) {
 func (td *TestData_App01sqCustomer) PostReq(target string, body string) {
 
     
-        td.T.Logf("Customer.Setup()\n")
-    
 
     td.Req = httptest.NewRequest(http.MethodPost, target, strings.NewReader(body))
     td.Req.Header.Set("Content-Type", "application/x-www-form-urlencoded")
     td.ServeHttp()          // Perform the test through the mux.
 
-    
-        td.T.Logf("...end Customer.Setup\n")
     
 }
 
@@ -112,8 +100,6 @@ func (td *TestData_App01sqCustomer) ResponseBody() string {
     var str     string
 
     
-        td.T.Logf("Customer.ResponseBody()\n")
-    
     if td.Resp == nil {
         td.T.Fatalf("Error: Missing HTTP Response\n")
     }
@@ -125,8 +111,6 @@ func (td *TestData_App01sqCustomer) ResponseBody() string {
     str = string(body)
     td.T.Logf("\tResponse Body: %s\n", body)
 
-    
-        td.T.Logf("...end Customer.ResponseBody\n")
     
     return str
 }
@@ -140,15 +124,11 @@ func (td *TestData_App01sqCustomer) ResponseBody() string {
 func (td *TestData_App01sqCustomer) ServeHttp( ) {
 
     
-        td.T.Logf("Customer.ServeHttp()\n")
-    
 
     td.w = httptest.NewRecorder()
     td.Mux.ServeHTTP(td.w, td.Req)
     td.Resp = td.w.Result()
 
-    
-        td.T.Logf("...end Customer.ServeHttp\n")
     
 }
 

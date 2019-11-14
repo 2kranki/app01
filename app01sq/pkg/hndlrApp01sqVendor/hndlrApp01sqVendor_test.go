@@ -4,7 +4,7 @@
 // ioApp01sq contains all the functions
 // and data to interact with the SQL Database.
 
-// Generated: Mon Oct 28, 2019 08:40
+// Generated: Thu Nov 14, 2019 11:17
 
 package hndlrApp01sqVendor
 
@@ -43,8 +43,6 @@ type TestData_App01sqVendor struct {
 func (td *TestData_App01sqVendor) CheckStatus(status int) {
 
     
-        td.T.Logf("Vendor.CheckStatus()\n")
-    
     if td.Resp == nil {
         td.T.Fatalf("Error: Missing HTTP Response\n")
     }
@@ -53,8 +51,6 @@ func (td *TestData_App01sqVendor) CheckStatus(status int) {
         td.T.Fatalf("Error: Invalid Status Code of %d, needed %d\n", td.Resp.StatusCode, status)
     }
 
-    
-        td.T.Logf("...end Vendor.Setup\n")
     
 }
 
@@ -67,8 +63,6 @@ func (td *TestData_App01sqVendor) CheckStatus(status int) {
 func (td *TestData_App01sqVendor) GetReq(target string, body string) {
 
     
-        td.T.Logf("Vendor.Setup()\n")
-    
     if target == "" {
         td.T.Fatalf("Error: Missing Target String\n")
     }
@@ -76,8 +70,6 @@ func (td *TestData_App01sqVendor) GetReq(target string, body string) {
     td.Req = httptest.NewRequest(http.MethodGet, target, strings.NewReader(body))
     td.ServeHttp()          // Perform the test through the mux.
 
-    
-        td.T.Logf("...end Vendor.Setup\n")
     
 }
 
@@ -90,15 +82,11 @@ func (td *TestData_App01sqVendor) GetReq(target string, body string) {
 func (td *TestData_App01sqVendor) PostReq(target string, body string) {
 
     
-        td.T.Logf("Vendor.Setup()\n")
-    
 
     td.Req = httptest.NewRequest(http.MethodPost, target, strings.NewReader(body))
     td.Req.Header.Set("Content-Type", "application/x-www-form-urlencoded")
     td.ServeHttp()          // Perform the test through the mux.
 
-    
-        td.T.Logf("...end Vendor.Setup\n")
     
 }
 
@@ -112,8 +100,6 @@ func (td *TestData_App01sqVendor) ResponseBody() string {
     var str     string
 
     
-        td.T.Logf("Vendor.ResponseBody()\n")
-    
     if td.Resp == nil {
         td.T.Fatalf("Error: Missing HTTP Response\n")
     }
@@ -125,8 +111,6 @@ func (td *TestData_App01sqVendor) ResponseBody() string {
     str = string(body)
     td.T.Logf("\tResponse Body: %s\n", body)
 
-    
-        td.T.Logf("...end Vendor.ResponseBody\n")
     
     return str
 }
@@ -140,15 +124,11 @@ func (td *TestData_App01sqVendor) ResponseBody() string {
 func (td *TestData_App01sqVendor) ServeHttp( ) {
 
     
-        td.T.Logf("Vendor.ServeHttp()\n")
-    
 
     td.w = httptest.NewRecorder()
     td.Mux.ServeHTTP(td.w, td.Req)
     td.Resp = td.w.Result()
 
-    
-        td.T.Logf("...end Vendor.ServeHttp\n")
     
 }
 

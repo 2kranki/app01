@@ -4,7 +4,7 @@
 // ioApp01ma contains all the functions
 // and data to interact with the SQL Database.
 
-// Generated: Mon Oct 28, 2019 08:40
+// Generated: Thu Nov 14, 2019 11:17
 
 package hndlrApp01ma
 

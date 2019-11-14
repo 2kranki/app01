@@ -1,12 +1,12 @@
 #!/usr/bin/env python3
 # vi:nu:et:sts=4 ts=4 sw=4
 
-""" Utility Routines
+''' Utility Routines
 
 This module contains miscellaneous classes and functions used with in other
 scripts.
 
-"""
+'''
 
 
 #   This is free and unencumbered software released into the public domain.
@@ -35,294 +35,276 @@ scripts.
 #   For more information, please refer to <http://unlicense.org/>
 
 
-import      contextlib
-import      json
-import      os
-import      re
-import      stat
-import      subprocess
-import      sys
-import      time
+import json
+import os
+import subprocess
+import sys
 
 
-fDebug = False
-fForce = False
-fTrace = False
+debug_flag = False
+force_flag = False
+trace_flag = False
 
 
 #---------------------------------------------------------------------
-#       absolutePath -- Convert a Path to an absolute path
+#       absolute_path -- Convert a Path to an absolute path
 #---------------------------------------------------------------------
 
-def absolutePath(szPath, fCreateDirs=False):
-    """ Convert Path to an absolute path creating subdirectories if needed
+def absolute_path(path, create_dirs=False):
+    ''' Convert Path to an absolute path creating subdirectories if needed
 
     Returns:
-        Error object or None for successful completion
-    """
-    if fTrace:
-        print("absolutePath(%s)" % (szPath))
+        path string for successful completion or None for error
+    '''
+    if trace_flag:
+        print("absolutePath(%s)" % (path))
 
     # Convert the path.
-    szWork = os.path.normpath(szPath)
-    szWork = os.path.expanduser(szWork)
-    szWork = os.path.expandvars(szWork)
-    szWork = os.path.abspath(szWork)
+    work_path = os.path.normpath(path)
+    work_path = os.path.expanduser(work_path)
+    work_path = os.path.expandvars(work_path)
+    work_path = os.path.abspath(work_path)
 
-    if fCreateDirs:
-        szDir = os.path.dirname(szWork)
-        if len(szDir) > 0:
-            if not os.path.exists(szDir):
-                os.mkdirs(szDir)
+    if create_dirs:
+        dir_path = os.path.dirname(work_path)
+        if len(dir_path) > 0:
+            if not os.path.exists(dir_path):
+                if trace_flag:
+                    print("\tCreating directories:", dir_path)
+                os.makedirs(dir_path)
 
     # Return to caller.
-    if fTrace:
-        print("...end of absolutePath:", szWork)
-    return szWork
-
-
-#---------------------------------------------------------------------
-#       buildGoApp -- Build a Golang Application
-#---------------------------------------------------------------------
-
-def         buildGoApp(szAppDir, szAppName):
-    """ Build a golang application including reformatting the source
-
-    This builds go packages located in the 'cmd'/szAppName directory.
-    The built program can be found at $TMP/bin/szAppName.
-
-    Args:
-        szAppDir (str): Application Directory where 'main.go' can be
-                        found.
-        szAppName (str): Application Name
-
-    Returns:
-        Error object or None for successful completion
-    """
-
-    curDir = os.getcwd()
-    tmpDir = None
-    if sys.platform == 'darwin':
-        # /tmp is easiest to use from bash/zsh which really is /private/tmp.
-        # The other options are:
-        # /var/tmp
-        # ${TMPDIR}
-        tmpDir = '/tmp'
-    if tmpDir == None:
-        tmpDir = os.getenv('TMP')
-    if tmpDir == None:
-        tmpDir = os.getenv('TEMP')
-    if tmpDir == None:
-        return Error("Error: Can't find temporary Directory, TMP or TEMP, in environment!")
-    appDirAbs = absolutePath(os.path.join(curDir, szAppDir, szAppName))
-    if fTrace:
-        print("\ttmpDir:", tmpDir)
-        print("\tappDirAbs:", appDirAbs)
-
-    # Reformat the source code.
-    err = None
-    try:
-        szCmd = "go fmt {0}".format(os.path.join(curDir, szAppDir, szAppName, '*.go'))
-        if fTrace:
-            print("Issuing: {0}".format(szCmd))
-        if fDebug:
-            print("\t Debug: %s".format(szCmd))
-        else:
-            os.system(szCmd)
-    except Exception as e:
-        if fTrace:
-            print("Execption:",e)
-        err = Error("Error: '%s' failed!" % szCmd)
-    if err:
-        return err
-
-    # Build the packages.
-    try:
-        szCmd = 'go build -o {0} -v {1}'.format(
-                    os.path.join(tmpDir, 'bin', szAppName),
-                    os.path.join(curDir, szAppDir, szAppName, '*.go'))
-        # Setup output directory if needed.
-        tmpBin = os.path.join(tmpDir, 'bin')
-        if not os.path.exists(tmpBin):
-            if fTrace:
-                print("Making: {0}".format(tmpBin))
-            os.makedirs(tmpBin, 0o777)
-        # Build the packages.
-        if fTrace:
-            print("Issuing: {0}".format(szCmd))
-        if fDebug:
-            print("\t Debug: %s".format(szCmd))
-        else:
-            os.system(szCmd)
-    except Exception as e:
-        if fTrace:
-            print("Execption:",e)
-        err = Error("Error: '%s' failed!" % szCmd)
-    if err:
-        return err
-
-    return None
+    if trace_flag:
+        print("...end of absolutePath:", work_path)
+    return work_path
 
 
 #---------------------------------------------------------------------
 #                       Command Class
 #---------------------------------------------------------------------
 
-class       Cmd(object):
-    """
-    """
+class Cmd:
 
     def __init__(self, **kwargs):
         #super(cmd, self).__init(**kwargs)
         pass
 
     def cmd(self, **kwargs):
-        """ Command to be executed.
+        ''' Command to be executed.
             Warning - Commands should override this method.
-        """
+        '''
         raise NotImplementedError
 
     def help(self):
-        """ Commands should override this method.
-        """
+        ''' Commands should override this method.
+        '''
         raise NotImplementedError
 
     def name(self):
-        """ Commands should override this method.
-        """
+        ''' Commands should override this method.
+        '''
         raise NotImplementedError
 
-    def numArgs(self):
-        """ Commands should override this method.
-        """
+    def num_args(self):
+        ''' Commands should override this method.
+        '''
         raise NotImplementedError
 
     def run(self, *argv, **kwargs):
-        """ Run the cmd
-        """
-        iRc = self.cmd(**kwargs)
-        return iRc
+        ''' Run the cmd
+        '''
+        return self.cmd(**kwargs)
 
 
 #---------------------------------------------------------------------
 #                       Commands Class
 #---------------------------------------------------------------------
 
-class       Cmds(object):
-    """
-    """
+class Cmds:
 
     def __init__(self, *argv, **kwargs):
-        self.oCmdDict = {}
+        self.cmd_dict = {}
         for arg in argv:
-            self.oCmdDict[arg.name()] = arg
-
+            self.cmd_dict[arg.name()] = arg
 
     def __contains__(self, key):
-        if key in self.oCmdDict:
-            return True
-        else:
-            return False
+        return key in self.cmd_dict
 
     def __getitem__(self, key):
-        if self.oCmdDict.has_key(key):
-            return self.oCmdDict[key]
+        if key in self.cmd_dict:
+            return self.cmd_dict[key]
         else:
             raise IndexError
 
     def __setitem__(self, key, value):
-        self.oCmdDict[key] = value
+        self.cmd_dict[key] = value
 
-    def doCmd(self, name, *argv, **kwargs):
-        if name in self.oCmdDict:
-            iRc = self.oCmdDict[name].run(**kwargs)
-            return iRc
+    def do_cmd(self, name, *argv, **kwargs):
+        if name in self.cmd_dict:
+            irc = self.cmd_dict[name].run(**kwargs)
+            return irc
         else:
             raise IndexError
 
-    def doCmds(self, cmds, *argv, **kwargs):
-        """ Execute a group of commands
+    def do_cmds(self, cmds, *argv, **kwargs):
+        ''' Execute a group of commands
 
         :param cmds:
             A non-empty list of command names and arguments
-        """
+        '''
         if len(cmds) > 0:
             i = 0
             while i < len(cmds):
-                if oArgs.debug:
-                    print("Arg:", cmds[i])
+                if debug_flag:
+                    print("cmd:", cmds[i])
                 # By adjusting i, we can have commands with parameters.
-                if cmds[i] in self.oCmdDict:
-                    iRc = self.oCmdDict[cmds[i]].run(**kwargs)
-                    if iRc > 0:
+                if cmds[i] in self.cmd_dict:
+                    irc = self.cmd_dict[cmds[i]].run(**kwargs)
+                    if irc > 0:
                         break
                 else:
                     print("Error - Invalid Command - {}".format(cmds[i]))
-                    iRc = 8
+                    irc = 8
                     break
                 i += 1
         else:
             raise RuntimeError
-        return iRc
+        return irc
 
-    def cmdDescs(self):
-        """ Build the description of the current commands in this object
-        """
-        szDesc = "Commands:\n"
-        for key in sorted(self.oCmdDict.keys()):
-            szName = self.oCmdDict[key].name()
-            szHelp = self.oCmdDict[key].help()
-            szDesc += "\t{} - {}\n".format(szName, szHelp)
-        szDesc += '\n\n'
-        return szDesc
+    def cmd_descs(self):
+        ''' Build the description of the current commands in this object
+        '''
+        desc = "Commands:\n"
+        for key in sorted(self.cmd_dict.keys()):
+            name = self.cmd_dict[key].name()
+            help = self.cmd_dict[key].help()
+            desc += "\t{} - {}\n".format(name, help)
+        desc += '\n\n'
+        return desc
 
 
 #---------------------------------------------------------------------
 #                           Docker Container
 #---------------------------------------------------------------------
 
-class   DockerContainer(object):
-    """
-    """
+class DockerContainer:
+    '''
+        This object provides for manipulating docker containers using the
+        'docker container' cli command.
+        This object was written so that the user would not be required
+        to install the python docker api.  Otherwise, we would have
+        used it.
+    '''
 
-    def run(self, szName, szTag, fForce=False):
-        ''' Pull a Docker Image
+    def __init__(self, name, tag=None):
+        ''' Set default parameters.
         '''
-        di = DockerImage()
-        image = di.Find(szName, szTag)
-        if image == None:
+        self._docker_name = name
+        if tag is None:
+            self._docker_tag = 'latest'
+        else:
+            self._docker_tag = tag
+
+    def _container_name(self):
+        container_name = self._docker_name
+        if len(container_name) > 0:
+            container_name += '_1'
+        return container_name
+
+    def _image_name(self):
+        image_name = self._docker_name
+        if len(self._docker_tag) > 0:
+            image_name += ':' + self._docker_tag
+        return image_name
+
+    def build(self, name=None, path='./Dockerfile', context='.', **kwargs):
+        '''  Build a docker container
+
+            :param name:
+                container name and tag for the new container
+            :param path:
+                path of the Dockerfile to use
+            :param context:
+                directory path or URL of where the container's data is to come
+                from
+        '''
+
+        if debug_flag:
+            print("build(%s)" % (name))
+
+        # Perform the specified actions.
+        cmd_line = "docker image build --file %s -t %s %s" % (
+                        path, name, context)
+        rc = 0                  # Assume that it works
+        try:
+            if debug_flag:
+                print("Debug:", cmd_line)
+            else:
+                rc = do_cmd(cmd_line)
+        finally:
+            pass
+
+        return rc
+
+    def kill(self, force_flag=False):
+        ''' Kill a Docker Container and/or delete it.
+        Returns:
+            0 - Successful Completion
+            4 - Error occurred
+        '''
+        container_name = self._container_name()
+
+        irc = 0
+        if len(container_name) > 0:
+            cmd_line = 'docker container rm -f {0}'.format(container_name)
+            if trace_flag:
+                print("Issuing:", cmd_line)
+            try:
+                irc = do_cmd(cmd_line)
+            except OSError:
+                irc = 4
+
+        return irc
+
+    def run(self, parms, force_flag=False):
+        ''' Run a Docker Container
+        '''
+        image_name = self._image_name()
+        self.kill()
+
+        di = DockerImage(self._docker_name, self._docker_tag)
+        image = di.find()
+        if image is None:
             pass
         else:
-            if fForce:
+            if force_flag:
                 pass
             else:
                 return
 
-        szImageName = szName
-        if len(szTag):
-            szImageName += ':' + szTag
-        szContainerName = szImageName + '_1'
 
         # Get rid of any prior images if necessary
-        if image == None:
+        if image is None:
             pass
         else:
-            szCmd = 'docker image rm -f {0}'.format(szImageName)
-            if fTrace:
-                print("Issuing: {0}".format(szCmd))
+            cmd_line = 'docker image rm -f {0}'.format(image_name)
+            if trace_flag:
+                print("Issuing: {0}".format(cmd_line))
             try:
-                os.system(szCmd)
+                irc = do_cmd(cmd_line)
             except OSError:
-                pass
+                irc = 4
 
         # Pull the image
-        szCmd = "docker image pull {0} --format='{{json .}}'".format(szImageName)
-        if fTrace:
-            print("Issuing: {0}".format(szCmd))
+        di.pull()
+        cmd_line = "docker image pull {0} --format='{{json .}}'".format(
+                    image_name)
+        if trace_flag:
+            print("Issuing: {0}".format(cmd_line))
         try:
-            os.system(szCmd)
+            irc = do_cmd(cmd_line)
         except OSError:
-            pass
+            irc = 4
 
         return
 
@@ -331,133 +313,164 @@ class   DockerContainer(object):
 #                           Docker Image
 #---------------------------------------------------------------------
 
-class   DockerImage(object):
-    """
-    """
+class DockerImage:
+    '''
+        This object provides for manipulating docker images using the
+        'docker image' cli command.
+        This object was written so that the user would not be required
+        to install the python docker api.  Otherwise, we would have
+        used it.
+    '''
 
-    def Build(self, szName, szTag, szDockerFilePath='.', fForce=False):
-        ''' Build a current Docker Image
+    def __init__(self, name, tag=None):
+        ''' Set default parameters.
         '''
-        imageInfo = None
+        self._docker_name = name
+        if tag is None:
+            self._docker_tag = 'latest'
+        else:
+            self._docker_tag = tag
 
-        szImageName = szName
-        if len(szTag):
-            szImageName += ':' + szTag
+    def _image_name(self):
+        image_name = self._docker_name
+        if len(self._docker_tag) > 0:
+            image_name += ':' + self._docker_tag
+        return image_name
 
-        image = self.Find(szName, szTag)
-        if image == None:
+    def build(self, docker_file_path='.', force_flag=False):
+        ''' Build a current Docker Image
+            Returns:
+                None or Error object
+        '''
+        image_name = None
+        print("force_flag:", force_flag)
+
+        image_name = self._docker_name
+        if len(self._docker_tag) > 0 and self._docker_tag != 'latest':
+            image_name += ':' + self._docker_tag
+
+        image = self.find()
+        if image is None:
             pass
         else:
-            if fForce:
+            if force_flag:
                 pass
             else:
-                return Error("Error: image {0} already exists!".format(szImageName))
+                return Error("Error: image {0} already exists!".format(
+                                image_name))
 
         # Get rid of any prior images if necessary
-        if image == None:
+        if image is None:
             pass
         else:
-            szCmd = 'docker image rm -f {0}'.format(szImageName)
-            if fDebug:
-                print("\tDebug: {0}".format(szCmd))
+            cmd_line = 'docker image rm -f {0}'.format(image_name)
+            if debug_flag:
+                print("\tDebug: {0}".format(cmd_line))
             try:
-                if fTrace:
-                    print("\tIssuing: {0}".format(szCmd))
-                os.system(szCmd)
+                if trace_flag:
+                    print("\tIssuing: {0}".format(cmd_line))
+                irc = do_cmd(cmd_line)
+                if not irc == 0:
+                    return Error("Error: could not remove image {0}".format(
+                                    image_name))
             except OSError:
-                return Error("Error: could not remove image {0}".format(szImageName))
+                return Error("Error: could not remove image {0}".format(
+                                image_name))
 
         # Pull the image
-        szCmd = "docker image build -t {0} {1}".format(szImageName, szDockerFilePath)
-        if fDebug:
-            print("\tDebug: {0}".format(szCmd))
+        cmd_line = "docker image build -t {0} {1}".format(
+                        image_name, docker_file_path)
+        if debug_flag:
+            print("\tDebug: {0}".format(cmd_line))
         try:
-            if fTrace:
-                print("\tIssuing: {0}".format(szCmd))
-            os.system(szCmd)
+            if trace_flag:
+                print("\tIssuing: {0}".format(cmd_line))
+            irc = do_cmd(cmd_line)
+            if not irc == 0:
+                return Error("Error: could not build image {0}".format(
+                                image_name))
         except OSError:
-                return Error("Error: could not build image {0}".format(szImageName))
+            return Error("Error: could not build image {0}".format(image_name))
 
         return None
 
-
-    def Find(self, szName, szTag):
+    def find(self):
         ''' Find information about a current Docker Image
         '''
-        imageInfo = None
+        image_info = None
 
-        images = self.Images()
-        if len(images):
+        images = self.images()
+        if len(images) > 0:
             for image in images:
-                if szName == image['Repository'] and szTag == image['Tag']:
-                    imageInfo = image
+                if self._docker_name == image['Repository']:
+                    if self._docker_tag == image['Tag']:
+                        image_info = image
 
-        return imageInfo
+        return image_info
 
 
-    def Images(self):
-        ''' Get Docker Image(s) Summary Data '''
+    def images(self):
+        ''' Get Docker Image(s) Summary Data
+        '''
 
-        szCmd = "docker image ls --format='{{json .}}'"
-        if fDebug:
-            print("Issuing: {0}".format(szCmd))
-        result = subprocess.getstatusoutput(szCmd)
-        if fTrace:
+        cmd_line = "docker image ls --format='{{json .}}'"
+        if debug_flag:
+            print("Issuing: {0}".format(cmd_line))
+        result = subprocess.getstatusoutput(cmd_line)
+        if trace_flag:
             print("\tResult = %s, %s..." % (result[0], result[1]))
-        iRC = result[0]
-        szOutput = result[1]
-        lines = szOutput.splitlines(False)
-        szInput = '['
+        irc = result[0]
+        output = result[1]
+        lines = output.splitlines(False)
+        input = '['
         for l in lines:
-            szInput += l + ','
-        szInput = szInput[:-1] + ']'
+            input += l + ','
+        input = input[:-1] + ']'
 
         jsonImages = None
-        if len(szOutput):
-            jsonImages = json.loads(szInput)
+        if len(output) > 0:
+            jsonImages = json.loads(input)
 
         return jsonImages
 
 
-    def Pull(self, szName, szTag):
+    def pull(self):
         ''' Pull a Docker Image
         '''
 
-        image = self.Find(szName, szTag, fForce=False)
-        if image == None:
+        image = self.find()
+        if image is None:
             pass
         else:
-            if fForce:
+            if force_flag:
                 pass
             else:
                 return
 
-        szImageName = szName
-        if len(szTag):
-            szImageName += ':' + szTag
-
         # Get rid of any prior images if necessary
-        if image == None:
+        image_name = self._image_name()
+        if image is None:
             pass
         else:
-            szCmd = 'docker image rm -f {0}'.format(szImageName)
-            if fDebug:
-                print("\tDebug: {0}".format(szCmd))
+            cmd_line = 'docker image rm -f {0}'.format(image_name)
+            if debug_flag:
+                print("\tDebug: {0}".format(cmd_line))
             try:
-                if fTrace:
-                    print("\tIssuing: {0}".format(szCmd))
-                os.system(szCmd)
+                if trace_flag:
+                    print("\tIssuing: {0}".format(cmd_line))
+                irc = do_cmd(cmd_line)
             except OSError:
                 pass
 
         # Pull the image
-        szCmd = "docker image pull {0} --format='{{json .}}'".format(szImageName)
-        if fDebug:
-            print("\tDebug: {0}".format(szCmd))
+        cmd_line = "docker image pull {0} --format='{{json .}}'".format(
+                    image_name)
+        if debug_flag:
+            print("\tDebug: {0}".format(cmd_line))
         try:
-            if fTrace:
-                print("\tIssuing: {0}".format(szCmd))
-            os.system(szCmd)
+            if trace_flag:
+                print("\tIssuing: {0}".format(cmd_line))
+            irc = do_cmd(cmd_line)
         except OSError:
             pass
 
@@ -468,7 +481,7 @@ class   DockerImage(object):
 #                           Error Class
 #---------------------------------------------------------------------
 
-class   Error(object):
+class Error:
 
     def __init__(self, msg=None):
         ''' Convert Path to an absolute path.
@@ -485,52 +498,153 @@ class   Error(object):
 #                           OS Execute
 #---------------------------------------------------------------------
 
-def DoSys(szCmd, cwd=None):
-    """ Execute an O/S command capturing output.
+def do_cmd(cmd_line, cwd='.'):
+    ''' Execute an O/S command without capturing input or output.
 
-    Returns:
-        r.returncode
-        r.stdout
-        r.stderr
-    """
-    r = subprocess.run(szCmd,cwd=cwd,stdout=subprocess.PIPE,stderr=subprocess.PIPE,shell=True)
+        Returns:
+            command return code
+    '''
+    r = subprocess.run(cmd_line, cwd=cwd, shell=True)
+    return r.returncode
+
+
+def do_sys(cmd_line, cwd='.'):
+    ''' Execute an O/S command capturing output.
+
+        Returns:
+            r.returncode
+            r.stdout
+            r.stderr
+    '''
+    r = subprocess.run(cmd_line, cwd=cwd, stdout=subprocess.PIPE,
+                       stderr=subprocess.PIPE, shell=True)
     return r
 
 
 #---------------------------------------------------------------------
-#   goget -- Go Get Specific Packages if not already downloaded
+#           go_build -- Build a Golang Application
 #---------------------------------------------------------------------
 
-def         goget(pkgDir, szGoDir=None):
-    ''' Go get a go package if it is not already loaded.
-        The Go Directory is composed of 'bin', 'pkg' and 'src'. All packages
-        are loaded into 'src'.  So, we can just check there to see if the
-        package has already been loaded or not.  If the package is in a
-        repository, the full path must be used excluding the repository type.
-        example:
-            goget('github.com/2kranki/go_util')
-    '''
-    if szGoDir == None:
-        szGoDir = '~/go'
-    goPkgDir = absolutePath(os.path.join(szGoDir, 'src', pkgDir))
+def go_build_app(app_dir, app_name):
+    ''' Build a golang application including reformatting the source
 
-    if not os.path.exists(goPkgDir) :
-        szCmd = 'go get {0}'.format(pkgDir)
-        if fDebug:
-            print("\t Debug: %s".format(szCmd))
+    This builds go packages located in the 'cmd'/szAppName directory.
+    The built program can be found at $TMP/bin/szAppName.
+
+    Args:
+        app_dir (str): Application Directory where 'main.go' can be
+                        found.
+        app_name (str): Application Name
+
+    Returns:
+        Error object or None for successful completion
+    '''
+
+    cur_dir = os.getcwd()
+    tmp_dir = None
+    if sys.platform == 'darwin':
+        # /tmp is easiest to use from bash/zsh which really is /private/tmp.
+        # The other options are:
+        # /var/tmp
+        # ${TMPDIR}
+        tmp_dir = '/tmp'
+    if tmp_dir is None:
+        tmp_dir = os.getenv('TMP')
+    if tmp_dir is None:
+        tmp_dir = os.getenv('TEMP')
+    if tmp_dir is None:
+        return Error("Error: Can't find temporary Directory,"
+                     " TMP or TEMP, in environment!")
+    app_dir_abs = absolute_path(os.path.join(cur_dir, app_dir, app_name))
+    if trace_flag:
+        print("\ttmp_dir:", tmp_dir)
+        print("\tapp_dir_abs:", app_dir_abs)
+
+    # Reformat the source code.
+    err = None
+    try:
+        cmd_line = "go fmt {0}".format(os.path.join(cur_dir, app_dir,
+                                       app_name, '*.go'))
+        if trace_flag:
+            print("Issuing: {0}".format(cmd_line))
+        if debug_flag:
+            print("\t Debug: %s".format(cmd_line))
         else:
-            os.system(szCmd)
+            irc = do_cmd(cmd_line)
+            if not irc == 0:
+                return Error("Error: '%s' failed!" % cmd_line)
+    except Exception as e:
+        if trace_flag:
+            print("Execption:", e)
+        err = Error("Error: '%s' failed!" % cmd_line)
+    if err:
+        return err
+
+    # Build the packages.
+    try:
+        cmd_line = 'go build -o {0} -v {1}'.format(
+            os.path.join(tmp_dir, 'bin', app_name),
+            os.path.join(cur_dir, app_dir, app_name, '*.go'))
+        # Setup output directory if needed.
+        tmp_bin = os.path.join(tmp_dir, 'bin')
+        if not os.path.exists(tmp_bin):
+            if trace_flag:
+                print("Making: {0}".format(tmp_dir))
+            os.makedirs(tmp_bin, 0o777)
+        # Build the packages.
+        if trace_flag:
+            print("Issuing: {0}".format(cmd_line))
+        if debug_flag:
+            print("\t Debug: %s".format(cmd_line))
+        else:
+            irc = do_cmd(cmd_line)
+            if not irc == 0:
+                return Error("Error: '%s' failed!" % cmd_line)
+    except Exception as e:
+        if trace_flag:
+            print("Execption:", e)
+        err = Error("Error: '%s' failed!" % cmd_line)
+    if err:
+        return err
 
     return None
 
 
-################################################################################
+#---------------------------------------------------------------------
+#   go_get -- Go Get Specific Packages if not already downloaded
+#---------------------------------------------------------------------
+
+def go_get(pkg_dir, go_dir=None):
+    ''' Go get a go package if it is not already loaded.
+        The Go Directory is composed of 'bin', 'pkg' and 'src'. All
+        packages are loaded into 'src'.  So, we can just check there
+        to see if the package has already been loaded or not.  If the
+        package is in a repository, the full path must be used excluding
+        the repository type.
+        example:
+            goget('github.com/2kranki/go_util')
+    '''
+
+    if go_dir is None:
+        go_dir = '~/go'
+    go_pkg_dir = absolute_path(os.path.join(go_dir, 'src', pkg_dir))
+
+    if not os.path.exists(go_pkg_dir):
+        cmd_line = 'go get {0}'.format(pkg_dir)
+        if debug_flag:
+            print("\t Debug: %s".format(cmd_line))
+        else:
+            do_cmd(cmd_line)
+
+    return None
+
+
+######################################################################
 #                           Command-line interface
-################################################################################
+######################################################################
 
 if '__main__' == __name__:
-    print("Error: Sorry, util.py provides classes and functions for use by other scripts.")
+    print("Error: Sorry, util.py provides classes and functions "
+          "for use by other scripts.")
     print("\tIt is not meant to be run by itself.")
     sys.exit(4)
-
-

@@ -1,9 +1,19 @@
 // vi:nu:et:sts=4 ts=4 sw=4
 // See License.txt in main repository directory
 
-// SQL Application main program
+//              Application main program
+// This module handles the CLI parameters, displaying help
+// if needed. It then passes control to mainExec for the
+// primary application processing.
 
-// Generated: Mon Oct 28, 2019 08:40 for mariadb Database
+// Notes:
+//  1.  If HTTPS is specified, we will default to looking for key.pem and
+//      cert.pem in the certDir ("/tmp/cert" default). If the directory
+//      or the required files are not present, we will generate temporary
+//      versions of them in the specified directory using openssl with
+//      default parameters.
+
+// Generated: Thu Nov 14, 2019 11:17 for mariadb Database
 
 package main
 
@@ -45,11 +55,11 @@ func usage() {
 
 }
 
-func main() {
-	var wrk string
+// parseFlags parses the command line flags. If there are any errors,
+// it displays the usage help and exits.
+func parseFlags() {
 
 	// Set up flag variables
-	log.Printf("\tSetting up the flag variables...\n")
 
 	flag.Usage = usage
 	flag.BoolVar(&debug, "debug", true, "enable debugging")
@@ -71,14 +81,21 @@ func main() {
 	flag.StringVar(&baseDir, "basedir", ".", "Base Directory for Templates, HTML and CSS")
 
 	// Parse the flags and check them
-	log.Printf("\tParsing the flags...\n")
+
 	flag.Parse()
 	if debug {
 		log.Println("\tIn Debug Mode...")
 	}
 
+}
+
+// envOverride looks for certain environment variables and if found
+// overrides the flags that they speciffy.
+func envOverride() {
+	var wrk string
+
 	// Collect variables from Environment and override value if present.
-	log.Printf("\tCollecting the variables from Environment and override value if present...\n")
+
 	wrk = os.Getenv("APP01MA_HTTP_PORT")
 	if len(wrk) > 0 {
 		http_port = wrk
@@ -117,7 +134,17 @@ func main() {
 		db_name = wrk
 	}
 
+}
+
+// main is the main entry point of the application. It parses the
+// CLI flags, overrides any flags specified by Environment variables
+// and executes the the main application logic.
+func main() {
+
+	parseFlags()
+	envOverride()
+
 	// Execute the main process.
-	log.Printf("\tExecuting the main process...\n")
+
 	exec()
 }

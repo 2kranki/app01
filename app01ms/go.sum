@@ -1,5 +1,5 @@
-github.com/2kranki/go_util v1.0.3 h1:qYrME1kX/15WUdiL4kYoBMhuAQjSoUsPbXsxk4FV1yA=
-github.com/2kranki/go_util v1.0.3/go.mod h1:s75XI12NiBj4qcG6D2ip6YfXMTyfcPS5xm2yk8nCXkg=
+github.com/2kranki/go_util v1.0.4 h1:pUgYcsLzSoAZLhSceFvWiiAtpQB3q+8eNROZGbwVCF4=
+github.com/2kranki/go_util v1.0.4/go.mod h1:s75XI12NiBj4qcG6D2ip6YfXMTyfcPS5xm2yk8nCXkg=
 github.com/2kranki/jsonpreprocess v1.0.1 h1:cwZfoelBoT9NhGemaW/KzQk/jvtUV276RuGX53kCZEs=
 github.com/2kranki/jsonpreprocess v1.0.1/go.mod h1:YeGfkfW78LfYzlCuRbrav4uPPCC8XdxHCoqhq0fczqU=
 github.com/denisenkom/go-mssqldb v0.0.0-20191001013358-cfbb681360f0 h1:epsH3lb7KVbXHYk7LYGN5EiE0MxcevHU85CKITJ0wUY=

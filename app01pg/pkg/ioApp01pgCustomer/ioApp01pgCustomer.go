@@ -16,7 +16,7 @@
 
 
 // 2.   SQL requires OFFSET to follow LIMIT optionally (ie LIMIT n [OFFSET n])
-// Generated: Mon Oct 28, 2019 08:40 for postgres Database
+// Generated: Thu Nov 14, 2019 11:17 for postgres Database
 
 package ioApp01pgCustomer
 
@@ -25,9 +25,9 @@ import (
 	"fmt"
     _ "github.com/shopspring/decimal"
     "log"
-    _ "strconv"
+	_ "strconv"
 
-    "github.com/2kranki/go_util"
+    
 	_ "github.com/lib/pq"
     "app01pg/pkg/App01pgCustomer"
     "app01pg/pkg/ioApp01pg"
@@ -50,15 +50,15 @@ func (io *IO_App01pgCustomer) RowDelete(rcd *App01pgCustomer.App01pgCustomer) er
     var err         error
     var sqlStmt = "DELETE FROM public.customer WHERE num = $1;\n"
 
-    log.Printf("ioCustomer.RowDelete()\n")
+    
 
 	err = io.io.Exec(sqlStmt, rcd.Num)
 	if err != nil {
-        log.Printf("...end ioCustomer.RowDelete(Error:500) - Internal Error\n")
+        
 		return fmt.Errorf("500. Internal Server Error")
 	}
 
-    log.Printf("...end ioCustomer.RowDelete()\n")
+    
 	return nil
 }
 
@@ -72,13 +72,13 @@ func (io *IO_App01pgCustomer) RowFind(rcd *App01pgCustomer.App01pgCustomer) erro
     var err         error
     var sqlStmt     = "SELECT * FROM public.customer WHERE num = $1;\n"
 
-    log.Printf("ioCustomer.RowFind(%+v)\n", rcd)
+    
 
 	row := io.io.QueryRow(sqlStmt, rcd.Num)
 
 	err = row.Scan(&rcd.Num, &rcd.Name, &rcd.Addr1, &rcd.Addr2, &rcd.City, &rcd.State, &rcd.Zip, &rcd.Curbal)
 
-    log.Printf("...end ioCustomer.RowFind(%s)\n", util.ErrorString(err))
+    
 	return err
 }
 
@@ -93,17 +93,17 @@ func (io *IO_App01pgCustomer) RowFirst(rcd *App01pgCustomer.App01pgCustomer) err
     var err         error
     var sqlStmt = "SELECT * FROM public.customer ORDER BY num ASC LIMIT 1;\n"
 
-    log.Printf("ioCustomer.RowFirst()\n")
+    
 
     row := io.io.QueryRow(sqlStmt)
 
 	err = row.Scan(&rcd.Num, &rcd.Name, &rcd.Addr1, &rcd.Addr2, &rcd.City, &rcd.State, &rcd.Zip, &rcd.Curbal)
 	if err == sql.ErrNoRows {
-        log.Printf("\tNo Rows found!\n")
+        
 	    err = nil
     }
 
-    log.Printf("...end ioCustomer.RowFirst(%s)\n", util.ErrorString(err))
+    
     return err
 }
 
@@ -115,19 +115,18 @@ func (io *IO_App01pgCustomer) RowInsert(d *App01pgCustomer.App01pgCustomer) erro
     var err     error
     var sqlStmt = "INSERT INTO public.customer (num, name, addr1, addr2, city, state, zip, curbal) VALUES ($1, $2, $3, $4, $5, $6, $7, $8);\n"
 
-    log.Printf("ioCustomer.RowInsert(%+v)\n", d)
-        log.Printf("\tSQL:\n%s\n", sqlStmt)
+    
 
     // Validate the input record.
 
     // Add it to the table.
     err = io.io.Exec(sqlStmt, d.Num, d.Name, d.Addr1, d.Addr2, d.City, d.State, d.Zip, d.Curbal)
 	if err != nil {
-    log.Printf("...end ioCustomer.RowInsert(Error:500) - Internal Error\n")
+    
 		err = fmt.Errorf("500. Internal Server Error. %s\n", err.Error())
 	}
 
-    log.Printf("...end ioCustomer.RowInsert(%s)\n", util.ErrorString(err))
+    
 	return err
 }
 
@@ -139,16 +138,15 @@ func (io *IO_App01pgCustomer) RowLast(rcd *App01pgCustomer.App01pgCustomer) erro
     var err         error
     var sqlStmt = "SELECT * FROM public.customer ORDER BY num DESC LIMIT 1;\n"
 
-    log.Printf("ioCustomer.RowLast()\n")
     row := io.io.QueryRow(sqlStmt)
 
 	err = row.Scan(&rcd.Num, &rcd.Name, &rcd.Addr1, &rcd.Addr2, &rcd.City, &rcd.State, &rcd.Zip, &rcd.Curbal)
 	if err == sql.ErrNoRows {
-        log.Printf("\tNo Rows found!\n")
+        
 	    err = nil
     }
 
-    log.Printf("...end ioCustomer.RowLast(%s)\n", util.ErrorString(err))
+    
     return err
 }
 
@@ -162,7 +160,7 @@ func (io *IO_App01pgCustomer) RowNext(rcd *App01pgCustomer.App01pgCustomer) erro
     var err         error
     var sqlStmt = "SELECT * FROM public.customer WHERE num > $1 ORDER BY num ASC LIMIT 1;\n"
 
-    log.Printf("ioCustomer.RowNext(%+v)\n", rcd)
+    
 
     row := io.io.QueryRow(sqlStmt, rcd.Num)
 
@@ -171,7 +169,7 @@ func (io *IO_App01pgCustomer) RowNext(rcd *App01pgCustomer.App01pgCustomer) erro
 	    err = io.RowFirst(rcd)
 	}
 
-    log.Printf("...end ioCustomer.RowNext(%s)\n", util.ErrorString(err))
+    
     return err
 }
 
@@ -188,7 +186,7 @@ func (io *IO_App01pgCustomer) RowPage(offset int, limit int) ([]App01pgCustomer.
     var sqlStmt = "SELECT * FROM public.customer ORDER BY num ASC LIMIT $1 OFFSET $2;\n"
     data := []App01pgCustomer.App01pgCustomer{}
 
-    log.Printf("ioCustomer.RowPage(%d,%d)\n",offset,limit)
+    
 
     err = io.io.Query(
                     sqlStmt,
@@ -204,7 +202,7 @@ func (io *IO_App01pgCustomer) RowPage(offset int, limit int) ([]App01pgCustomer.
     limit,
                     offset)
 
-    log.Printf("...end ioCustomer.RowPage(%s)\n", util.ErrorString(err))
+    
     return data, err
 }
 
@@ -216,7 +214,7 @@ func (io *IO_App01pgCustomer) RowPrev(rcd *App01pgCustomer.App01pgCustomer) erro
     var err         error
     var sqlStmt = "SELECT * FROM public.customer WHERE num < $1 ORDER BY num DESC LIMIT 1;\n"
 
-    log.Printf("ioCustomer.RowPrev(%+v)\n", rcd)
+    
 
     row := io.io.QueryRow(sqlStmt, rcd.Num)
 
@@ -225,7 +223,7 @@ func (io *IO_App01pgCustomer) RowPrev(rcd *App01pgCustomer.App01pgCustomer) erro
 	    err = io.RowLast(rcd)
 	}
 
-    log.Printf("...end ioCustomer.RowPrev(%s)\n", util.ErrorString(err))
+    
     return err
 }
 
@@ -237,18 +235,18 @@ func (io *IO_App01pgCustomer) RowUpdate(d *App01pgCustomer.App01pgCustomer) erro
     var err     error
     var sqlStmt = "INSERT INTO public.customer (num, name, addr1, addr2, city, state, zip, curbal) VALUES ($1, $2, $3, $4, $5, $6, $7, $8);\n"
 
-    log.Printf("ioCustomer.RowUpdate(%+v)\n", d)
+    
 
     // Validate the input record.
 
     // Add it to the table.
     err = io.io.Exec(sqlStmt, d.Num, d.Name, d.Addr1, d.Addr2, d.City, d.State, d.Zip, d.Curbal)
 	if err != nil {
-    log.Printf("...end ioCustomer.RowUpdate(Error:500) - Internal Error\n")
+    
 		err = fmt.Errorf("500. Internal Server Error. %s\n", err.Error())
 	}
 
-    log.Printf("...end ioCustomer.RowUpdate(%s)\n", util.ErrorString(err))
+    
 	return err
 }
 
@@ -262,18 +260,17 @@ func (io *IO_App01pgCustomer) TableCount( ) (int, error) {
     var count       int
     var sqlStmt = "SELECT COUNT(*) FROM public.customer;\n"
 
-    log.Printf("ioCustomer.TableCount()\n")
+    
 
     row := io.io.QueryRow(sqlStmt)
 
 	err = row.Scan(&count)
     if err != nil {
         
-            log.Printf("...end ioCustomer.TableCount(%s) %d\n", util.ErrorString(err), count)
         return 0, err
     }
 
-    log.Printf("...end ioCustomer.TableCount(%s) %d\n", util.ErrorString(err), count)
+    
     return count, err
 }
 
@@ -287,17 +284,16 @@ func (io *IO_App01pgCustomer) TableCreate() error {
     var sqlStmt = "CREATE TABLE IF NOT EXISTS public.customer (\n\tnum\tINT NOT NULL,\n\tname\tVARCHAR(30),\n\taddr1\tVARCHAR(30),\n\taddr2\tVARCHAR(30),\n\tcity\tVARCHAR(20),\n\tstate\tVARCHAR(10),\n\tzip\tVARCHAR(15),\n\tcurbal\tDEC(15,2),\n\tCONSTRAINT PK_customer PRIMARY KEY(num)\n);\n"
     var err     error
 
-    log.Printf("ioCustomer.TableCreate()\n")
-        log.Printf("\tSQL:\n%s\n", sqlStmt)
+    
 
     err = io.TableDelete()
     if err != nil {
-        log.Printf("...end ioCustomer.TableCreate(Error:%s)\n", err.Error())
+        
         return err
     }
     err = io.io.Exec(sqlStmt)
 
-    log.Printf("...end ioCustomer.TableCreate(%s)\n", util.ErrorString(err))
+    
     return err
 }
 
@@ -310,12 +306,11 @@ func (io *IO_App01pgCustomer) TableDelete() error {
     var sqlStmt = "DROP TABLE IF EXISTS public.customer;\n"
     var err     error
 
-    log.Printf("ioCustomer.TableDelete()\n")
-        log.Printf("\tSQL:\n%s\n", sqlStmt)
+    
 
     err = io.io.Exec(sqlStmt)
 
-    log.Printf("...end ioCustomer.TableDelete(%s)\n", util.ErrorString(err))
+    
     return err
 }
 
@@ -327,25 +322,23 @@ func (io *IO_App01pgCustomer) TableDelete() error {
 // TableScan reads all the rows in the table applying a function to each of
 // them.
 func (io *IO_App01pgCustomer) TableScan(apply func (rcd App01pgCustomer.App01pgCustomer) error) error {
-    var sqlStmt = "DROP TABLE IF EXISTS public.customer;\n"
     var err     error
     var rcd     App01pgCustomer.App01pgCustomer
     var sqlFirstStmt = "SELECT * FROM public.customer ORDER BY num ASC LIMIT 1;\n"
     var sqlNextStmt = "SELECT * FROM public.customer WHERE num > $1 ORDER BY num ASC LIMIT 1;\n"
     var row     *sql.Row
 
-    log.Printf("ioCustomer.TableScanner()\n")
-        log.Printf("\tSQL:\n%s\n", sqlStmt)
+    
 
 
-    log.Printf("ioCustomer.RowFirst()\n")
+    
 
     row = io.io.QueryRow(sqlFirstStmt)
     for ;; {
         err = row.Scan(&rcd.Num, &rcd.Name, &rcd.Addr1, &rcd.Addr2, &rcd.City, &rcd.State, &rcd.Zip, &rcd.Curbal)
         if err != nil {
             if err == sql.ErrNoRows {
-                log.Printf("\tNo Rows found!\n")
+                
                 err = nil
             }
             break
@@ -359,7 +352,7 @@ func (io *IO_App01pgCustomer) TableScan(apply func (rcd App01pgCustomer.App01pgC
         row = io.io.QueryRow(sqlNextStmt, rcd.Num)
     }
 
-    log.Printf("...end ioCustomer.TableDelete(%s)\n", util.ErrorString(err))
+    
     return err
 }
 

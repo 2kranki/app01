@@ -3,7 +3,7 @@
 
 //  Struct and Methods for App01sqCustomer
 
-// Generated: Mon Oct 28, 2019 08:40
+// Generated: Thu Nov 14, 2019 11:17
 
 
 package App01sqCustomer
@@ -12,15 +12,13 @@ import (
 	"encoding/json"
     "fmt"
     
-        "log"
-    
 	"net/http"
 	"strconv"
 	"strings"
      
 	"net/url"
 
-	"github.com/2kranki/go_util"
+    
 )
 
 //============================================================================
@@ -289,15 +287,12 @@ func (s *App01sqCustomer) Key() Key {
 // KeysToValue creates a URL Value map from the table's key(s).
 func (s *App01sqCustomer) KeysToValue() string {
     var wrk string
-    var i   int
 
-    i = 0
     v := url.Values{}
     // Accumulate the key value(s) in KeyNum order.
     // Field: Num
             	wrk = fmt.Sprintf("%d", s.Num)
-v.Add(fmt.Sprintf("key%d", i), wrk)
-            i++
+v.Add(fmt.Sprintf("key%d", 1-1), wrk)
 	return v.Encode()
 }
 
@@ -343,9 +338,6 @@ func (s *App01sqCustomer) Request2Struct(r *http.Request) error {
     var str         string
 
     
-        log.Printf("Customer.Request2Struct()\n")
-        log.Printf("\tr.FormValue: %q\n", r.Form)
-    
 
     s.Empty()
     str = r.FormValue("Num")
@@ -369,8 +361,6 @@ str = r.FormValue("Curbal")
 
 
     
-        log.Printf("...end CustomerRequest2Struct(%+v, %s)\n", s, util.ErrorString(err))
-    
     return err
 }
 
@@ -381,14 +371,14 @@ str = r.FormValue("Curbal")
 // SetKeysFromStrings creates a URL Value map from the table's key(s). The slice
 // is in field order within the struct, not sorted by field name.
 func (s *App01sqCustomer) SetKeysFromStrings(strs []string) error {
-    var i   int
 
     if len(strs) != 1 {
         return fmt.Errorf("Error - Invalid key count of %d, need %d!\n", len(strs), 1)
     }
+
     // Accumulate the key value(s) in KeyNum order.
-    	s.Num, _ = strconv.ParseInt(strs[i],0,64)
-i++
+    	s.Num, _ = strconv.ParseInt(strs[0],0,64)
+
 	return nil
 }
 

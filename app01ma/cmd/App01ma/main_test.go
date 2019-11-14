@@ -1,10 +1,10 @@
 // vi:nu:et:sts=4 ts=4 sw=4
 // See License.txt in main repository directory
 
-// ioApp01my contains all the functions
+// ioApp01ma contains all the functions
 // and data to interact with the SQL Database.
 
-// Generated: Mon Oct 28, 2019 08:40 for mysql Database
+// Generated: Thu Nov 14, 2019 11:17 for mariadb Database
 
 package main
 
@@ -15,10 +15,10 @@ import (
 )
 
 //----------------------------------------------------------------------------
-//                              Docker Run - mysql
+//                              Docker Run - mariadb
 //----------------------------------------------------------------------------
 
-// DockerRun executes the dbs/mysql/run.sh to create a fresh SQL Server.
+// DockerRun executes the dbs/mariadb/run.sh to create a fresh SQL Server.
 func DockerRun(t *testing.T) {
 	var err error
 	var exec *util.ExecCmd
@@ -26,7 +26,7 @@ func DockerRun(t *testing.T) {
 
 	t.Logf("DockerRun()...\n")
 
-	exec = util.NewExecCmd("../dbs/mysql/run.sh")
+	exec = util.NewExecCmd("../dbs/mariadb/run.sh")
 	if exec == nil {
 		t.Fatalf("Error: Failed to create util.ExecCmd instance!\n\n")
 	}

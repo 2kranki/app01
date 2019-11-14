@@ -4,7 +4,7 @@
 // ioCustomer_test tests various functions of
 // the Table SQL Maintenance methods.
 
-// Generated: Mon Oct 28, 2019 08:40 for sqlite Database
+// Generated: Thu Nov 14, 2019 11:17 for sqlite Database
 
 package ioApp01sqCustomer
 
