@@ -4,7 +4,7 @@
 // ioApp01my contains all the functions
 // and data to interact with the SQL Database.
 
-// Generated: Thu Nov 14, 2019 11:17
+// Generated: Sun Nov 17, 2019 06:49
 
 package hndlrApp01myVendor
 
@@ -17,21 +17,114 @@ import (
 	"testing"
 
     "github.com/2kranki/go_util"
+	"app01my/pkg/App01myVendor"
+	"app01my/pkg/hndlrApp01my"
+	"app01my/pkg/ioApp01my"
+	"app01my/pkg/ioApp01myVendor"
 )
 
 //============================================================================
-//                              Test Data
+//                          App01myVendorTestData
 //============================================================================
+
+type App01myVendorTestData struct {
+    T           *testing.T
+    Port        string
+    PW          string
+    Server      string
+    User        string
+    NameDB      string
+    io          *ioApp01my.IO_App01my
+}
+
+//----------------------------------------------------------------------------
+//                            Check Status Code
+//----------------------------------------------------------------------------
+
+// CheckRcd compares the given record to the needed one and issues an error if
+// they do not match.
+func (td *App01myVendorTestData) CheckRcd(need int, rcd *App01myVendor.App01myVendor) {
+    var rcd2        App01myVendor.App01myVendor
+
+    rcd2.TestData(need)
+
+    if rcd.Compare(&rcd2) != 0 {
+        td.T.Fatalf("Error: Record Mismatch: needed:%+v have:%+v\n", rcd2, rcd)
+    }
+
+}
+
+//----------------------------------------------------------------------------
+//                             Disconnect
+//----------------------------------------------------------------------------
+
+// Disconnect disconnects the ioApp01my server.
+func (td *App01myVendorTestData) Disconnect() {
+    var err         error
+
+    err = td.io.Disconnect()
+    if err != nil {
+        td.T.Fatalf("Error: Disconnect Failure: %s\n", err.Error())
+    }
+
+}
+
+//----------------------------------------------------------------------------
+//                             Set up
+//----------------------------------------------------------------------------
+
+// Setup initializes the Test Data.
+// If it fails at something, it must issue a t.Fatalf().
+func (td *App01myVendorTestData) Setup(t *testing.T) {
+
+    td.T = t
+    td.SetupDB()
+
+}
+
+//----------------------------------------------------------------------------
+//                             Set up DB
+//----------------------------------------------------------------------------
+
+// SetupDB initializes the DB with test records.
+// If it fails at something, it must issue a t.Fatalf().
+func (td *App01myVendorTestData) SetupDB( ) {
+    var err         error
+
+    // Set connection parameters based on database SQL type.
+    td.io = ioApp01my.NewIoApp01my()
+    td.io.DefaultParms()
+    err = td.io.DatabaseCreate("App01my")
+    if err != nil {
+        td.T.Fatalf("Error: Creation Failure: %s\n", err.Error())
+    }
+
+}
+
+//----------------------------------------------------------------------------
+//                                  New
+//----------------------------------------------------------------------------
+
+// New creates a new io struct.
+func NewTestApp01myVendor() *App01myVendorTestData {
+    td := App01myVendorTestData{}
+    return &td
+}
+
+//----------------------------------------------------------------------------
+//                          TestData_App01myVendor
+//----------------------------------------------------------------------------
 
 type TestData_App01myVendor struct {
     T           *testing.T
     bt          *App01myVendorTestData
-    db          *IO_App01myVendor
+    db          *ioApp01myVendor.IO_App01myVendor
     H           *HandlersApp01myVendor
     Mux         *http.ServeMux
     w           *httptest.ResponseRecorder
     Req         *http.Request
     Resp        *http.Response
+    tmpls       *hndlrApp01my.TmplsApp01my
 }
 
 //----------------------------------------------------------------------------
@@ -43,6 +136,8 @@ type TestData_App01myVendor struct {
 func (td *TestData_App01myVendor) CheckStatus(status int) {
 
     
+        td.T.Logf("Vendor.CheckStatus()\n")
+    
     if td.Resp == nil {
         td.T.Fatalf("Error: Missing HTTP Response\n")
     }
@@ -51,6 +146,8 @@ func (td *TestData_App01myVendor) CheckStatus(status int) {
         td.T.Fatalf("Error: Invalid Status Code of %d, needed %d\n", td.Resp.StatusCode, status)
     }
 
+    
+        td.T.Logf("...end Vendor.Setup\n")
     
 }
 
@@ -63,6 +160,8 @@ func (td *TestData_App01myVendor) CheckStatus(status int) {
 func (td *TestData_App01myVendor) GetReq(target string, body string) {
 
     
+        td.T.Logf("Vendor.Setup()\n")
+    
     if target == "" {
         td.T.Fatalf("Error: Missing Target String\n")
     }
@@ -70,6 +169,8 @@ func (td *TestData_App01myVendor) GetReq(target string, body string) {
     td.Req = httptest.NewRequest(http.MethodGet, target, strings.NewReader(body))
     td.ServeHttp()          // Perform the test through the mux.
 
+    
+        td.T.Logf("...end Vendor.Setup\n")
     
 }
 
@@ -82,11 +183,15 @@ func (td *TestData_App01myVendor) GetReq(target string, body string) {
 func (td *TestData_App01myVendor) PostReq(target string, body string) {
 
     
+        td.T.Logf("Vendor.Setup()\n")
+    
 
     td.Req = httptest.NewRequest(http.MethodPost, target, strings.NewReader(body))
     td.Req.Header.Set("Content-Type", "application/x-www-form-urlencoded")
     td.ServeHttp()          // Perform the test through the mux.
 
+    
+        td.T.Logf("...end Vendor.Setup\n")
     
 }
 
@@ -100,6 +205,8 @@ func (td *TestData_App01myVendor) ResponseBody() string {
     var str     string
 
     
+        td.T.Logf("Vendor.ResponseBody()\n")
+    
     if td.Resp == nil {
         td.T.Fatalf("Error: Missing HTTP Response\n")
     }
@@ -111,6 +218,8 @@ func (td *TestData_App01myVendor) ResponseBody() string {
     str = string(body)
     td.T.Logf("\tResponse Body: %s\n", body)
 
+    
+        td.T.Logf("...end Vendor.ResponseBody\n")
     
     return str
 }
@@ -124,11 +233,15 @@ func (td *TestData_App01myVendor) ResponseBody() string {
 func (td *TestData_App01myVendor) ServeHttp( ) {
 
     
+        td.T.Logf("Vendor.ServeHttp()\n")
+    
 
     td.w = httptest.NewRecorder()
     td.Mux.ServeHTTP(td.w, td.Req)
     td.Resp = td.w.Result()
 
+    
+        td.T.Logf("...end Vendor.ServeHttp\n")
     
 }
 
@@ -154,7 +267,7 @@ func (td *TestData_App01myVendor) Setup(t *testing.T) {
 // If it fails at something, it must issue a t.Fatalf().
 func (td *TestData_App01myVendor) SetupIO( ) {
     var err         error
-    var rcd         App01myVendor
+    var rcd         App01myVendor.App01myVendor
 
     td.bt = NewTestApp01myVendor()
     if td.bt == nil {
@@ -163,7 +276,7 @@ func (td *TestData_App01myVendor) SetupIO( ) {
         td.bt.Setup(td.T)
     }
 
-    td.db = NewIoApp01myVendor(td.bt.io)
+    td.db = ioApp01myVendor.NewIoApp01myVendor(td.bt.io)
     if td.db == nil {
         td.T.Fatalf("Error: Unable to allocate FakeDB!\n")
     }
@@ -197,9 +310,8 @@ func (td *TestData_App01myVendor) SetupIO( ) {
 func (td *TestData_App01myVendor) SetupHandlers( ) {
 
 	// Set up main Handler which parses the templates.
-    hndlrsApp01my = NewTmplsApp01my()
-    hndlrsApp01my.SetTmplsDir("../tmpl")
-    hndlrsApp01my.SetupTmpls()
+    td.tmpls = hndlrApp01my.NewTmplsApp01my("../../tmpl")
+    td.tmpls.SetupTmpls()
 
     // Set up the Handler object.
     td.H = &HandlersApp01myVendor{db:td.db, rowsPerPage:2}
@@ -227,8 +339,8 @@ func (td *TestData_App01myVendor) SetupHandlers( ) {
 func TestApp01myVendorHndlrDB(t *testing.T) {
     var err         error
     var td          *TestData_App01myVendor
-    var rcd         App01myVendor
-    var rcd2        App01myVendor
+    var rcd         App01myVendor.App01myVendor
+    var rcd2        App01myVendor.App01myVendor
 
     t.Logf("TestVendor.DB()...\n")
     td = &TestData_App01myVendor{}
@@ -253,7 +365,7 @@ func TestApp01myVendorHndlrDB(t *testing.T) {
 func TestApp01myVendorHndlrListIndex(t *testing.T) {
     var err         error
     var td          *TestData_App01myVendor
-    var r           string
+    //var r           string
 
     t.Logf("TestVendor.HndlrListIndex()...\n")
     td = &TestData_App01myVendor{}
@@ -263,7 +375,19 @@ func TestApp01myVendorHndlrListIndex(t *testing.T) {
         t.Fatalf("Error: Cannot connect: %s\n", err.Error())
     }
 
+    // Issue a request for ???.
+    //TODO: Create a first() request followed by next()'s'.
+
+    // Check response.
+    /*TODO: Uncomment when requests are actually being performed.
     r = td.ResponseBody()
+    if r != "" {
+        t.Logf("\t%s\n", r)
+    }
+    */
+
+    // Parse response to verify
+    //TODO: Parse the response.
 
     t.Logf("TestVendor.HndlrListIndex() - End of Test\n\n\n")
 }
@@ -280,6 +404,13 @@ func TestApp01myVendorHndlrListShow(t *testing.T) {
     td.Setup(t)
 
     // First try a blank record.
+    //TODO: Perform Show()
+
+    // Get the response.
+    //TODO: get the response with initial error checking.
+
+    // Parse response to verify
+    //TODO: Parse the response.
 
     t.Logf("TestListShow() - End of Test\n\n\n")
 }
@@ -291,7 +422,7 @@ func TestApp01myVendorHndlrListShow(t *testing.T) {
 func TestApp01myVendorHndlrRowDelete(t *testing.T) {
     var err         error
     var td          *TestData_App01myVendor
-    var rcd         App01myVendor
+    var rcd         App01myVendor.App01myVendor
     //expectedBody    := ""
 
     t.Logf("TestRowDelete()...\n")
@@ -363,7 +494,7 @@ func TestApp01myVendorHndlrRowEmpty(t *testing.T) {
 
 func TestApp01myVendorHndlrRowFirst(t *testing.T) {
     var td          *TestData_App01myVendor
-    var rcd         App01myVendor
+    var rcd         App01myVendor.App01myVendor
 /*****
     expectedBody    := ""
  *****/
@@ -399,7 +530,7 @@ func TestApp01myVendorHndlrRowFirst(t *testing.T) {
 
 func TestApp01myVendorHndlrRowInsert(t *testing.T) {
     var td          *TestData_App01myVendor
-    var rcd         App01myVendor
+    var rcd         App01myVendor.App01myVendor
     //expectedBody    := ""
 
     t.Logf("TestVendorRowInsert()...\n")
@@ -433,7 +564,7 @@ func TestApp01myVendorHndlrRowInsert(t *testing.T) {
 
 func TestApp01myVendorHndlrRowNext(t *testing.T) {
     var td          *TestData_App01myVendor
-    var rcd         App01myVendor
+    var rcd         App01myVendor.App01myVendor
 
     t.Logf("TestVendor.RowNext()...\n")
     td = &TestData_App01myVendor{}

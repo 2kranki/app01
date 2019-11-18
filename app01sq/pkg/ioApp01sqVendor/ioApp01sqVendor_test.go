@@ -4,7 +4,7 @@
 // ioVendor_test tests various functions of
 // the Table SQL Maintenance methods.
 
-// Generated: Thu Nov 14, 2019 11:17 for sqlite Database
+// Generated: Sun Nov 17, 2019 06:49 for sqlite Database
 
 package ioApp01sqVendor
 
@@ -12,6 +12,8 @@ import (
 	"testing"
     
 
+    "app01sq/pkg/ioApp01sq"
+    "app01sq/pkg/App01sqVendor"
 	_ "github.com/mattn/go-sqlite3"
 )
 
@@ -27,7 +29,7 @@ type App01sqVendorTestData struct {
     Server      string
     User        string
     NameDB      string
-    io          *IO_App01sq
+    io          *ioApp01sq.IO_App01sq
 }
 
 //----------------------------------------------------------------------------
@@ -36,8 +38,8 @@ type App01sqVendorTestData struct {
 
 // CheckRcd compares the given record to the needed one and issues an error if
 // they do not match.
-func (td *App01sqVendorTestData) CheckRcd(need int, rcd *App01sqVendor) {
-    var rcd2        App01sqVendor
+func (td *App01sqVendorTestData) CheckRcd(need int, rcd *App01sqVendor.App01sqVendor) {
+    var rcd2        App01sqVendor.App01sqVendor
 
     rcd2.TestData(need)
 
@@ -85,7 +87,7 @@ func (td *App01sqVendorTestData) SetupDB( ) {
     var err         error
 
     // Set connection parameters based on database SQL type.
-    td.io = NewIoApp01sq()
+    td.io = ioApp01sq.NewIoApp01sq()
     td.io.DefaultParms()
     err = td.io.DatabaseCreate("App01sq")
     if err != nil {
@@ -118,7 +120,7 @@ func TestApp01sqVendorCreateDeleteTable(t *testing.T) {
     var io          *IO_App01sqVendor
 
 	t.Logf("TestCreateTable()...\n")
-	DockerRun(t)
+	//TODO: DockerRun(t)
 	td = NewTestApp01sqVendor()
 	td.Setup(t)
 	io = NewIoApp01sqVendor(td.io)
@@ -150,10 +152,10 @@ func TestApp01sqVendorRowInsert(t *testing.T) {
     var err         error
     var td          *App01sqVendorTestData
     var io          *IO_App01sqVendor
-    var rcd         App01sqVendor
+    var rcd         App01sqVendor.App01sqVendor
 
     t.Logf("TestVendor.RowInsert()...\n")
-	DockerRun(t)
+	//TODO: DockerRun(t)
 	td = NewTestApp01sqVendor()
 	td.Setup(t)
 	io = NewIoApp01sqVendor(td.io)
@@ -234,11 +236,11 @@ func TestApp01sqVendorRowPage(t *testing.T) {
     var err         error
     var td          *App01sqVendorTestData
     var io          *IO_App01sqVendor
-    var rcd         App01sqVendor
-    var rcds        []App01sqVendor
+    var rcd         App01sqVendor.App01sqVendor
+    var rcds        []App01sqVendor.App01sqVendor
 
     t.Logf("TestVendorRowPage()...\n")
-	DockerRun(t)
+	//TODO: DockerRun(t)
 	td = NewTestApp01sqVendor()
 	td.Setup(t)
 	io = NewIoApp01sqVendor(td.io)
@@ -326,11 +328,11 @@ func TestApp01sqVendorTableScan(t *testing.T) {
     var err         error
     var td          *App01sqVendorTestData
     var io          *IO_App01sqVendor
-    var rcd         App01sqVendor
+    var rcd         App01sqVendor.App01sqVendor
     var cnt         int
 
 	t.Logf("TestTableScan()...\n")
-	DockerRun(t)
+	//TODO: DockerRun(t)
 	td = NewTestApp01sqVendor()
 	td.Setup(t)
 	io = NewIoApp01sqVendor(td.io)
@@ -352,7 +354,7 @@ func TestApp01sqVendorTableScan(t *testing.T) {
         }
     }
 
-    apply := func (rcd App01sqVendor) error {
+    apply := func (rcd App01sqVendor.App01sqVendor) error {
                 t.Logf("\tScan Row %d\n", cnt)
                 cnt++
                 return nil

@@ -41,9 +41,9 @@ import subprocess
 import sys
 
 
-debug_flag = False
-force_flag = False
-trace_flag = False
+_debug_flag = False
+_force_flag = False
+_trace_flag = False
 
 
 #---------------------------------------------------------------------
@@ -56,7 +56,7 @@ def absolute_path(path, create_dirs=False):
     Returns:
         path string for successful completion or None for error
     '''
-    if trace_flag:
+    if _trace_flag:
         print("absolutePath(%s)" % (path))
 
     # Convert the path.
@@ -69,12 +69,12 @@ def absolute_path(path, create_dirs=False):
         dir_path = os.path.dirname(work_path)
         if len(dir_path) > 0:
             if not os.path.exists(dir_path):
-                if trace_flag:
+                if _trace_flag:
                     print("\tCreating directories:", dir_path)
                 os.makedirs(dir_path)
 
     # Return to caller.
-    if trace_flag:
+    if _trace_flag:
         print("...end of absolutePath:", work_path)
     return work_path
 
@@ -229,7 +229,7 @@ class DockerContainer:
                 from
         '''
 
-        if debug_flag:
+        if _debug_flag:
             print("build(%s)" % (name))
 
         # Perform the specified actions.
@@ -237,7 +237,7 @@ class DockerContainer:
                         path, name, context)
         rc = 0                  # Assume that it works
         try:
-            if debug_flag:
+            if _debug_flag:
                 print("Debug:", cmd_line)
             else:
                 rc = do_cmd(cmd_line)
@@ -257,7 +257,7 @@ class DockerContainer:
         irc = 0
         if len(container_name) > 0:
             cmd_line = 'docker container rm -f {0}'.format(container_name)
-            if trace_flag:
+            if _trace_flag:
                 print("Issuing:", cmd_line)
             try:
                 irc = do_cmd(cmd_line)
@@ -297,8 +297,7 @@ class DockerContainer:
 
         # Pull the image
         di.pull()
-        cmd_line = "docker image pull {0} --format='{{json .}}'".format(
-                    image_name)
+        cmd_line = "docker image pull {0} --format='{{json .}}'".format(image_name)
         if trace_flag:
             print("Issuing: {0}".format(cmd_line))
         try:
@@ -356,39 +355,34 @@ class DockerImage:
             if force_flag:
                 pass
             else:
-                return Error("Error: image {0} already exists!".format(
-                                image_name))
+                return Error("Error: image {0} already exists!".format(image_name))
 
         # Get rid of any prior images if necessary
         if image is None:
             pass
         else:
             cmd_line = 'docker image rm -f {0}'.format(image_name)
-            if debug_flag:
+            if _debug_flag:
                 print("\tDebug: {0}".format(cmd_line))
             try:
-                if trace_flag:
+                if _trace_flag:
                     print("\tIssuing: {0}".format(cmd_line))
                 irc = do_cmd(cmd_line)
                 if not irc == 0:
-                    return Error("Error: could not remove image {0}".format(
-                                    image_name))
+                    return Error("Error: could not remove image {0}".format(image_name))
             except OSError:
-                return Error("Error: could not remove image {0}".format(
-                                image_name))
+                return Error("Error: could not remove image {0}".format(image_name))
 
         # Pull the image
-        cmd_line = "docker image build -t {0} {1}".format(
-                        image_name, docker_file_path)
-        if debug_flag:
+        cmd_line = "docker image build -t {0} {1}".format(image_name, docker_file_path)
+        if _debug_flag:
             print("\tDebug: {0}".format(cmd_line))
         try:
-            if trace_flag:
+            if _trace_flag:
                 print("\tIssuing: {0}".format(cmd_line))
             irc = do_cmd(cmd_line)
             if not irc == 0:
-                return Error("Error: could not build image {0}".format(
-                                image_name))
+                return Error("Error: could not build image {0}".format(image_name))
         except OSError:
             return Error("Error: could not build image {0}".format(image_name))
 
@@ -414,10 +408,10 @@ class DockerImage:
         '''
 
         cmd_line = "docker image ls --format='{{json .}}'"
-        if debug_flag:
+        if _debug_flag:
             print("Issuing: {0}".format(cmd_line))
         result = subprocess.getstatusoutput(cmd_line)
-        if trace_flag:
+        if _trace_flag:
             print("\tResult = %s, %s..." % (result[0], result[1]))
         irc = result[0]
         output = result[1]
@@ -442,7 +436,7 @@ class DockerImage:
         if image is None:
             pass
         else:
-            if force_flag:
+            if _force_flag:
                 pass
             else:
                 return
@@ -453,22 +447,21 @@ class DockerImage:
             pass
         else:
             cmd_line = 'docker image rm -f {0}'.format(image_name)
-            if debug_flag:
+            if _debug_flag:
                 print("\tDebug: {0}".format(cmd_line))
             try:
-                if trace_flag:
+                if _trace_flag:
                     print("\tIssuing: {0}".format(cmd_line))
                 irc = do_cmd(cmd_line)
             except OSError:
                 pass
 
         # Pull the image
-        cmd_line = "docker image pull {0} --format='{{json .}}'".format(
-                    image_name)
-        if debug_flag:
+        cmd_line = "docker image pull {0} --format='{{json .}}'".format(image_name)
+        if _debug_flag:
             print("\tDebug: {0}".format(cmd_line))
         try:
-            if trace_flag:
+            if _trace_flag:
                 print("\tIssuing: {0}".format(cmd_line))
             irc = do_cmd(cmd_line)
         except OSError:
@@ -482,6 +475,8 @@ class DockerImage:
 #---------------------------------------------------------------------
 
 class Error:
+    ''' Handle error messages and codes.
+    '''
 
     def __init__(self, msg=None):
         ''' Convert Path to an absolute path.
@@ -556,25 +551,24 @@ def go_build_app(app_dir, app_name):
         return Error("Error: Can't find temporary Directory,"
                      " TMP or TEMP, in environment!")
     app_dir_abs = absolute_path(os.path.join(cur_dir, app_dir, app_name))
-    if trace_flag:
+    if _trace_flag:
         print("\ttmp_dir:", tmp_dir)
         print("\tapp_dir_abs:", app_dir_abs)
 
     # Reformat the source code.
     err = None
     try:
-        cmd_line = "go fmt {0}".format(os.path.join(cur_dir, app_dir,
-                                       app_name, '*.go'))
-        if trace_flag:
+        cmd_line = "go fmt {0}".format(os.path.join(cur_dir, app_dir, app_name, '*.go'))
+        if _trace_flag:
             print("Issuing: {0}".format(cmd_line))
-        if debug_flag:
+        if _debug_flag:
             print("\t Debug: %s".format(cmd_line))
         else:
             irc = do_cmd(cmd_line)
             if not irc == 0:
                 return Error("Error: '%s' failed!" % cmd_line)
     except Exception as e:
-        if trace_flag:
+        if _trace_flag:
             print("Execption:", e)
         err = Error("Error: '%s' failed!" % cmd_line)
     if err:
@@ -588,20 +582,20 @@ def go_build_app(app_dir, app_name):
         # Setup output directory if needed.
         tmp_bin = os.path.join(tmp_dir, 'bin')
         if not os.path.exists(tmp_bin):
-            if trace_flag:
+            if _trace_flag:
                 print("Making: {0}".format(tmp_dir))
             os.makedirs(tmp_bin, 0o777)
         # Build the packages.
-        if trace_flag:
+        if _trace_flag:
             print("Issuing: {0}".format(cmd_line))
-        if debug_flag:
+        if _debug_flag:
             print("\t Debug: %s".format(cmd_line))
         else:
             irc = do_cmd(cmd_line)
             if not irc == 0:
                 return Error("Error: '%s' failed!" % cmd_line)
     except Exception as e:
-        if trace_flag:
+        if _trace_flag:
             print("Execption:", e)
         err = Error("Error: '%s' failed!" % cmd_line)
     if err:
@@ -631,7 +625,7 @@ def go_get(pkg_dir, go_dir=None):
 
     if not os.path.exists(go_pkg_dir):
         cmd_line = 'go get {0}'.format(pkg_dir)
-        if debug_flag:
+        if _debug_flag:
             print("\t Debug: %s".format(cmd_line))
         else:
             do_cmd(cmd_line)

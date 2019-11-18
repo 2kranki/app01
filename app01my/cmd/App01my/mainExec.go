@@ -7,59 +7,128 @@
 //  *   All static (ie non-changing) files should be served from the 'static'
 //      subdirectory.
 
-// Generated: Thu Nov 14, 2019 11:17
+// Generated: Sun Nov 17, 2019 06:49
 
 package main
 
 import (
-	"fmt"
-	"log"
+    "fmt"
+    "log"
 	"net/http"
 	"os"
-	"os/signal"
+    "os/exec"
+    "os/signal"
 
-	"app01my/pkg/hndlrApp01my"
-
-	"app01my/pkg/hndlrApp01myCustomer"
-	"app01my/pkg/hndlrApp01myVendor"
-	"app01my/pkg/ioApp01my"
-	"app01my/pkg/ioApp01myCustomer"
-	"app01my/pkg/ioApp01myVendor"
+    "app01my/pkg/hndlrApp01my"
+	
+        "app01my/pkg/hndlrApp01myCustomer"
+        "app01my/pkg/ioApp01myCustomer"
+        "app01my/pkg/hndlrApp01myVendor"
+        "app01my/pkg/ioApp01myVendor"
+    "app01my/pkg/ioApp01my"
+    "github.com/2kranki/go_util"
 )
 
 const (
-	RowsPerPage = 15
+    RowsPerPage = 15
 )
 
-var hndlrsApp01my *hndlrApp01my.TmplsApp01my
+var     hndlrsApp01my    *hndlrApp01my.TmplsApp01my
 
-var hndlrsApp01myCustomer *hndlrApp01myCustomer.HandlersApp01myCustomer
-var hndlrsApp01myVendor *hndlrApp01myVendor.HandlersApp01myVendor
+    var hndlrsApp01myCustomer     *hndlrApp01myCustomer.HandlersApp01myCustomer
+    var hndlrsApp01myVendor     *hndlrApp01myVendor.HandlersApp01myVendor
+
+var app01myIO *ioApp01my.IO_App01my
+
+    var app01myCustomerIO  *ioApp01myCustomer.IO_App01myCustomer
+    var app01myVendorIO  *ioApp01myVendor.IO_App01myVendor
+
+
+// genCerts generates the Certificates needed for HTTPS.
+func genCerts() {
+    var err         error
+    var cmd         string
+
+    log.Printf("\tGenerating HTTPS Certificates if needed...\n")
+    if certDir == "" {
+        log.Fatalf("Error: Missing certificate path!\n\n")
+    }
+
+    log.Printf("\tChecking for HTTPS Certificates in %s...\n", certDir)
+    certPath := util.NewPath(certDir)
+    if certPath == nil {
+        log.Fatalf("Error: Creating %s path\n\n", certPath.String())
+    }
+    if err = certPath.CreateDir(); err != nil {
+        log.Fatalf("Error: Create %s : %s\n\n", certPath.String(), err.Error())
+    }
+
+    certPem := certPath.Append("cert.pem")
+    if certPem == nil {
+        log.Fatalf("Error: Creating %s/cert.pem path\n\n", certPath.String())
+    }
+    keyPem := certPath.Append("key.pem")
+    if keyPem == nil {
+        log.Fatalf("Error: Creating %s/key.pem path\n\n", certPath.String())
+    }
+    if certPem.IsPathRegularFile() && keyPem.IsPathRegularFile() {
+        return
+    }
+
+    log.Printf("\tMissing HTTPS Certificates will now be generated...\n")
+    // NOTE - The cmd to create the certificates may need to be massaged for
+    //      a more specific installation.
+    cmd  = "openssl req -x509 -nodes -days 365 -newkey rsa:2048 "
+    cmd += fmt.Sprintf("-keyout %s -out %s", keyPem, certPem)
+    cmd += " -passout pass:xyzzy"
+    cmd += " -subj \"/C=US/ST=Florida/L=Tampa/O=De/OU=Dev/CN=example.com\""
+    cmdr := exec.Command(cmd)
+    if cmdr == nil {
+        log.Fatalf("Error: Could not create command object!\n")
+    }
+    err = cmdr.Run()
+    if err != nil {
+        log.Fatalf("Error: Could not create HTTPS Certificates : %s!\n",
+                    err.Error())
+    }
+    if certPem.IsPathRegularFile() && keyPem.IsPathRegularFile() {
+        return
+    }
+
+    log.Fatalf("Error: OpenSSL could not create the certificates!\n")
+}
 
 // HndlrFavIcon is the default Favorite Icon Handler.  It defaults to
 // returning a 405 status to indicate that no Icon is available.
 func HndlrFavIcon(w http.ResponseWriter, r *http.Request) {
 
-	if r.Method != "GET" {
-		http.NotFound(w, r)
-	}
-	http.Error(w, http.StatusText(405), http.StatusMethodNotAllowed)
+    fmt.Printf("HndlrFavIcon(%s)\n", r.Method)
 
+    if r.Method != "GET" {
+	    http.NotFound(w, r)
+	}
+    http.Error(w, http.StatusText(405), http.StatusMethodNotAllowed)
+
+    fmt.Printf("...end HndlrFavIcon(Error:405)\n")
 }
 
 // HndlrHome responds to a URL with no sub-elements.  It defaults to
 // providing the default Menu to the browser/caller.
 func HndlrHome(w http.ResponseWriter, r *http.Request) {
 
-	if r.URL.Path != "/" {
+    fmt.Printf("HndlrHome(%s)\n", r.Method)
 
-		http.NotFound(w, r)
-		return
-	}
+    if r.URL.Path != "/" {
+        fmt.Printf("...end HndlrHome(Error 404) Not '/' URL\n")
+        http.NotFound(w, r)
+        return
+    }
 
-	hndlrsApp01my.MainDisplay(w, "")
-	//http.ServeFile(w, r, baseDir+"/html/App01my.menu.html")
+    fmt.Printf("\tHndlrHome Serving File: ./html/App01my.menu.html\n")
+    hndlrsApp01my.MainDisplay(w, "")
+    //http.ServeFile(w, r, baseDir+"/html/App01my.menu.html")
 
+    fmt.Printf("...end HndlrHome()\n")
 }
 
 // To understand the following, review packages net/http and net/url and review:
@@ -90,12 +159,12 @@ func MuxHandlerWrapper(f http.Handler) http.HandlerFunc {
 			ResponseWriter: w,
 		}
 
-		// Intercept before the request is handled.
+        // Intercept before the request is handled.
 		log.Println("mux input: (", r.Method, ") ", r.URL.String())
 
 		f.ServeHTTP(record, r)
 
-		// Intercept after the request is handled.
+        // Intercept after the request is handled.
 		log.Println("Bad Request ", record.status)
 
 		if record.status == http.StatusBadRequest {
@@ -104,84 +173,97 @@ func MuxHandlerWrapper(f http.Handler) http.HandlerFunc {
 	}
 }
 
-func exec() {
+func mainExec() {
 
-	// Generate HTTPS Certificates if needed.
+    // Generate HTTPS Certificates if needed.
+    genCerts()
 
-	// Connect the databases.
+    // Setup the I/O.
+    setupIO()
 
-	ioApp01my := ioApp01my.NewIoApp01my()
-	//ioApp01my.SetName(db_name)
-	ioApp01my.SetPort(db_port)
-	ioApp01my.SetPW(db_pw)
-	ioApp01my.SetPort(db_port)
-	ioApp01my.SetServer(db_srvr)
-	ioApp01my.SetUser(db_user)
-	err := ioApp01my.DatabaseCreate(db_name)
-	if err != nil {
-		log.Fatalf("ERROR - Failed to Connect Database\n\n\n")
-	}
+    // Set up templates.
+    setupTmpls()
 
-	// Set up to disconnect the database upon program interrupt.
-	chnl := make(chan os.Signal, 1)
-	signal.Notify(chnl, os.Interrupt)
-	go func() {
-		<-chnl
-		if ioApp01my.IsConnected() {
-			err = ioApp01my.Disconnect()
-			if err != nil {
-				log.Fatal(err)
-			}
-		}
-		os.Exit(1)
-	}()
-
-	// Set up the Table I/O.
-
-	ioApp01myCustomer := ioApp01myCustomer.NewIoApp01myCustomer(ioApp01my)
-	if ioApp01myCustomer == nil {
-		log.Fatalf("ERROR - Failed to Connect to Table, App01myCustomer\n\n\n")
-	}
-	ioApp01myVendor := ioApp01myVendor.NewIoApp01myVendor(ioApp01my)
-	if ioApp01myVendor == nil {
-		log.Fatalf("ERROR - Failed to Connect to Table, App01myVendor\n\n\n")
-	}
-
-	// Set up templates.
-
-	hndlrsApp01my = hndlrApp01my.NewTmplsApp01my("")
-	hndlrsApp01my.SetTmplsDir(baseDir + "/tmpl")
-	hndlrsApp01my.SetupTmpls()
-
-	// Set up default URL handlers
-
-	mux := http.NewServeMux()
+    // Set up default URL handlers
+    log.Printf("\tSetting up the Mux Handlers...\n")
+    mux := http.NewServeMux()
 	mux.HandleFunc("/", HndlrHome)
 	mux.HandleFunc("/favicon.ico", HndlrFavIcon)
 
-	// App01my.Customer URL handlers for table maintenance
-	hndlrsApp01myCustomer = hndlrApp01myCustomer.NewHandlersApp01myCustomer(ioApp01myCustomer, RowsPerPage, mux)
-	hndlrsApp01myCustomer.Tmpls = hndlrsApp01my
-	if hndlrsApp01myCustomer.Tmpls == nil {
-		log.Fatalf("ERROR - Failed to load templates from hndlrsApp01my\n\n\n")
-	}
-	// App01my.Vendor URL handlers for table maintenance
-	hndlrsApp01myVendor = hndlrApp01myVendor.NewHandlersApp01myVendor(ioApp01myVendor, RowsPerPage, mux)
-	hndlrsApp01myVendor.Tmpls = hndlrsApp01my
-	if hndlrsApp01myVendor.Tmpls == nil {
-		log.Fatalf("ERROR - Failed to load templates from hndlrsApp01my\n\n\n")
-	}
-
-	// mkdir ssl
-	// openssl req -x509 -days 365 -nodes -newkey rsa:2048 -keyout ./ssl/ssl_key.pem -out ./ssl/ssl_cert.pem
+	
+	    // App01my.Customer URL handlers for table maintenance
+	    hndlrsApp01myCustomer = hndlrApp01myCustomer.NewHandlersApp01myCustomer(app01myCustomerIO, RowsPerPage, mux)
+	    hndlrsApp01myCustomer.Tmpls = hndlrsApp01my
+        if hndlrsApp01myCustomer.Tmpls == nil {
+            log.Fatalf("ERROR - Failed to load templates from hndlrsApp01my\n\n\n")
+        }
+	    // App01my.Vendor URL handlers for table maintenance
+	    hndlrsApp01myVendor = hndlrApp01myVendor.NewHandlersApp01myVendor(app01myVendorIO, RowsPerPage, mux)
+	    hndlrsApp01myVendor.Tmpls = hndlrsApp01my
+        if hndlrsApp01myVendor.Tmpls == nil {
+            log.Fatalf("ERROR - Failed to load templates from hndlrsApp01my\n\n\n")
+        }
 
 	// Start the HTTP Server.
-
+    log.Printf("\tStarting Server at %s:%s...\n", http_srvr, http_port)
 	srvrStr := fmt.Sprintf("%s:%s", http_srvr, http_port)
-	s := &http.Server{
-		Addr:    srvrStr,
-		Handler: MuxHandlerWrapper(mux),
-	}
-	log.Fatal(s.ListenAndServe())
+    s := &http.Server{
+            Addr:    srvrStr,
+            Handler: MuxHandlerWrapper(mux),
+        }
+        log.Fatal(s.ListenAndServe())
+    
+
+}
+
+// setupIO connects to the datatbase.
+func setupIO() {
+
+    // Connect the databases.
+    log.Printf("\tConnecting to the Database...\n")
+    app01myIO = ioApp01my.NewIoApp01my()
+    //app01myIO.SetName(db_name)
+    app01myIO.SetPort(db_port)
+    app01myIO.SetPW(db_pw)
+    app01myIO.SetPort(db_port)
+    app01myIO.SetServer(db_srvr)
+    app01myIO.SetUser(db_user)
+    err := app01myIO.DatabaseCreate(db_name)
+    if err != nil {
+        log.Fatalf("ERROR - Failed to Connect Database\n\n\n")
+    }
+
+    // Set up to disconnect the database upon program interrupt.
+    chnl := make(chan os.Signal, 1)
+    signal.Notify(chnl, os.Interrupt)
+    go func(){
+        <-chnl
+        if app01myIO.IsConnected() {
+            err = app01myIO.Disconnect()
+            if err != nil {
+                log.Fatal(err)
+            }
+        }
+        os.Exit(1)
+    }()
+
+    // Set up the Table I/O.
+	
+	    app01myCustomerIO = ioApp01myCustomer.NewIoApp01myCustomer(app01myIO)
+        if app01myCustomerIO == nil {
+            log.Fatalf("ERROR - Failed to Connect to Table, App01myCustomer\n\n\n")
+        }
+	    app01myVendorIO = ioApp01myVendor.NewIoApp01myVendor(app01myIO)
+        if app01myVendorIO == nil {
+            log.Fatalf("ERROR - Failed to Connect to Table, App01myVendor\n\n\n")
+        }
+
+}
+
+func setupTmpls() {
+
+    log.Printf("\tSetting up the Templates...\n")
+    hndlrsApp01my = hndlrApp01my.NewTmplsApp01my(baseDir + "/tmpl")
+    hndlrsApp01my.SetupTmpls()
 
 }

@@ -4,7 +4,7 @@
 // ioCustomer_test tests various functions of
 // the Table SQL Maintenance methods.
 
-// Generated: Thu Nov 14, 2019 11:17 for mssql Database
+// Generated: Sun Nov 17, 2019 06:49 for mssql Database
 
 package ioApp01msCustomer
 
@@ -12,6 +12,8 @@ import (
 	"testing"
     
 
+    "app01ms/pkg/ioApp01ms"
+    "app01ms/pkg/App01msCustomer"
 	_ "github.com/denisenkom/go-mssqldb"
 )
 
@@ -27,7 +29,7 @@ type App01msCustomerTestData struct {
     Server      string
     User        string
     NameDB      string
-    io          *IO_App01ms
+    io          *ioApp01ms.IO_App01ms
 }
 
 //----------------------------------------------------------------------------
@@ -36,8 +38,8 @@ type App01msCustomerTestData struct {
 
 // CheckRcd compares the given record to the needed one and issues an error if
 // they do not match.
-func (td *App01msCustomerTestData) CheckRcd(need int, rcd *App01msCustomer) {
-    var rcd2        App01msCustomer
+func (td *App01msCustomerTestData) CheckRcd(need int, rcd *App01msCustomer.App01msCustomer) {
+    var rcd2        App01msCustomer.App01msCustomer
 
     rcd2.TestData(need)
 
@@ -85,7 +87,7 @@ func (td *App01msCustomerTestData) SetupDB( ) {
     var err         error
 
     // Set connection parameters based on database SQL type.
-    td.io = NewIoApp01ms()
+    td.io = ioApp01ms.NewIoApp01ms()
     td.io.DefaultParms()
     err = td.io.DatabaseCreate("App01ms")
     if err != nil {
@@ -118,7 +120,7 @@ func TestApp01msCustomerCreateDeleteTable(t *testing.T) {
     var io          *IO_App01msCustomer
 
 	t.Logf("TestCreateTable()...\n")
-	DockerRun(t)
+	//TODO: DockerRun(t)
 	td = NewTestApp01msCustomer()
 	td.Setup(t)
 	io = NewIoApp01msCustomer(td.io)
@@ -150,10 +152,10 @@ func TestApp01msCustomerRowInsert(t *testing.T) {
     var err         error
     var td          *App01msCustomerTestData
     var io          *IO_App01msCustomer
-    var rcd         App01msCustomer
+    var rcd         App01msCustomer.App01msCustomer
 
     t.Logf("TestCustomer.RowInsert()...\n")
-	DockerRun(t)
+	//TODO: DockerRun(t)
 	td = NewTestApp01msCustomer()
 	td.Setup(t)
 	io = NewIoApp01msCustomer(td.io)
@@ -234,11 +236,11 @@ func TestApp01msCustomerRowPage(t *testing.T) {
     var err         error
     var td          *App01msCustomerTestData
     var io          *IO_App01msCustomer
-    var rcd         App01msCustomer
-    var rcds        []App01msCustomer
+    var rcd         App01msCustomer.App01msCustomer
+    var rcds        []App01msCustomer.App01msCustomer
 
     t.Logf("TestCustomerRowPage()...\n")
-	DockerRun(t)
+	//TODO: DockerRun(t)
 	td = NewTestApp01msCustomer()
 	td.Setup(t)
 	io = NewIoApp01msCustomer(td.io)
@@ -326,11 +328,11 @@ func TestApp01msCustomerTableScan(t *testing.T) {
     var err         error
     var td          *App01msCustomerTestData
     var io          *IO_App01msCustomer
-    var rcd         App01msCustomer
+    var rcd         App01msCustomer.App01msCustomer
     var cnt         int
 
 	t.Logf("TestTableScan()...\n")
-	DockerRun(t)
+	//TODO: DockerRun(t)
 	td = NewTestApp01msCustomer()
 	td.Setup(t)
 	io = NewIoApp01msCustomer(td.io)
@@ -352,7 +354,7 @@ func TestApp01msCustomerTableScan(t *testing.T) {
         }
     }
 
-    apply := func (rcd App01msCustomer) error {
+    apply := func (rcd App01msCustomer.App01msCustomer) error {
                 t.Logf("\tScan Row %d\n", cnt)
                 cnt++
                 return nil

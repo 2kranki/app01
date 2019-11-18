@@ -3,7 +3,7 @@
 
 //  Struct and Methods for App01msCustomer
 
-// Generated: Thu Nov 14, 2019 11:17
+// Generated: Sun Nov 17, 2019 06:49
 
 
 package App01msCustomer
@@ -12,13 +12,15 @@ import (
 	"encoding/json"
     "fmt"
     
+        "log"
+    
 	"net/http"
 	"strconv"
 	"strings"
      
 	"net/url"
 
-    
+    "github.com/2kranki/go_util"
 )
 
 //============================================================================
@@ -334,6 +336,9 @@ func (s *App01msCustomer) Request2Struct(r *http.Request) error {
     var str         string
 
     
+        log.Printf("Customer.Request2Struct()\n")
+        log.Printf("\tr.FormValue: %q\n", r.Form)
+    
 
     s.Empty()
     str = r.FormValue("Num")
@@ -354,6 +359,8 @@ str = r.FormValue("Curbal")
         		s.Curbal, _ = strconv.ParseFloat(str, 64)
 
 
+    
+        log.Printf("...end CustomerRequest2Struct(%+v, %s)\n", s, util.ErrorString(err))
     
     return err
 }
@@ -502,7 +509,7 @@ func (s *App01msCustomer) ToStrings() []string {
 //                             New Struct
 //----------------------------------------------------------------------------
 
-// CustomerNew creates a new empty struct.
+// NewApp01msCustomer creates a new empty struct.
 func NewApp01msCustomer() *App01msCustomer {
     return &App01msCustomer{}
 }

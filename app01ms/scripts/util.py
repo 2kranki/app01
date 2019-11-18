@@ -40,23 +40,17 @@ import os
 import subprocess
 import sys
 
-
-debug_flag = False
-force_flag = False
-trace_flag = False
-
-
 #---------------------------------------------------------------------
 #       absolute_path -- Convert a Path to an absolute path
 #---------------------------------------------------------------------
 
-def absolute_path(path, create_dirs=False):
+def absolute_path(path, create_dirs=False, debug=False):
     ''' Convert Path to an absolute path creating subdirectories if needed
 
     Returns:
         path string for successful completion or None for error
     '''
-    if trace_flag:
+    if debug:
         print("absolutePath(%s)" % (path))
 
     # Convert the path.
@@ -69,12 +63,12 @@ def absolute_path(path, create_dirs=False):
         dir_path = os.path.dirname(work_path)
         if len(dir_path) > 0:
             if not os.path.exists(dir_path):
-                if trace_flag:
+                if debug:
                     print("\tCreating directories:", dir_path)
                 os.makedirs(dir_path)
 
     # Return to caller.
-    if trace_flag:
+    if debug:
         print("...end of absolutePath:", work_path)
     return work_path
 
@@ -196,7 +190,7 @@ class DockerContainer:
         used it.
     '''
 
-    def __init__(self, name, tag=None):
+    def __init__(self, name, tag=None, debug=False, force=False):
         ''' Set default parameters.
         '''
         self._docker_name = name
@@ -204,6 +198,8 @@ class DockerContainer:
             self._docker_tag = 'latest'
         else:
             self._docker_tag = tag
+        self.debug = debug
+        self.force = force
 
     def _container_name(self):
         container_name = self._docker_name
@@ -229,7 +225,7 @@ class DockerContainer:
                 from
         '''
 
-        if debug_flag:
+        if self.debug:
             print("build(%s)" % (name))
 
         # Perform the specified actions.
@@ -237,7 +233,7 @@ class DockerContainer:
                         path, name, context)
         rc = 0                  # Assume that it works
         try:
-            if debug_flag:
+            if self.debug:
                 print("Debug:", cmd_line)
             else:
                 rc = do_cmd(cmd_line)
@@ -246,7 +242,7 @@ class DockerContainer:
 
         return rc
 
-    def kill(self, force_flag=False):
+    def kill(self):
         ''' Kill a Docker Container and/or delete it.
         Returns:
             0 - Successful Completion
@@ -257,7 +253,7 @@ class DockerContainer:
         irc = 0
         if len(container_name) > 0:
             cmd_line = 'docker container rm -f {0}'.format(container_name)
-            if trace_flag:
+            if self.debug:
                 print("Issuing:", cmd_line)
             try:
                 irc = do_cmd(cmd_line)
@@ -266,7 +262,7 @@ class DockerContainer:
 
         return irc
 
-    def run(self, parms, force_flag=False):
+    def run(self, parms):
         ''' Run a Docker Container
         '''
         image_name = self._image_name()
@@ -277,7 +273,7 @@ class DockerContainer:
         if image is None:
             pass
         else:
-            if force_flag:
+            if self.force:
                 pass
             else:
                 return
@@ -288,7 +284,7 @@ class DockerContainer:
             pass
         else:
             cmd_line = 'docker image rm -f {0}'.format(image_name)
-            if trace_flag:
+            if self.debug:
                 print("Issuing: {0}".format(cmd_line))
             try:
                 irc = do_cmd(cmd_line)
@@ -299,14 +295,14 @@ class DockerContainer:
         di.pull()
         cmd_line = "docker image pull {0} --format='{{json .}}'".format(
                     image_name)
-        if trace_flag:
+        if self.debug:
             print("Issuing: {0}".format(cmd_line))
         try:
             irc = do_cmd(cmd_line)
         except OSError:
             irc = 4
 
-        return
+        return irc
 
 
 #---------------------------------------------------------------------
@@ -322,7 +318,7 @@ class DockerImage:
         used it.
     '''
 
-    def __init__(self, name, tag=None):
+    def __init__(self, name, tag=None, debug=False, force=False):
         ''' Set default parameters.
         '''
         self._docker_name = name
@@ -330,6 +326,8 @@ class DockerImage:
             self._docker_tag = 'latest'
         else:
             self._docker_tag = tag
+        self.debug = debug
+        self.force = force
 
     def _image_name(self):
         image_name = self._docker_name
@@ -337,13 +335,12 @@ class DockerImage:
             image_name += ':' + self._docker_tag
         return image_name
 
-    def build(self, docker_file_path='.', force_flag=False):
+    def build(self, docker_file_path='.'):
         ''' Build a current Docker Image
             Returns:
                 None or Error object
         '''
         image_name = None
-        print("force_flag:", force_flag)
 
         image_name = self._docker_name
         if len(self._docker_tag) > 0 and self._docker_tag != 'latest':
@@ -353,7 +350,7 @@ class DockerImage:
         if image is None:
             pass
         else:
-            if force_flag:
+            if self.force:
                 pass
             else:
                 return Error("Error: image {0} already exists!".format(
@@ -364,10 +361,10 @@ class DockerImage:
             pass
         else:
             cmd_line = 'docker image rm -f {0}'.format(image_name)
-            if debug_flag:
+            if self.debug:
                 print("\tDebug: {0}".format(cmd_line))
             try:
-                if trace_flag:
+                if self.debug:
                     print("\tIssuing: {0}".format(cmd_line))
                 irc = do_cmd(cmd_line)
                 if not irc == 0:
@@ -380,10 +377,10 @@ class DockerImage:
         # Pull the image
         cmd_line = "docker image build -t {0} {1}".format(
                         image_name, docker_file_path)
-        if debug_flag:
+        if self.debug:
             print("\tDebug: {0}".format(cmd_line))
         try:
-            if trace_flag:
+            if self.debug:
                 print("\tIssuing: {0}".format(cmd_line))
             irc = do_cmd(cmd_line)
             if not irc == 0:
@@ -414,10 +411,10 @@ class DockerImage:
         '''
 
         cmd_line = "docker image ls --format='{{json .}}'"
-        if debug_flag:
+        if self.debug:
             print("Issuing: {0}".format(cmd_line))
         result = subprocess.getstatusoutput(cmd_line)
-        if trace_flag:
+        if self.debug:
             print("\tResult = %s, %s..." % (result[0], result[1]))
         irc = result[0]
         output = result[1]
@@ -442,7 +439,7 @@ class DockerImage:
         if image is None:
             pass
         else:
-            if force_flag:
+            if self.force:
                 pass
             else:
                 return
@@ -453,10 +450,10 @@ class DockerImage:
             pass
         else:
             cmd_line = 'docker image rm -f {0}'.format(image_name)
-            if debug_flag:
+            if self.debug:
                 print("\tDebug: {0}".format(cmd_line))
             try:
-                if trace_flag:
+                if self.debug:
                     print("\tIssuing: {0}".format(cmd_line))
                 irc = do_cmd(cmd_line)
             except OSError:
@@ -465,10 +462,10 @@ class DockerImage:
         # Pull the image
         cmd_line = "docker image pull {0} --format='{{json .}}'".format(
                     image_name)
-        if debug_flag:
+        if self.debug:
             print("\tDebug: {0}".format(cmd_line))
         try:
-            if trace_flag:
+            if self.debug:
                 print("\tIssuing: {0}".format(cmd_line))
             irc = do_cmd(cmd_line)
         except OSError:
@@ -482,16 +479,28 @@ class DockerImage:
 #---------------------------------------------------------------------
 
 class Error:
+    ''' An Error class for describing individual errors.
+    '''
 
-    def __init__(self, msg=None):
-        ''' Convert Path to an absolute path.
+    def __init__(self, msg=None, rc=None):
+        ''' Save the message.
         '''
         self._msg = msg
+        self._rc = rc
 
-    def Error(self):
-        '''Convert Path to an absolute path.
+    def error(self):
+        ''' Return the message.
         '''
         return self._msg
+
+    def print(self):
+        ''' Print the error message if present.
+        '''
+        if not self._msg == None:
+            if not self._rc == None:
+                print('Error:', self.rc, ':', self._msg)
+            else:
+                print('Error:', self._msg)
 
 
 #---------------------------------------------------------------------
@@ -525,7 +534,7 @@ def do_sys(cmd_line, cwd='.'):
 #           go_build -- Build a Golang Application
 #---------------------------------------------------------------------
 
-def go_build_app(app_dir, app_name):
+def go_build_app(app_dir, app_name, debug=False):
     ''' Build a golang application including reformatting the source
 
     This builds go packages located in the 'cmd'/szAppName directory.
@@ -556,7 +565,7 @@ def go_build_app(app_dir, app_name):
         return Error("Error: Can't find temporary Directory,"
                      " TMP or TEMP, in environment!")
     app_dir_abs = absolute_path(os.path.join(cur_dir, app_dir, app_name))
-    if trace_flag:
+    if debug:
         print("\ttmp_dir:", tmp_dir)
         print("\tapp_dir_abs:", app_dir_abs)
 
@@ -565,16 +574,14 @@ def go_build_app(app_dir, app_name):
     try:
         cmd_line = "go fmt {0}".format(os.path.join(cur_dir, app_dir,
                                        app_name, '*.go'))
-        if trace_flag:
-            print("Issuing: {0}".format(cmd_line))
-        if debug_flag:
+        if debug:
             print("\t Debug: %s".format(cmd_line))
         else:
             irc = do_cmd(cmd_line)
             if not irc == 0:
-                return Error("Error: '%s' failed!" % cmd_line)
+                return Error("Error: '%s' failed!" % cmd_line, irc)
     except Exception as e:
-        if trace_flag:
+        if debug:
             print("Execption:", e)
         err = Error("Error: '%s' failed!" % cmd_line)
     if err:
@@ -588,20 +595,18 @@ def go_build_app(app_dir, app_name):
         # Setup output directory if needed.
         tmp_bin = os.path.join(tmp_dir, 'bin')
         if not os.path.exists(tmp_bin):
-            if trace_flag:
+            if debug:
                 print("Making: {0}".format(tmp_dir))
             os.makedirs(tmp_bin, 0o777)
         # Build the packages.
-        if trace_flag:
-            print("Issuing: {0}".format(cmd_line))
-        if debug_flag:
+        if debug:
             print("\t Debug: %s".format(cmd_line))
         else:
             irc = do_cmd(cmd_line)
             if not irc == 0:
                 return Error("Error: '%s' failed!" % cmd_line)
     except Exception as e:
-        if trace_flag:
+        if debug:
             print("Execption:", e)
         err = Error("Error: '%s' failed!" % cmd_line)
     if err:
@@ -614,7 +619,7 @@ def go_build_app(app_dir, app_name):
 #   go_get -- Go Get Specific Packages if not already downloaded
 #---------------------------------------------------------------------
 
-def go_get(pkg_dir, go_dir=None):
+def go_get(pkg_dir, go_dir=None, debug=False):
     ''' Go get a go package if it is not already loaded.
         The Go Directory is composed of 'bin', 'pkg' and 'src'. All
         packages are loaded into 'src'.  So, we can just check there
@@ -631,13 +636,12 @@ def go_get(pkg_dir, go_dir=None):
 
     if not os.path.exists(go_pkg_dir):
         cmd_line = 'go get {0}'.format(pkg_dir)
-        if debug_flag:
+        if debug:
             print("\t Debug: %s".format(cmd_line))
         else:
             do_cmd(cmd_line)
 
     return None
-
 
 ######################################################################
 #                           Command-line interface

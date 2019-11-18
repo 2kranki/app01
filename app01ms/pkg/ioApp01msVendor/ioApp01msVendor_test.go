@@ -4,7 +4,7 @@
 // ioVendor_test tests various functions of
 // the Table SQL Maintenance methods.
 
-// Generated: Thu Nov 14, 2019 11:17 for mssql Database
+// Generated: Sun Nov 17, 2019 06:49 for mssql Database
 
 package ioApp01msVendor
 
@@ -12,6 +12,8 @@ import (
 	"testing"
     
 
+    "app01ms/pkg/ioApp01ms"
+    "app01ms/pkg/App01msVendor"
 	_ "github.com/denisenkom/go-mssqldb"
 )
 
@@ -27,7 +29,7 @@ type App01msVendorTestData struct {
     Server      string
     User        string
     NameDB      string
-    io          *IO_App01ms
+    io          *ioApp01ms.IO_App01ms
 }
 
 //----------------------------------------------------------------------------
@@ -36,8 +38,8 @@ type App01msVendorTestData struct {
 
 // CheckRcd compares the given record to the needed one and issues an error if
 // they do not match.
-func (td *App01msVendorTestData) CheckRcd(need int, rcd *App01msVendor) {
-    var rcd2        App01msVendor
+func (td *App01msVendorTestData) CheckRcd(need int, rcd *App01msVendor.App01msVendor) {
+    var rcd2        App01msVendor.App01msVendor
 
     rcd2.TestData(need)
 
@@ -85,7 +87,7 @@ func (td *App01msVendorTestData) SetupDB( ) {
     var err         error
 
     // Set connection parameters based on database SQL type.
-    td.io = NewIoApp01ms()
+    td.io = ioApp01ms.NewIoApp01ms()
     td.io.DefaultParms()
     err = td.io.DatabaseCreate("App01ms")
     if err != nil {
@@ -118,7 +120,7 @@ func TestApp01msVendorCreateDeleteTable(t *testing.T) {
     var io          *IO_App01msVendor
 
 	t.Logf("TestCreateTable()...\n")
-	DockerRun(t)
+	//TODO: DockerRun(t)
 	td = NewTestApp01msVendor()
 	td.Setup(t)
 	io = NewIoApp01msVendor(td.io)
@@ -150,10 +152,10 @@ func TestApp01msVendorRowInsert(t *testing.T) {
     var err         error
     var td          *App01msVendorTestData
     var io          *IO_App01msVendor
-    var rcd         App01msVendor
+    var rcd         App01msVendor.App01msVendor
 
     t.Logf("TestVendor.RowInsert()...\n")
-	DockerRun(t)
+	//TODO: DockerRun(t)
 	td = NewTestApp01msVendor()
 	td.Setup(t)
 	io = NewIoApp01msVendor(td.io)
@@ -234,11 +236,11 @@ func TestApp01msVendorRowPage(t *testing.T) {
     var err         error
     var td          *App01msVendorTestData
     var io          *IO_App01msVendor
-    var rcd         App01msVendor
-    var rcds        []App01msVendor
+    var rcd         App01msVendor.App01msVendor
+    var rcds        []App01msVendor.App01msVendor
 
     t.Logf("TestVendorRowPage()...\n")
-	DockerRun(t)
+	//TODO: DockerRun(t)
 	td = NewTestApp01msVendor()
 	td.Setup(t)
 	io = NewIoApp01msVendor(td.io)
@@ -326,11 +328,11 @@ func TestApp01msVendorTableScan(t *testing.T) {
     var err         error
     var td          *App01msVendorTestData
     var io          *IO_App01msVendor
-    var rcd         App01msVendor
+    var rcd         App01msVendor.App01msVendor
     var cnt         int
 
 	t.Logf("TestTableScan()...\n")
-	DockerRun(t)
+	//TODO: DockerRun(t)
 	td = NewTestApp01msVendor()
 	td.Setup(t)
 	io = NewIoApp01msVendor(td.io)
@@ -352,7 +354,7 @@ func TestApp01msVendorTableScan(t *testing.T) {
         }
     }
 
-    apply := func (rcd App01msVendor) error {
+    apply := func (rcd App01msVendor.App01msVendor) error {
                 t.Logf("\tScan Row %d\n", cnt)
                 cnt++
                 return nil

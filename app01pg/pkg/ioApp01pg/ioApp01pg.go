@@ -22,13 +22,15 @@
 //		(ie "MyTable" is not equal to "MYTABLE") and should be surrounded with
 //		double-quotes.
 
-// Generated: Thu Nov 14, 2019 11:17 for postgres Database
+// Generated: Sun Nov 17, 2019 06:49 for postgres Database
 
 package ioApp01pg
 
 import (
     "database/sql"
     "fmt"
+    
+        "log"
     
     
      "strconv"
@@ -152,7 +154,7 @@ func (io *IO_App01pg) Connect(dbName string) error {
 
     // Allow for the Docker Container to get operational.
     for i:=0; i<connect_retries; i++ {
-        
+        log.Printf("\tConnecting %d to postgres with %s...\n", i, connStr)
         io.dbSql, err = sql.Open("postgres", connStr)
         if err == nil {
             err = io.dbSql.Ping()
@@ -167,6 +169,8 @@ func (io *IO_App01pg) Connect(dbName string) error {
         return fmt.Errorf("Error: Cannot Connect: %s\n", err.Error())
     }
 
+    
+        log.Printf("Pinging Server...\n")
     
     err = io.dbSql.Ping()
     if err != nil {
@@ -189,6 +193,8 @@ func (io *IO_App01pg) Connect(dbName string) error {
 func (io *IO_App01pg) Disconnect() error {
     var err         error
 
+    
+        log.Printf("\tDisconnecting from Database\n")
     
     if io.IsConnected() {
         err = io.dbSql.Close()
@@ -225,7 +231,7 @@ func (io *IO_App01pg) DatabaseCreate(dbName string) error {
     var err     error
     var str		util.StringBuilder
 
-    
+    log.Printf("DatabaseCreate(%s)\n", dbName)
     if len(dbName) == 0 {
         return fmt.Errorf("Error: Missing database name for DatabaseCreate()!")
     }
@@ -272,6 +278,8 @@ func (io *IO_App01pg) DatabaseCreate(dbName string) error {
     err = io.Connect(dbName)
 
     
+        log.Printf("...end DatabaseCreate(%s)\n", util.ErrorString(err))
+    
     return err
 }
 
@@ -286,6 +294,8 @@ func (io *IO_App01pg) DatabaseDelete(dbName string) error {
 	var str		util.StringBuilder
 
     
+        log.Printf("DatabaseDelete()\n")
+    
     dbName = strings.ToLower(dbName)
 
 	// Build the Create Database SQL Statement.
@@ -295,6 +305,8 @@ func (io *IO_App01pg) DatabaseDelete(dbName string) error {
             err = io.Exec(str.String())
         }
 
+    
+        log.Printf("...end DatabaseDelete(%s)\n", util.ErrorString(err))
     
     return err
 }
@@ -312,6 +324,8 @@ func (io *IO_App01pg) IsDatabaseDefined(dbName string) bool {
     var Database    string
 
     
+        log.Printf("IsDatabaseDefined(%s)\n", dbName)
+    
     dbName = strings.ToLower(dbName)
 
     // Build the SQL Statement.
@@ -322,11 +336,18 @@ func (io *IO_App01pg) IsDatabaseDefined(dbName string) bool {
 	if err == nil {
         if Database == dbName {
         
+            log.Printf("...end IsDatabaseDefined(true)\n")
+        
             return true;
         }
     
+	} else {
+	        log.Printf("\tSELECT pg_database Error: %s  Name: %s\n", err.Error(), Database)
+    
 	}
 
+    
+        log.Printf("...end IsDatabaseDefined(false)\n")
     
     return false
 }
@@ -346,6 +367,8 @@ func (io *IO_App01pg) IsTableDefined(schemaName, tableName string) bool {
     var table_name      string
 
     
+        log.Printf("IsTableDefined()\n")
+    
 
     err = io.Query(sqlStmt, func(rows *sql.Rows) {
         if schemaName == table_schema && tableName == table_name {
@@ -356,10 +379,17 @@ func (io *IO_App01pg) IsTableDefined(schemaName, tableName string) bool {
     tableName)
 	if err == nil && found {
         
+            log.Printf("...end IsTableDefined(true)\n")
+        
         return true;
+    
+	} else {
+	        log.Printf("\tSELECT pg_database Error: %s  Name: %s.%s\n", err.Error(), table_schema, table_name)
     
 	}
 
+    
+        log.Printf("...end IsTableDefined(false)\n")
     
     return false
 }
@@ -375,10 +405,14 @@ func (io *IO_App01pg) Exec(sqlStmt string, args ...interface{}) error {
     var err     error
 
     
+        log.Printf("Exec(%s)\n", sqlStmt)
+    
 
     _, err = io.dbSql.Exec(sqlStmt, args...)
     
 
+    
+        log.Printf("...end Exec(%s)\n", util.ErrorString(err))
     
     return err
 }
@@ -393,6 +427,8 @@ func (io *IO_App01pg) Query(sqlStmt string, process func(rows *sql.Rows), args .
     var rows    *sql.Rows
 
     
+        log.Printf("Query(%s)\n", sqlStmt)
+    
 
     rows, err = io.dbSql.Query(sqlStmt, args...)
     
@@ -406,6 +442,8 @@ func (io *IO_App01pg) Query(sqlStmt string, process func(rows *sql.Rows), args .
     }
 
     
+        log.Printf("...end Query(%s)\n", util.ErrorString(err))
+    
     return err
 }
 
@@ -415,16 +453,16 @@ func (io *IO_App01pg) Query(sqlStmt string, process func(rows *sql.Rows), args .
 
 // QueryRow executes an sql statement which does return row(s).
 func (io *IO_App01pg) QueryRow(sqlStmt string, args ...interface{}) *sql.Row {
-    
+    var err     error
     var row     *sql.Row
 
-    
+    log.Printf("QueryRow(%s)\n", sqlStmt)
 
     row = io.dbSql.QueryRow(sqlStmt, args...)
 
     
 
-    
+    log.Printf("...end Query(%s)\n", util.ErrorString(err))
     return row
 }
 
