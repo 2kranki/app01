@@ -2,7 +2,7 @@
 */vendor/*
 *.db
 
-#			*** Python Ignores ***
+#			*** Modified Python Ignores ***
 
 # Byte-compiled / optimized / DLL files
 __pycache__/
@@ -14,13 +14,11 @@ __pycache__/
 
 # Distribution / packaging
 .Python
-build/
 develop-eggs/
 dist/
 downloads/
 eggs/
 .eggs/
-lib/
 lib64/
 parts/
 sdist/
@@ -87,12 +85,9 @@ celerybeat-schedule
 # SageMath parsed files
 *.sage.py
 
-# Environments
+# Some Environments
 .env
 .venv
-env/
-venv/
-ENV/
 env.bak/
 venv.bak/
 
@@ -124,6 +119,6 @@ venv.bak/
 # Output of the go coverage tool, specifically when used with LiteIDE
 *.out
 
-# Work files
+# Vi Work files
 *.swp
 
