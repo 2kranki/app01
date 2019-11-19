@@ -32,10 +32,10 @@ ENV GOLANG_DOCKER_CONTAINER=1
 
 ENV CGO_ENABLED=0
 ENV GOOS=linux
-RUN go get github.com/2kranki/jsonpreprocess \
-    && go get github.com/2kranki/go_util \
-    && go get github.com/shopspring/decimal \
-    && go get "github.com/denisenkom/go-mssqldb"
+RUN go get -u github.com/2kranki/jsonpreprocess \
+    && go get -u github.com/2kranki/go_util \
+    && go get -u github.com/shopspring/decimal \
+    && go get -u "github.com/denisenkom/go-mssqldb"
 WORKDIR /go/src/app01ms/cmd
 COPY ./cmd      ./
 WORKDIR /go/src/app01ms/pkg

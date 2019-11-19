@@ -50,8 +50,8 @@ class testParseArgs(TestCase):
     def test_one(self):
         args = ["--debug"]
         build.parseArgs(args)
-        self.assertTrue(build.oArgs.fDebug)
-        self.assertEqual(build.oArgs.szAppName, 'app01sq')
+        self.assertTrue(build.args.debug)
+        self.assertEqual(build.args.app_name, 'app01sq')
 
 
 ################################################################################

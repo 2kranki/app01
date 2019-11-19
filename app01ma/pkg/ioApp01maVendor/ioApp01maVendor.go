@@ -16,7 +16,7 @@
 
 
 // 2.   SQL requires OFFSET to follow LIMIT optionally (ie LIMIT n [OFFSET n])
-// Generated: Sun Nov 17, 2019 06:49 for mariadb Database
+// Generated: Tue Nov 19, 2019 15:46 for mariadb Database
 
 package ioApp01maVendor
 

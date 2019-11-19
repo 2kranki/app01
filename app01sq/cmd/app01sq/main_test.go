@@ -4,7 +4,7 @@
 // ioApp01sq contains all the functions
 // and data to interact with the SQL Database.
 
-// Generated: Sun Nov 17, 2019 06:49 for sqlite Database
+// Generated: Tue Nov 19, 2019 15:46 for sqlite Database
 
 package main
 
@@ -21,20 +21,8 @@ import (
 
 // DockerRun executes the dbs/sqlite/run.sh to create a fresh SQL Server.
 func DockerRun(t *testing.T) {
-    var err         error
-    var exec        *util.ExecCmd
 
 	t.Logf("DockerRun()...\n")
-
-	exec = util.NewExecCmd("../dbs/sqlite/run.sh")
-	if exec == nil {
-        t.Fatalf("Error: Failed to create util.ExecCmd instance!\n\n")
-	}
-
-    //err = exec.Run()      // Not needed for sqlite!
-    if err != nil {
-        t.Fatalf("Error: %s\n\n", err)
-    }
 
 	t.Logf("DockerRun() - End\n\n\n")
 }

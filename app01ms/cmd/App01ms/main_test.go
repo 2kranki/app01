@@ -4,7 +4,7 @@
 // ioApp01ms contains all the functions
 // and data to interact with the SQL Database.
 
-// Generated: Sun Nov 17, 2019 06:49 for mssql Database
+// Generated: Tue Nov 19, 2019 15:46 for mssql Database
 
 package main
 
@@ -27,7 +27,7 @@ func DockerRun(t *testing.T) {
 
 	t.Logf("DockerRun()...\n")
 
-	exec = util.NewExecCmd("../dbs/mssql/run.sh")
+	exec = util.NewExecArgs("", "../dbs/mssql/run.sh")
 	if exec == nil {
         t.Fatalf("Error: Failed to create util.ExecCmd instance!\n\n")
 	}

@@ -71,10 +71,11 @@ def         parse_args(listArgV=None):
                          )
     oCmdPrs.add_argument('args', nargs=argparse.REMAINDER, default=[])
     args = oCmdPrs.parse_args(listArgV)
-    args.szAppPath = os.path.join(args.szAppDir, args.szAppName)
     if args.debug:
         print("In DEBUG Mode...")
         print('Args:', args)
+
+    return 0
 
 
 #---------------------------------------------------------------------

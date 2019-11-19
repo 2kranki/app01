@@ -7,7 +7,7 @@
 //  *   All static (ie non-changing) files should be served from the 'static'
 //      subdirectory.
 
-// Generated: Sun Nov 17, 2019 06:49
+// Generated: Tue Nov 19, 2019 15:46
 
 package main
 
@@ -16,7 +16,6 @@ import (
     "log"
 	"net/http"
 	"os"
-    "os/exec"
     "os/signal"
 
     "app01sq/pkg/hndlrApp01sq"
@@ -47,7 +46,7 @@ var app01sqIO *ioApp01sq.IO_App01sq
 // genCerts generates the Certificates needed for HTTPS.
 func genCerts() {
     var err         error
-    var cmd         string
+    var out         string
 
     log.Printf("\tGenerating HTTPS Certificates if needed...\n")
     if certDir == "" {
@@ -71,31 +70,32 @@ func genCerts() {
     if keyPem == nil {
         log.Fatalf("Error: Creating %s/key.pem path\n\n", certPath.String())
     }
-    if certPem.IsPathRegularFile() && keyPem.IsPathRegularFile() {
+    if certPem.IsPathRegularFile() && keyPem.IsPathRegularFile() && !force {
         return
     }
 
     log.Printf("\tMissing HTTPS Certificates will now be generated...\n")
     // NOTE - The cmd to create the certificates may need to be massaged for
     //      a more specific installation.
-    cmd  = "openssl req -x509 -nodes -days 365 -newkey rsa:2048 "
-    cmd += fmt.Sprintf("-keyout %s -out %s", keyPem, certPem)
-    cmd += " -passout pass:xyzzy"
-    cmd += " -subj \"/C=US/ST=Florida/L=Tampa/O=De/OU=Dev/CN=example.com\""
-    cmdr := exec.Command(cmd)
-    if cmdr == nil {
-        log.Fatalf("Error: Could not create command object!\n")
+    //TODO: Allow for password to be substituted.
+    cmd := util.NewExecArgs("openssl", "req", "-x509", "-nodes",
+     "-days", "365", "-newkey", "rsa:2048", "-keyout", keyPem.String(),
+     "-out", certPem.String(), "-passout", "pass:xyzzy",
+     "-subj", "/C=US/ST=Florida/L=Tampa/O=De/OU=Dev/CN=example.com")
+    log.Printf("\tExecuting %s...\n", cmd.CommandString())
+    if cmd == nil {
+        log.Fatalf("Error: Could not create cmd object!\n")
     }
-    err = cmdr.Run()
+    out, err = cmd.RunWithOutput()
     if err != nil {
-        log.Fatalf("Error: Could not create HTTPS Certificates : %s!\n",
-                    err.Error())
+        log.Fatalf("Error: Did not create HTTPS Certificates : %s : %s!\n",
+                    err.Error(), out)
     }
     if certPem.IsPathRegularFile() && keyPem.IsPathRegularFile() {
         return
     }
 
-    log.Fatalf("Error: OpenSSL could not create the certificates!\n")
+    log.Fatalf("Error: OpenSSL did not create the certificates!\n")
 }
 
 // HndlrFavIcon is the default Favorite Icon Handler.  It defaults to
