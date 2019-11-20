@@ -2,7 +2,7 @@ This repository contains the latest version of the generated Test01 applications
 
 Normally, I clone into /tmp. That means that you lose all changes upon computer restart. So, you might want to clone to a different directory if you want to keep changes. Also, I have rebuilt this repository from scatch. So, you will have to reclone it if you have an older version. Docker is now required to run any of the applications.
 
-`docker-compose` is working for all as well and is how I test. It will build the application container the first time that it is run. I use `docker-container up &` in MacOS to watch the progress of the application.  You should note that each application exposes a different port, 8090-8094, so that they can all be run at once if needed. `docker-compose down` should shut the application down. Note that you need to be in the directory that contains the Dockerfile and docker-compose.yaml for this to work.
+`docker-compose` is working for all as well and is how I test. It will build the application container the first time that it is run. I use `docker-container up &` in MacOS to watch the progress of the application.  You should note that each application exposes a different port, 8090-8094 for HTTP and 8095-8099 for HTTPS, so that they can all be run at once if needed. `docker-compose down` should shut the application down. Note that you need to be in the directory that contains the Dockerfile and docker-compose.yaml for this to work.
 
 The way that I test is to:
 
