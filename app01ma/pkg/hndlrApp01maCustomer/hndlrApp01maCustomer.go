@@ -7,7 +7,7 @@
 //  *   All static (ie non-changing) files should be served from the 'static'
 //      subdirectory.
 
-// Generated: Tue Nov 19, 2019 15:46
+// Generated: Wed Nov 20, 2019 16:06
 
 
 package hndlrApp01maCustomer

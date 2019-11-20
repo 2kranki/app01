@@ -3,7 +3,7 @@
 
 //  Struct and Methods for App01sqVendor
 
-// Generated: Tue Nov 19, 2019 15:46
+// Generated: Wed Nov 20, 2019 16:06
 
 
 package App01sqVendor

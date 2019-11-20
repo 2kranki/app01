@@ -16,7 +16,7 @@
 
 
 // 2.   SQL requires OFFSET to follow LIMIT optionally (ie LIMIT n [OFFSET n])
-// Generated: Tue Nov 19, 2019 15:46 for sqlite Database
+// Generated: Wed Nov 20, 2019 16:06 for sqlite Database
 
 package ioApp01sqCustomer
 

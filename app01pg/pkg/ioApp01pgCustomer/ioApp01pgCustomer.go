@@ -16,7 +16,7 @@
 
 
 // 2.   SQL requires OFFSET to follow LIMIT optionally (ie LIMIT n [OFFSET n])
-// Generated: Tue Nov 19, 2019 15:46 for postgres Database
+// Generated: Wed Nov 20, 2019 16:06 for postgres Database
 
 package ioApp01pgCustomer
 

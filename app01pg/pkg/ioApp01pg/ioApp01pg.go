@@ -22,7 +22,7 @@
 //		(ie "MyTable" is not equal to "MYTABLE") and should be surrounded with
 //		double-quotes.
 
-// Generated: Tue Nov 19, 2019 15:46 for postgres Database
+// Generated: Wed Nov 20, 2019 16:06 for postgres Database
 
 package ioApp01pg
 

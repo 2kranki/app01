@@ -4,7 +4,7 @@
 // ioApp01my contains all the functions
 // and data to interact with the SQL Database.
 
-// Generated: Tue Nov 19, 2019 15:46
+// Generated: Wed Nov 20, 2019 16:06
 
 package hndlrApp01myCustomer
 

@@ -7,7 +7,7 @@
 //  *   All static (ie non-changing) files should be served from the 'static'
 //      subdirectory.
 
-// Generated: Tue Nov 19, 2019 15:46
+// Generated: Wed Nov 20, 2019 16:06
 
 package main
 
@@ -43,8 +43,22 @@ var app01sqIO *ioApp01sq.IO_App01sq
     var app01sqVendorIO  *ioApp01sqVendor.IO_App01sqVendor
 
 
-// genCerts generates the Certificates needed for HTTPS.
-func genCerts() {
+type PemControl struct {
+	certPath    *util.Path
+	certPem     *util.Path
+	keyPem      *util.Path
+}
+
+func (p *PemControl) CertPemPath() string {
+    return p.certPem.String()
+}
+
+func (p *PemControl) KeyPemPath() string {
+    return p.KeyPem.String()
+}
+
+// Gen generates the Certificates needed for HTTPS.
+func (p *PemControl) Gen() {
     var err         error
     var out         string
 
@@ -62,11 +76,11 @@ func genCerts() {
         log.Fatalf("Error: Create %s : %s\n\n", certPath.String(), err.Error())
     }
 
-    certPem := certPath.Append("cert.pem")
+    certPem = certPath.Append("cert.pem")
     if certPem == nil {
         log.Fatalf("Error: Creating %s/cert.pem path\n\n", certPath.String())
     }
-    keyPem := certPath.Append("key.pem")
+    keyPem = certPath.Append("key.pem")
     if keyPem == nil {
         log.Fatalf("Error: Creating %s/key.pem path\n\n", certPath.String())
     }
@@ -96,6 +110,64 @@ func genCerts() {
     }
 
     log.Fatalf("Error: OpenSSL did not create the certificates!\n")
+}
+
+// certsIsPresent checks to see if the Certificates needed for HTTPS
+// are present. If certificates seem ok, nil is returned. Otherwise,
+// an error is returned.
+func (p *PemControl) IsPresent(force bool) error {
+    var err         error
+    var out         string
+
+    log.Printf("\tChecking for HTTPS Certificates...\n")
+    if p.certPem.String() == "" {
+        return fmt.Errorf("Error: Missing cert certificate path!\n\n")
+    }
+    if p.keyPem.String() == "" {
+        return fmt.Errorf("Error: Missing key certificate path!\n\n")
+    }
+
+    if p.certPem.IsPathRegularFile() && p.keyPem.IsPathRegularFile() && !force {
+        return nil
+    }
+
+    return fmt.Errorf("Error: Certificates need to be (re)built!\n\n")
+}
+
+// Setup checks to see if the Certificates needed for HTTPS
+// are present.
+func (p *PemControl) Setup() error {
+    var err         error
+    var out         string
+
+    log.Printf("\tSetting up for the HTTPS Certificates...\n")
+    if certDir == "" {
+        return fmt.Errorf("Error: Missing certificate path!\n\n")
+    }
+
+    log.Printf("\tChecking for HTTPS Certificates in %s...\n", certDir)
+    p.certPath = util.NewPath(certDir)
+    if p.certPath == nil {
+        return fmt.Errorf("Error: Creating %s path\n\n", certPath.String())
+    }
+    if err = p.certPath.CreateDir(); err != nil {
+        return fmt.Errorf("Error: Create %s : %s\n\n", certPath.String(), err.Error())
+    }
+
+    p.certPem = p.certPath.Append("cert.pem")
+    if certPem == nil {
+        return fmt.Errorf("Error: Creating %s/cert.pem path\n\n", certPath.String())
+    }
+    p.keyPem = p.certPath.Append("key.pem")
+    if keyPem == nil {
+        return fmt.Errorf("Error: Creating %s/key.pem path\n\n", certPath.String())
+    }
+
+    return nil
+}
+
+func NewPem() *PemControl {
+    return &PemControl{}
 }
 
 // HndlrFavIcon is the default Favorite Icon Handler.  It defaults to

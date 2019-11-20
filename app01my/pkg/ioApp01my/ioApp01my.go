@@ -20,7 +20,7 @@
 //      in the name.
 
 
-// Generated: Tue Nov 19, 2019 15:46 for mysql Database
+// Generated: Wed Nov 20, 2019 16:06 for mysql Database
 
 package ioApp01my
 
