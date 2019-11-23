@@ -4,7 +4,7 @@
 // ioApp01ma contains all the functions
 // and data to interact with the SQL Database.
 
-// Generated: Wed Nov 20, 2019 16:06
+// Generated: Sat Nov 23, 2019 00:27
 
 package hndlrApp01ma
 
@@ -22,4 +22,3 @@ func TestSomething(t *testing.T) {
 
 	t.Logf("TestSomething() - End of Test\n\n\n")
 }
-
