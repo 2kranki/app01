@@ -64,23 +64,23 @@ class Main(util.MainBase):
             print('*****************************************')
             print()
 
-        result = self.do_cmd("./jenkins/test/test.py", 'app01ma')
+        result = self.do_cmd("./scripts/ci/test/test.py", 'app01ma')
         if result != 0:
             print("Error: Testing failed for: 'app01ma'!\n")
             return
-        result = self.do_cmd("./jenkins/test/test.py", 'app01ms')
+        result = self.do_cmd("./scripts/ci/test/test.py", 'app01ms')
         if result != 0:
             print("Error: Testing failed for: 'app01ms'!\n")
             return
-        result = self.do_cmd("./jenkins/test/test.py", 'app01my')
+        result = self.do_cmd("./scripts/ci/test/test.py", 'app01my')
         if result != 0:
             print("Error: Testing failed for: 'app01my'!\n")
             return
-        result = self.do_cmd("./jenkins/test/test.py", 'app01pg')
+        result = self.do_cmd("./scripts/ci/test/test.py", 'app01pg')
         if result != 0:
             print("Error: Testing failed for: 'app01pg'!\n")
             return
-        result = self.do_cmd("./jenkins/test/test.py", 'app01sq')
+        result = self.do_cmd("./scripts/ci/test/test.py", 'app01sq')
         if result != 0:
             print("Error: Testing failed for: 'app01sq'!\n")
             return
