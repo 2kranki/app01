@@ -16,76 +16,78 @@
 //  h.Serve(false)      // <== true == wrap handlers for debugging
 //  NOTE: Any code here will never be executed.
 
-// Generated: Mon Jan  6, 2020 09:54
+
+// Generated: Mon Jan  6, 2020 11:09
 
 package httpServer
 
 import (
-	"fmt"
-	"log"
+    "fmt"
+    "log"
 	"net/http"
 
-	//"github.com/2kranki/go_util"
-	"app01pg/pkg/cert"
+    //"github.com/2kranki/go_util"
+    "app01pg/pkg/cert"
 )
+
 
 //----------------------------------------------------------------------------
 //                         HTTP/HTTPS Server
 //----------------------------------------------------------------------------
 
 type HttpServer struct {
-	CertDir    string
-	Host       string
-	Port       string
-	SecureHost string
-	SecurePort string
-	Mux        *http.ServeMux
-	Certs      *cert.CertControl // if != nil, assume HTTPS
+    CertDir         string
+	Host            string
+	Port            string
+	SecureHost      string
+	SecurePort      string
+	Mux             *http.ServeMux
+	Certs           *cert.CertControl   // if != nil, assume HTTPS
 }
 
 // HndlrRedirect redirects all HTTP requests to HTTPS requests.
 func (h *HttpServer) HndlrRedirect(w http.ResponseWriter, r *http.Request) {
 
-	fmt.Printf("HndlrRedirect(%s)\n", r.Method)
+    fmt.Printf("HndlrRedirect(%s)\n", r.Method)
 
-	redirectUrl := fmt.Sprintf("https://%s:%s%s", h.SecureHost, h.SecurePort,
-		r.URL.Path)
-	http.Redirect(w, r, redirectUrl, http.StatusMovedPermanently)
+    redirectUrl := fmt.Sprintf("https://%s:%s%s", h.SecureHost, h.SecurePort,
+                            r.URL.Path)
+    http.Redirect(w, r, redirectUrl, http.StatusMovedPermanently)
 
-	fmt.Printf("...end HndlrRedirect()\n")
+    fmt.Printf("...end HndlrRedirect()\n")
 }
 
 // Serve sets up the server(s) which handle the HTTP/HTTPS
 // requests.
 func (h *HttpServer) Serve(UseMuxWrapper bool) error {
-	var serverString string
+    var serverString    string
 
-	if h.Certs != nil {
-		log.Printf("\tStarting HTTP Redirect Server at %s:%s -> %s:%s...\n",
-			h.Host, h.Port, h.SecureHost, h.SecurePort)
-		serverString = fmt.Sprintf("%s:%s", h.Host, h.Port)
-		go http.ListenAndServe(serverString, http.HandlerFunc(h.HndlrRedirect))
-	}
+    if h.Certs != nil {
+    log.Printf("\tStarting HTTP Redirect Server at %s:%s -> %s:%s...\n",
+                    h.Host, h.Port, h.SecureHost, h.SecurePort)
+        serverString = fmt.Sprintf("%s:%s", h.Host, h.Port)
+        go http.ListenAndServe(serverString, http.HandlerFunc(h.HndlrRedirect))
+    }
 
-	if h.Certs != nil {
-		log.Printf("\tStarting HTTPS Server at %s:%s...\n",
-			h.SecureHost, h.SecurePort)
-		serverString = fmt.Sprintf("%s:%s", h.SecureHost, h.SecurePort)
-	} else {
-		log.Printf("\tStarting HTTP Server at %s:%s...\n", h.Host, h.Port)
-		serverString = fmt.Sprintf("%s:%s", h.Host, h.Port)
-	}
-	if UseMuxWrapper {
-		s := &http.Server{
-			Addr:    serverString,
-			Handler: MuxHandlerWrapper(h.Mux),
-		}
-		log.Fatal(s.ListenAndServe())
-	} else {
-		log.Fatal(http.ListenAndServe(serverString, h.Mux))
-	}
+    if h.Certs != nil {
+    log.Printf("\tStarting HTTPS Server at %s:%s...\n",
+                        h.SecureHost, h.SecurePort)
+        serverString = fmt.Sprintf("%s:%s", h.SecureHost, h.SecurePort)
+    } else {
+    log.Printf("\tStarting HTTP Server at %s:%s...\n", h.Host, h.Port)
+        serverString = fmt.Sprintf("%s:%s", h.Host, h.Port)
+    }
+    if UseMuxWrapper {
+        s := &http.Server{
+            Addr:    serverString,
+            Handler: MuxHandlerWrapper(h.Mux),
+        }
+        log.Fatal(s.ListenAndServe())
+    } else {
+        log.Fatal(http.ListenAndServe(serverString, h.Mux))
+    }
 
-	return nil
+    return nil
 }
 
 // SetupCerts insures that the HTTPS Certificates are present
@@ -94,16 +96,16 @@ func (h *HttpServer) Serve(UseMuxWrapper bool) error {
 // Warning: This must be run before Serve().
 func (h *HttpServer) SetupCerts(certDir string) error {
 
-	// Generate HTTPS Certificates if needed.
-	h.Certs = cert.NewCert(certDir)
-	if h.Certs.IsPresent(false) != nil {
-		err := h.Certs.Generate()
-		if err != nil {
-			return err
-		}
-	}
+    // Generate HTTPS Certificates if needed.
+    h.Certs = cert.NewCert(certDir)
+    if h.Certs.IsPresent(false) != nil {
+        err := h.Certs.Generate()
+        if err != nil {
+            return err
+        }
+    }
 
-	return nil
+    return nil
 }
 
 //----------------------------------------------------------------------------
@@ -112,14 +114,14 @@ func (h *HttpServer) SetupCerts(certDir string) error {
 
 func NewHttp(host, port, securePort string) *HttpServer {
 
-	h := &HttpServer{}
-	h.Host = host
-	h.Port = port
-	h.SecureHost = host
-	h.SecurePort = securePort
-	h.Mux = http.NewServeMux()
+    h := &HttpServer{}
+    h.Host = host
+    h.Port = port
+    h.SecureHost = host
+    h.SecurePort = securePort
+    h.Mux = http.NewServeMux()
 
-	return h
+    return h
 }
 
 //----------------------------------------------------------------------------
@@ -154,12 +156,12 @@ func MuxHandlerWrapper(f http.Handler) http.HandlerFunc {
 			ResponseWriter: w,
 		}
 
-		// Intercept before the request is handled.
+        // Intercept before the request is handled.
 		log.Println("mux input: (", r.Method, ") ", r.URL.String())
 
 		f.ServeHTTP(record, r)
 
-		// Intercept after the request is handled.
+        // Intercept after the request is handled.
 		log.Println("Bad Request ", record.status)
 
 		if record.status == http.StatusBadRequest {

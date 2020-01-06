@@ -19,7 +19,7 @@
 //      be lower-case. You should separate words with an '_' if you use full words
 //      in the name.
 
-// Generated: Mon Jan  6, 2020 09:54 for sqlite Database
+// Generated: Mon Jan  6, 2020 11:09 for sqlite Database
 
 package ioApp01sq
 

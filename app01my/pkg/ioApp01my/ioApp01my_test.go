@@ -4,7 +4,7 @@
 // ioApp01my contains all the functions
 // and data to interact with the SQL Database.
 
-// Generated: Mon Jan  6, 2020 09:54 for mysql Database
+// Generated: Mon Jan  6, 2020 11:09 for mysql Database
 
 package ioApp01my
 
@@ -12,7 +12,9 @@ import (
 	"testing"
 )
 
-var ioApp01my *IO_App01my
+
+var ioApp01my   *IO_App01my
+
 
 //============================================================================
 //                              Tests
@@ -23,23 +25,23 @@ var ioApp01my *IO_App01my
 //----------------------------------------------------------------------------
 
 func TestApp01myConnect(t *testing.T) {
-	var err error
+    var err         error
 
 	t.Logf("TestConnect()...\n")
-	// DockerRun(t)
+// DockerRun(t)
 
 	ioApp01my = NewIoApp01my()
 	ioApp01my.DefaultParms()
-	err = ioApp01my.Connect("")
-	if err == nil {
-		err = ioApp01my.Disconnect()
-		if err != nil {
-			t.Fatalf("Error: %s\n\n", err)
-		}
-		ioApp01my = nil
-	} else {
-		t.Fatalf("Error: %s\n\n", err)
-	}
+    err = ioApp01my.Connect("")
+    if err == nil {
+	    err = ioApp01my.Disconnect()
+        if err != nil {
+            t.Fatalf("Error: %s\n\n", err)
+        }
+        ioApp01my = nil
+    } else {
+            t.Fatalf("Error: %s\n\n", err)
+    }
 
 	t.Logf("TestConnect() - End of Test\n\n\n")
 }
@@ -49,74 +51,75 @@ func TestApp01myConnect(t *testing.T) {
 //----------------------------------------------------------------------------
 
 func TestApp01myDisconnect(t *testing.T) {
-	var err error
+    var err         error
 
 	t.Logf("TestDisconnect()...\n")
 	ioApp01my = NewIoApp01my()
 	ioApp01my.DefaultParms()
 
 	// Disconnect before a connection has been made.
-	err = ioApp01my.Disconnect()
-	if err == nil {
-		t.Fatal("Error: Never Connected!\n\n\n")
-	}
+    err = ioApp01my.Disconnect()
+    if err == nil {
+        t.Fatal("Error: Never Connected!\n\n\n")
+    }
 
-	if ioApp01my.IsConnected() {
-		t.Fatal("Error: Never Connected!\n\n\n")
-	}
+    if ioApp01my.IsConnected() {
+        t.Fatal("Error: Never Connected!\n\n\n")
+    }
 
-	// Now connect then disconnect.
-	err = ioApp01my.Connect("")
-	if err != nil {
-		t.Fatal("Error: Cannot connect: ", err)
-	}
+    // Now connect then disconnect.
+    err = ioApp01my.Connect("")
+    if err != nil {
+        t.Fatal("Error: Cannot connect: ", err)
+    }
 
-	if !ioApp01my.IsConnected() {
-		t.Fatal("Error: Never Connected!\n\n\n")
-	}
+    if !ioApp01my.IsConnected() {
+        t.Fatal("Error: Never Connected!\n\n\n")
+    }
 
-	err = ioApp01my.Disconnect()
-	if err != nil {
-		t.Fatal("Error: Cannot disconnect: ", err)
-	}
-	ioApp01my = nil
+    err = ioApp01my.Disconnect()
+    if err != nil {
+        t.Fatal("Error: Cannot disconnect: ", err)
+    }
+    ioApp01my = nil
 
 	t.Logf("TestDisconnect() - End of Test\n\n\n")
 }
+
+
 
 //----------------------------------------------------------------------------
 //                              DatabaseCreate
 //----------------------------------------------------------------------------
 
 func TestApp01myDatabaseCreate(t *testing.T) {
-	var err error
+    var err         error
 
 	t.Logf("TestDatabaseCreate()...\n")
-	//DockerRun(t)
+//DockerRun(t)
 
 	ioApp01my = NewIoApp01my()
 	ioApp01my.DefaultParms()
 
-	err = ioApp01my.DatabaseCreate("App01my")
-	if err != nil {
-		t.Errorf("\tError - Database Create failed: %s\n", err.Error())
-	}
+    err = ioApp01my.DatabaseCreate("App01my")
+    if err != nil {
+        t.Errorf("\tError - Database Create failed: %s\n", err.Error())
+    }
 
-	err = ioApp01my.Disconnect()
-	if err != nil {
-		t.Fatalf("Error: %s\n\n", err)
-	}
-	ioApp01my = nil
+    err = ioApp01my.Disconnect()
+    if err != nil {
+        t.Fatalf("Error: %s\n\n", err)
+    }
+    ioApp01my = nil
 
 	t.Logf("TestQueryRow() - End of Test\n\n\n")
 }
-
 //----------------------------------------------------------------------------
 //                              QueryRow
 //----------------------------------------------------------------------------
 
 func TestApp01myQueryRow(t *testing.T) {
-	var err error
+    var err         error
 
 	t.Logf("TestQueryRow()...\n")
 	//DockerRun(t)
@@ -124,16 +127,16 @@ func TestApp01myQueryRow(t *testing.T) {
 	ioApp01my = NewIoApp01my()
 	ioApp01my.DefaultParms()
 
-	err = ioApp01my.DatabaseCreate("App01my")
-	if err != nil {
-		t.Errorf("\tError - Database Create failed: %s\n", err.Error())
-	}
+    err = ioApp01my.DatabaseCreate("App01my")
+    if err != nil {
+        t.Errorf("\tError - Database Create failed: %s\n", err.Error())
+    }
 
-	err = ioApp01my.Disconnect()
-	if err != nil {
-		t.Fatalf("Error: %s\n\n", err)
-	}
-	ioApp01my = nil
+    err = ioApp01my.Disconnect()
+    if err != nil {
+        t.Fatalf("Error: %s\n\n", err)
+    }
+    ioApp01my = nil
 
 	t.Logf("TestQueryRow() - End of Test\n\n\n")
 }

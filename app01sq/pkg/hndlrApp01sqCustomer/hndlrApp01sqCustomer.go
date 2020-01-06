@@ -7,7 +7,7 @@
 //  *   All static (ie non-changing) files should be served from the 'static'
 //      subdirectory.
 
-// Generated: Mon Jan  6, 2020 09:54
+// Generated: Mon Jan  6, 2020 11:09
 
 package hndlrApp01sqCustomer
 
@@ -286,7 +286,6 @@ func (h *HandlersApp01sqCustomer) ListShow(w http.ResponseWriter, offset int, ms
 	var err error
 	var rcds []App01sqCustomer.App01sqCustomer
 	var name = "App01sq.Customer.list.gohtml"
-
 	var str strings.Builder
 
 	log.Printf("hndlrCustomer.ListShow(%d)\n", offset)
@@ -319,7 +318,6 @@ func (h *HandlersApp01sqCustomer) ListShow(w http.ResponseWriter, offset int, ms
 
 	log.Printf("\t output: %s\n", str.String())
 	log.Printf("...end hndlrCustomer.ListShow(%s)\n", util.ErrorString(err))
-
 }
 
 //============================================================================
@@ -388,8 +386,10 @@ func (h *HandlersApp01sqCustomer) RowDelete(w http.ResponseWriter, r *http.Reque
 // RowDisplay displays the given record.
 func (h *HandlersApp01sqCustomer) RowDisplay(w http.ResponseWriter, rcd *App01sqCustomer.App01sqCustomer, msg string) {
 	var err error
+	var str strings.Builder
 
 	log.Printf("hndlrCustomer.RowDisplay(%+v, %s)\n", rcd, msg)
+	w2 := io.MultiWriter(w, &str)
 
 	if h.Tmpls != nil {
 		data := struct {
@@ -397,19 +397,18 @@ func (h *HandlersApp01sqCustomer) RowDisplay(w http.ResponseWriter, rcd *App01sq
 			Msg string
 		}{rcd, msg}
 		name := "App01sq.Customer.form.gohtml"
-
 		log.Printf("\tRcd: %+v\n", data.Rcd)
 		log.Printf("\tMsg: %s\n", data.Msg)
 		log.Printf("\tname: %s\n", name)
-
-		err = h.Tmpls.Tmpls.ExecuteTemplate(w, name, data)
+		log.Printf("\tExecuting template: %s\n", name)
+		err = h.Tmpls.Tmpls.ExecuteTemplate(w2, name, data)
 		if err != nil {
 			fmt.Fprintf(w, err.Error())
 		}
 	}
 
+	log.Printf("\t output: %s\n", str.String())
 	log.Printf("...end hndlrCustomer.RowDisplay(%s)\n", util.ErrorString(err))
-
 }
 
 //----------------------------------------------------------------------------
