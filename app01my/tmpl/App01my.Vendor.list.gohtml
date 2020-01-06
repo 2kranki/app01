@@ -1,0 +1,99 @@
+
+<!doctype html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <title>App01my/vendor List</title>
+    <style>
+        html, body, p {
+            padding: 0;
+            border: 0;
+            margin: 0;
+        }
+        body {
+            display: flex;
+            flex-flow: column nowrap;
+            justify-content: center;
+            align-items: left;
+            height: 100vh;
+        }
+        p {
+            margin-left: 4rem;
+            font-size: 2rem;
+            color: black;
+        }
+        .link {
+            font-size: 1rem;
+        }
+        label {
+            display:block;
+            position:relative;
+        }
+
+        label span {
+            font-weight:bold;
+            position:absolute;
+            left: 3px;
+        }
+
+        label input, label textarea, label select {
+            margin-left: 120px;
+        }
+    </style>
+</head>
+<body>
+    <form id="listForm" method="get" action="/Vendor">
+    <table>
+        <tbody>
+            {{ range $r := .Rcds }}
+                <tr>
+                <td>
+                        <a href="/Vendor/find?{{$r.KeysToValue}}">
+                        {{ $r.ToString "Id" }}
+                        </a>
+                        </td>
+                    <td>
+                        {{ $r.ToString "Name" }}
+                        </td>
+                    </tr>
+            {{ end }}
+        </tbody>
+    </table>
+        <input type=hidden name=offset id=offset value={{ .Offset }}>
+        <p/>
+        <p/>
+        <p/>
+        <input type=submit onclick='onListFirst()' value="First">
+        <input type=submit onclick='onListPrev()'  value="Prev">
+        <input type=submit onclick='onListNext()'  value="Next">
+        <input type=submit onclick='onListLast()'  value="Last">
+        <input type=submit onclick='onListMenu()'  value="Menu">
+    </form>
+    <p/>
+    <p>{{.Msg}}</p>
+    <script>
+        function onListFirst() {
+            document.getElementById("listForm").action = "/Vendor/list/first";
+            document.getElementById("listForm").method = "get";
+        }
+        function onListLast() {
+            document.getElementById("listForm").action = "/Vendor/list/last";
+            document.getElementById("listForm").method = "get";
+        }
+        function onListMenu() {
+            document.getElementById("listForm").action = "/";
+            document.getElementById("listForm").method = "get";
+        }
+        function onListNext() {
+            key = document.getElementById("offset").value
+            document.getElementById("listForm").action = "/Vendor/list/next?key="+key;
+            document.getElementById("listForm").method = "get";
+        }
+        function onListPrev() {
+            key = document.getElementById("offset").value
+            document.getElementById("listForm").action = "/Vendor/list/prev?key="+key;
+            document.getElementById("listForm").method = "get";
+        }
+    </script>
+</body>
+</html>

@@ -1,0 +1,54 @@
+
+/*  vi:nu:et:sts=4 ts=4 sw=4
+
+    The goal is to containerize and test the applications.
+
+    Created: 2019/09/19
+ */
+
+pipeline {
+
+    agent any
+    
+    stages {
+
+        stage('Build') {
+            steps {
+                sh './scripts/ci/build/build.py'
+            }
+        }
+
+    /***
+        stage('Test') {
+            steps {
+                sh './scripts/ci/test/test.py'
+            }
+        }
+     ***/
+
+    /***
+        // Perform various code reviews.
+        stage('Review') {
+            steps {
+                sh './scripts/ci/review/review.py'
+            }
+        }
+     ***/
+
+    /***
+        stage('Push') {
+            steps {
+                sh './scripts/ci/push/push.py'
+            }
+        }
+     ***/
+
+    /***
+        stage('Deploy') {
+            steps {
+                sh './scripts/ci/deploy/deploy.py'
+            }
+        }
+     ***/
+    }
+}

@@ -1,0 +1,56 @@
+
+# vi:nu:et:sts=4 ts=4 sw=4
+
+# WARNING: This file must be located in the main directory
+#           because of docker-compose limitations.
+
+version: "3"
+
+#================================================
+networks:
+#================================================
+    net:
+
+#================================================
+services:
+#================================================
+
+    #----------------------------------------------
+    db:
+    #----------------------------------------------
+        # Create and the docker sql server container
+        # with the appropriate startup arguments such
+        # as root password.
+        image: "mcr.microsoft.com/mssql/server:2017-latest"
+        environment:
+            ACCEPT_EULA: "Y"
+            MSSQL_SA_PASSWORD: "Passw0rd"
+            
+        expose:
+            - "1433"
+        networks:
+            - net
+        restart: always
+
+    #----------------------------------------------
+    app01ms:
+    #----------------------------------------------
+        # Run the latest version of our application
+        # container passing the appropriate startup
+        # parameters such as sql server password.
+        image: "app01ms:latest"
+        build:
+            context: "."
+            dockerfile: "./Dockerfile"
+        ports:
+            - "127.0.0.1:8091:8091"
+        environment:
+            APP01MS_DB_SERVER: "db"
+            APP01MS_DB_PORT: "1433"
+        depends_on:
+            - db
+        networks:
+            - net
+        restart: always
+
+
